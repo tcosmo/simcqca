@@ -1,14 +1,14 @@
 #include "config.h"
-#include <SFML/Graphics.hpp>
-#include <iostream>
-using namespace std;
+
+#include "arguments.h"
+#include "graphic_engine.h"
+#include <cstdio>
 
 int main(int argc, char* argv[])
 {
-    int a = 9;
+    Arguments arguments;
+    parseArguments(argc, argv, &arguments);
 
-    for (int i = 0; i < 10; i++) {
-        std::cout << i;
-        int b = 9;
-    }
+    GraphicEngine graphicEngine(800 * 1.5, 600 * 1.5);
+    graphicEngine.run();
 }

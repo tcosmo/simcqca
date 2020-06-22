@@ -4,6 +4,7 @@ project(simcqca LANGUAGES CXX)
 
 set(simcqca_VERSION_MAJOR 0)
 set(simcqca_VERSION_MINOR 3)
+set(simcqca_PROG_NAME "SimCQCA")
 configure_file(
   "${PROJECT_SOURCE_DIR}/src/config.h.in"
   "${PROJECT_SOURCE_DIR}/src/config.h"
@@ -14,7 +15,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-file(GLOB SOURCES "src/*.cpp")
+file(GLOB SOURCES "src/*.cpp" "src/graphic_engine/*.cpp")
 
 set(EXECUTABLE_NAME "simcqca")
 add_executable(simcqca ${SOURCES})
