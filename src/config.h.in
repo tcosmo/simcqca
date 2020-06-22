@@ -1,0 +1,2 @@
+#define simcqca_VERSION_MAJOR @simcqca_VERSION_MAJOR @
+#define simcqca_VERSION_MINOR @simcqca_VERSION_MINOR @
