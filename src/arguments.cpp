@@ -10,7 +10,7 @@ void setInputType(char* arg, Arguments* arguments, InputType inputType)
 {
     if (arg == NULL)
         return;
-    if (arguments->inputType != UNDEF) {
+    if (arguments->inputType != NONE) {
         printf("Only one input mode (line/col/border/cycle) should be chosen. Abort.");
         exit(0);
     }

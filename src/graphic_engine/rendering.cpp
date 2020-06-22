@@ -8,5 +8,6 @@ void GraphicEngine::renderOrigin()
     sf::RectangleShape carre(sf::Vector2f(CELL_W, CELL_H));
     carre.setOutlineColor(sf::Color::Black);
     carre.setFillColor(sf::Color::Transparent);
+    carre.setOutlineThickness(2);
     window.draw(carre);
 }

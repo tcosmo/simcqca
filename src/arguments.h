@@ -5,7 +5,7 @@
 #include <string>
 
 enum InputType {
-    UNDEF = 0,
+    NONE = 0,
     LINE,
     COL,
     BORDER,
@@ -28,7 +28,7 @@ struct Arguments {
 
     Arguments()
         : isSequential(false)
-        , inputType(UNDEF)
+        , inputType(NONE)
     {
     }
 };

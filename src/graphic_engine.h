@@ -6,6 +6,7 @@
 #include <SFML/Window.hpp>
 
 #include "global.h"
+#include "world.h"
 
 #define CELL_W 20
 #define CELL_H 20
@@ -23,17 +24,49 @@
 #define COLOR_DARKER_GREEN sf::Color(0.2 * 255, 0.9 * 255, 0.2 * 255)
 
 class GraphicEngine {
+    /***
+     * Class which renders the world and its evolution.
+    */
 
 public:
-    GraphicEngine(int screen_w, int screen_h);
+    GraphicEngine(World& world, int screen_w, int screen_h);
     ~GraphicEngine();
 
     void run();
 
 private:
+    World& world;
+
     sf::RenderWindow window;
-    sf::View camera;
+
+    // General routines
+    sf::Vector2f mapWorldCoordsToCoords(const sf::Vector2i& world_coords);
+    sf::Vector2i mapCoordsToWorldCoords(const sf::Vector2f& coords);
 
     // Rendering routines
-    renderOrigin();
+    void renderOrigin();
+
+    // Camera attributes and routines
+    sf::View camera;
+    bool moveCameraMode, cameraMouseLeft;
+    sf::Vector2i cameraMousePosition;
+    void cameraTranslate(float dx, float dy);
+    void cameraTranslate(const sf::Vector2f& vec);
+    void cameraZoom(float zoom_factor);
+    void cameraCenter(const sf::Vector2f& where);
+
+    // Event routines and handlers
+    bool isControlPressed();
+    bool isShiftPressed();
+    void handleCameraEvents(const sf::Event& event);
+
+    // Graphic cells
+    std::vector<sf::VertexArray> graphicCells;
+    std::map<sf::Vector2i, bool> isCellDrawn; // Mapping world pos to bool
+    void updateGraphicCells();
+    void newGraphicBuffer();
+    void appendQuadForCell(const sf::Vector2i& cellPos, const Cell& cell);
+    int totalGraphicBufferSize();
+    sf::VertexArray& currentBuffer();
+    bool hasBufferLimitExceeded();
 };
