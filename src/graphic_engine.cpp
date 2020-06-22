@@ -4,6 +4,7 @@ GraphicEngine::GraphicEngine(World& world, int screen_w, int screen_h)
     : world(world)
 {
     window.create(sf::VideoMode(screen_w, screen_h), simcqca_PROG_NAME);
+    window.setFramerateLimit(TARGET_FPS);
 
     camera = window.getDefaultView();
     window.setView(camera);
@@ -108,7 +109,10 @@ void GraphicEngine::run()
     cameraZoom(3);
     cameraCenter({ -5 * CELL_W, 0 });
 
-    sf::Clock clock; // For framerate computation
+    // For FPS computation
+    sf::Clock clock;
+    int currentFPS = 1.0f;
+    int framePassed = 0;
 
     while (window.isOpen()) {
         sf::Event event;
@@ -121,9 +125,9 @@ void GraphicEngine::run()
                     break;
 
                 case sf::Keyboard::F:
-                    printf("FPS: %f\n", 1.f / clock.getElapsedTime().asSeconds());
+                    printf("FPS: %d\n", currentFPS);
                     printf("Vertex array: %ld x O(%d)\n", graphicCells.size(), VERTEX_ARRAY_MAX_SIZE);
-                    printf("Number of graphic cells: %d\n", totalGraphicBufferSize());
+                    printf("Number of graphic cells (quads): %d\n", totalGraphicBufferSize());
                     break;
 
                 default:
@@ -137,12 +141,17 @@ void GraphicEngine::run()
         window.clear(BACKGROUND_COLOR);
 
         updateGraphicCells();
-        for(const auto& graphicBuffer: graphicCells)
+        for (const auto& graphicBuffer : graphicCells)
             window.draw(graphicBuffer);
         renderOrigin();
 
         window.display();
 
-        clock.restart();
+        if (clock.getElapsedTime().asSeconds() >= 1.0) {
+            currentFPS = framePassed;
+            framePassed = 0;
+            clock.restart();
+        }
+        framePassed += 1;
     }
 }

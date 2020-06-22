@@ -14,6 +14,7 @@ include_directories("${PROJECT_BINARY_DIR}")
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
+set(CMAKE_CXX_FLAGS "-O3")
 
 file(GLOB SOURCES "src/*.cpp" "src/graphic_engine/*.cpp")
 
