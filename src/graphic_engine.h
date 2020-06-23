@@ -72,10 +72,10 @@ private:
 
     // Graphic cells
     std::vector<sf::VertexArray> graphicCells;
-    std::map<sf::Vector2i, bool> isCellDrawn; // Mapping world pos to bool
+    std::map<sf::Vector2i, std::pair<int, int>, compareWorldPositions> vertexArrayCell; // Mapping world pos to where are the cell's quad in `graphicCells`
     void updateGraphicCells();
     void newGraphicBuffer();
-    void appendQuadForCell(const sf::Vector2i& cellPos, const Cell& cell);
+    void appendOrUpdateQuadForCell(const sf::Vector2i& cellPos, const Cell& cell);
     int totalGraphicBufferSize();
     sf::VertexArray& currentBuffer();
     bool hasBufferLimitExceeded();

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <assert.h>
+#include <set>
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -25,3 +26,5 @@ struct compareWorldPositions {
         return a.x < b.x;
     }
 };
+
+typedef std::set<sf::Vector2i, compareWorldPositions> Poset;

@@ -17,6 +17,12 @@ enum AtomicInfo {
     ONE = 1
 };
 
+enum CellStatus {
+    UNDEFINED = -1, // bot bit and carry undefined
+    HALF_DEFINED = 1, // bit defined and carry undefined
+    DEFINED = 2 // bit-carry defined
+};
+
 struct Cell {
     /***
      * A cell contains a bit and a carry.
@@ -27,7 +33,24 @@ struct Cell {
         , carry(carry)
     {
     }
+    CellStatus getStatus() const
+    {
+        if (bit == UNDEF && carry == UNDEF)
+            return UNDEFINED;
+        if (bit != UNDEF && carry == UNDEF)
+            return HALF_DEFINED;
+        if (bit != UNDEF && carry != UNDEF)
+            return DEFINED;
+        assert(false); // We should never meet the case where only the carry is defined
+    }
+    int sum() const
+    {
+        assert(getStatus() == DEFINED);
+        return static_cast<int>(bit) + static_cast<int>(carry);
+    }
 };
+
+typedef std::pair<sf::Vector2i, Cell> CellPosAndCell;
 
 class World {
     /***
@@ -48,11 +71,25 @@ public:
         setInputCells();
     }
 
-    std::map<sf::Vector2i, Cell, compareWorldPositions> cells;
-    std::vector<sf::Vector2i> getAndFlushCellBuffer();
+    void next(); // Next simulation step
+
+    std::map<sf::Vector2i, Cell, compareWorldPositions> cells; // Contains only not undefined cells
+    Poset halfDefinedCells; // Buffer containing position of all half defined cells
+    std::vector<sf::Vector2i> getAndFlushGraphicBuffer();
 
 private:
     bool isSequentialSim; // Run in sequential mode or CA-style mode?
+
+    // Simulation
+    std::vector<CellPosAndCell> findNonLocalUpdates();
+    void nextNonLocal();
+    void nextLocal();
+    std::vector<CellPosAndCell> findCarryPropUpdates();
+    std::vector<CellPosAndCell> findForwardDeductionUpdates();
+    void applyUpdates(const std::vector<CellPosAndCell>& updates);
+
+    // Routines
+    bool doesCellExists(const sf::Vector2i& cellPos);
 
     // Input
     InputType inputType;
@@ -63,5 +100,5 @@ private:
     void setInputCellsLine();
 
     // For rendering
-    std::vector<sf::Vector2i> cellBuffer; // Cells that are not drawn yet
+    std::vector<sf::Vector2i> cellGraphicBuffer; // Cells that are not drawn yet
 };

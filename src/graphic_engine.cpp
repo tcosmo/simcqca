@@ -64,27 +64,42 @@ bool GraphicEngine::isShiftPressed()
     return sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) || sf::Keyboard::isKeyPressed(sf::Keyboard::RShift);
 }
 
-void GraphicEngine::appendQuadForCell(const sf::Vector2i& cellPos, const Cell& cell)
+void GraphicEngine::appendOrUpdateQuadForCell(const sf::Vector2i& cellPos, const Cell& cell)
 {
     /**
      * Vertices a,b,c,d will do a cell a  b
      *                                 d  c
     */
+    assert(cell.getStatus() >= HALF_DEFINED);
+
     sf::Vertex a, b, c, d;
     a.position = mapWorldPosToCoords(cellPos);
     b.position = mapWorldPosToCoords(cellPos + EAST);
     c.position = mapWorldPosToCoords(cellPos + SOUTH + EAST);
     d.position = mapWorldPosToCoords(cellPos + SOUTH);
 
-    a.color = BACKGROUND_COLOR_HALF_DEFINED;
-    b.color = BACKGROUND_COLOR_HALF_DEFINED;
-    c.color = BACKGROUND_COLOR_HALF_DEFINED;
-    d.color = BACKGROUND_COLOR_HALF_DEFINED;
+    sf::Color color = BACKGROUND_COLOR_HALF_DEFINED;
+    if (cell.getStatus() == DEFINED)
+        color = BACKGROUND_COLOR_DEFINED;
 
-    currentBuffer().append(a);
-    currentBuffer().append(b);
-    currentBuffer().append(c);
-    currentBuffer().append(d);
+    a.color = color;
+    b.color = color;
+    c.color = color;
+    d.color = color;
+
+    if (vertexArrayCell.find(cellPos) == vertexArrayCell.end()) {
+        vertexArrayCell[cellPos] = std::make_pair(graphicCells.size() - 1, currentBuffer().getVertexCount());
+        currentBuffer().append(a);
+        currentBuffer().append(b);
+        currentBuffer().append(c);
+        currentBuffer().append(d);
+    } else {
+        const auto& arrayAndPos = vertexArrayCell[cellPos];
+        graphicCells[arrayAndPos.first][arrayAndPos.second] = a;
+        graphicCells[arrayAndPos.first][arrayAndPos.second + 1] = b;
+        graphicCells[arrayAndPos.first][arrayAndPos.second + 2] = c;
+        graphicCells[arrayAndPos.first][arrayAndPos.second + 3] = d;
+    }
 }
 
 sf::VertexArray& GraphicEngine::currentBuffer()
@@ -100,11 +115,11 @@ bool GraphicEngine::hasBufferLimitExceeded()
 
 void GraphicEngine::updateGraphicCells()
 {
-    std::vector<sf::Vector2i> cellBuffer = world.getAndFlushCellBuffer();
+    std::vector<sf::Vector2i> cellBuffer = world.getAndFlushGraphicBuffer();
     for (auto& cellPos : cellBuffer) {
         if (hasBufferLimitExceeded())
             newGraphicBuffer();
-        appendQuadForCell(cellPos, world.cells[cellPos]);
+        appendOrUpdateQuadForCell(cellPos, world.cells[cellPos]);
     }
 }
 
@@ -137,12 +152,17 @@ void GraphicEngine::run()
                     printf("FPS: %d\n", currentFPS);
                     printf("Vertex array: %ld x O(%d)\n", graphicCells.size(), VERTEX_ARRAY_MAX_SIZE);
                     printf("Number of graphic cells (quads): %d\n", totalGraphicBufferSize());
+                    printf("Number of half defined cells: %ld\n", world.halfDefinedCells.size());
                     printf("Current zoom factor: %lf\n", currentZoom);
                     break;
 
                 case sf::Keyboard::T:
                     if (canRenderText())
                         isTextRendered = !isTextRendered;
+                    break;
+
+                case sf::Keyboard::N:
+                    world.next();
                     break;
 
                 default:
