@@ -95,7 +95,7 @@ std::vector<sf::Vertex> GraphicEngine::getCellColorVertices(const sf::Vector2i& 
     sf::Color color = BACKGROUND_COLOR_HALF_DEFINED;
     if (cell.getStatus() == DEFINED)
         color = CELL_DEFINED_COLORS[cell.index()];
-        
+
     std::vector<sf::Vertex> toRet;
     for (int i = 0; i < 4; i += 1) {
         sf::Vertex v;
@@ -114,18 +114,18 @@ std::vector<sf::Vertex> GraphicEngine::getCellColorVertices(const sf::Vector2i& 
 std::vector<sf::Vertex> GraphicEngine::getCellTextVertices(const sf::Vector2i& cellPos, const Cell& cell)
 {
     std::vector<sf::Vertex> toRet;
-    for(int iVertex = 0 ; iVertex < NB_TEXT_VERTICES ; iVertex += 1)
+    for (int iVertex = 0; iVertex < NB_TEXT_VERTICES; iVertex += 1)
         toRet.push_back(sf::Vertex());
 
-    if(cell.bit != UNDEF) {
-        if(cell.bit == ONE) {
+    if (cell.bit != UNDEF) {
+        if (cell.bit == ONE) {
             sf::Vertex up, down;
             sf::Vector2f upCoords = mapWorldPosToCoords(cellPos);
-            upCoords.x += CELL_W/2;
+            upCoords.x += CELL_W / 2;
             upCoords.y += 5; // Tweaking
             up.position = upCoords;
             sf::Vector2f downCoords = upCoords;
-            upCoords.y += CELL_H-10;
+            upCoords.y += CELL_H - 10;
             down.position = downCoords;
 
             up.color = sf::Color::White;

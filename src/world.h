@@ -54,7 +54,7 @@ struct Cell {
          * Indexing in order {(0,0),(0,1),(1,0),(1,1)}.
         */
         assert(getStatus() == DEFINED);
-        return static_cast<int>(2*bit) + static_cast<int>(carry);
+        return static_cast<int>(2 * bit) + static_cast<int>(carry);
     }
 };
 
