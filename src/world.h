@@ -12,7 +12,7 @@ enum AtomicInfo {
     /***
      * Bits and carrys can be either 0, 1 or undef (\bot in latex).
     */
-    UNDEF,
+    UNDEF = -1,
     ZERO = 0,
     ONE = 1
 };

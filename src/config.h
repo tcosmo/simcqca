@@ -9,7 +9,17 @@
 
 // Feel free to change that constant given your GPU/CPU configuration
 // It corresponds to the number of quads which are sent at once to the GPU for rendering
-#define VERTEX_ARRAY_MAX_SIZE 5 * 100 * 100
+#define VERTEX_ARRAY_MAX_SIZE 5*100*100
 
 // Change to the FPS you want to achieve given your GPU/CPU configuration
 #define TARGET_FPS 60
+
+// Zoom factor threshold under which text is not rendered for performance
+#define ZOOM_FACTOR_TEXT_THRESH 0.5
+
+#define DEFAULT_FONT "arial.ttf"
+#ifndef _WIN32
+#define DEFAULT_FONT_PATH "assets/fonts/" DEFAULT_FONT
+#else
+#define DEAULT_FONT_PATH "assets\\fonts\\" DEFAULT_FONT
+#endif

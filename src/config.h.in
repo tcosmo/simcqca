@@ -13,3 +13,13 @@
 
 // Change to the FPS you want to achieve given your GPU/CPU configuration
 #define TARGET_FPS 60
+
+// Zoom factor threshold under which text is not rendered for performance
+#define ZOOM_FACTOR_TEXT_THRESH 0.5
+
+#define DEFAULT_FONT "arial.ttf"
+#ifndef _WIN32
+#define DEFAULT_FONT_PATH "assets/fonts/" DEFAULT_FONT
+#else
+#define DEAULT_FONT_PATH "assets\\fonts\\" DEFAULT_FONT
+#endif

@@ -13,6 +13,7 @@ void GraphicEngine::cameraTranslate(const sf::Vector2f& vec)
 
 void GraphicEngine::cameraZoom(float zoom_factor)
 {
+    currentZoom *= zoom_factor;
     camera.zoom(1 / zoom_factor);
     window.setView(camera);
 }
@@ -93,4 +94,31 @@ void GraphicEngine::handleCameraEvents(const sf::Event& event)
                                            static_cast<int>(window.getSize().y / 2) },
                     window);
         }
+}
+
+std::pair<sf::Vector2i,sf::Vector2i> GraphicEngine::getExtremalVisibleCellsPos()
+{
+    /***
+     * Returns (topLeft,bottomRight) in world positions.
+    */
+
+    sf::Vector2f topLeftCoords = window.mapPixelToCoords({0,0});
+    sf::Vector2i topLeftPos = mapCoordsToWorldPos(topLeftCoords);
+
+    sf::Vector2f bottomRightCoords = window.mapPixelToCoords({(int)window.getSize().x,(int)window.getSize().y});
+    sf::Vector2i bottomRightPos = mapCoordsToWorldPos(bottomRightCoords);
+
+    return std::make_pair(topLeftPos,bottomRightPos);
+}
+
+bool GraphicEngine::isCellInView(const sf::Vector2i& cellPos)
+{
+    auto extremalVisibleCells = getExtremalVisibleCellsPos();
+    auto topLeft = extremalVisibleCells.first;
+    auto bottomRight = extremalVisibleCells.second;
+
+
+
+    return cellPos.x >= topLeft.x && cellPos.x <= bottomRight.x && 
+           cellPos.y >= topLeft.y && cellPos.y <= bottomRight.y;
 }

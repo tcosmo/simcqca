@@ -40,20 +40,31 @@ private:
     sf::RenderWindow window;
 
     // General routines
-    sf::Vector2f mapWorldCoordsToCoords(const sf::Vector2i& world_coords);
-    sf::Vector2i mapCoordsToWorldCoords(const sf::Vector2f& coords);
+    sf::Vector2f mapWorldPosToCoords(const sf::Vector2i& world_coords);
+    sf::Vector2i mapCoordsToWorldPos(const sf::Vector2f& coords);
+
+    // Text attribute and routines
+    sf::Font defaultFont;
+    bool isTextRendered;
+    bool canRenderText(); // Render only if zoom factor not too small
+
 
     // Rendering routines
     void renderOrigin();
+    void renderCellsText();
+    void renderCellText(const sf::Vector2i& cellPos, const Cell& cell);
 
     // Camera attributes and routines
     sf::View camera;
     bool moveCameraMode, cameraMouseLeft;
+    double currentZoom;
     sf::Vector2i cameraMousePosition;
     void cameraTranslate(float dx, float dy);
     void cameraTranslate(const sf::Vector2f& vec);
     void cameraZoom(float zoom_factor);
     void cameraCenter(const sf::Vector2f& where);
+    bool isCellInView(const sf::Vector2i& cellPos); // Cell pos is expressed in world positions
+    std::pair<sf::Vector2i,sf::Vector2i> getExtremalVisibleCellsPos(); // In world positions
 
     // Event routines and handlers
     bool isControlPressed();

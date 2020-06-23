@@ -6,10 +6,14 @@ GraphicEngine::GraphicEngine(World& world, int screen_w, int screen_h)
     window.create(sf::VideoMode(screen_w, screen_h), simcqca_PROG_NAME);
     window.setFramerateLimit(TARGET_FPS);
 
+    assert(defaultFont.loadFromFile(DEFAULT_FONT_PATH));
+    isTextRendered = true;
+
     camera = window.getDefaultView();
     window.setView(camera);
     moveCameraMode = false;
     cameraMouseLeft = false;
+    currentZoom = 1.0;
 
     newGraphicBuffer();
 }
@@ -36,13 +40,13 @@ int GraphicEngine::totalGraphicBufferSize()
     return toRet;
 }
 
-sf::Vector2f GraphicEngine::mapWorldCoordsToCoords(const sf::Vector2i& world_coords)
+sf::Vector2f GraphicEngine::mapWorldPosToCoords(const sf::Vector2i& world_coords)
 {
     return sf::Vector2f({ static_cast<float>(world_coords.x * CELL_W),
         static_cast<float>(world_coords.y * CELL_H) });
 }
 
-sf::Vector2i GraphicEngine::mapCoordsToWorldCoords(const sf::Vector2f& coords)
+sf::Vector2i GraphicEngine::mapCoordsToWorldPos(const sf::Vector2f& coords)
 {
     int sign_x = (coords.x < 0) ? -1 * CELL_W : 0;
     int sign_y = (coords.y < 0) ? -1 * CELL_H : 0;
@@ -67,10 +71,10 @@ void GraphicEngine::appendQuadForCell(const sf::Vector2i& cellPos, const Cell& c
      *                                 d  c
     */
     sf::Vertex a, b, c, d;
-    a.position = mapWorldCoordsToCoords(cellPos);
-    b.position = mapWorldCoordsToCoords(cellPos + EAST);
-    c.position = mapWorldCoordsToCoords(cellPos + SOUTH + EAST);
-    d.position = mapWorldCoordsToCoords(cellPos + SOUTH);
+    a.position = mapWorldPosToCoords(cellPos);
+    b.position = mapWorldPosToCoords(cellPos + EAST);
+    c.position = mapWorldPosToCoords(cellPos + SOUTH + EAST);
+    d.position = mapWorldPosToCoords(cellPos + SOUTH);
 
     a.color = BACKGROUND_COLOR_HALF_DEFINED;
     b.color = BACKGROUND_COLOR_HALF_DEFINED;
@@ -104,6 +108,11 @@ void GraphicEngine::updateGraphicCells()
     }
 }
 
+bool GraphicEngine::canRenderText()
+{
+    return currentZoom >= ZOOM_FACTOR_TEXT_THRESH;
+}
+
 void GraphicEngine::run()
 {
     cameraZoom(3);
@@ -128,6 +137,12 @@ void GraphicEngine::run()
                     printf("FPS: %d\n", currentFPS);
                     printf("Vertex array: %ld x O(%d)\n", graphicCells.size(), VERTEX_ARRAY_MAX_SIZE);
                     printf("Number of graphic cells (quads): %d\n", totalGraphicBufferSize());
+                    printf("Current zoom factor: %lf\n", currentZoom);
+                    break;
+
+                case sf::Keyboard::T:
+                    if( canRenderText() )
+                        isTextRendered = !isTextRendered;
                     break;
 
                 default:
@@ -144,6 +159,9 @@ void GraphicEngine::run()
         for (const auto& graphicBuffer : graphicCells)
             window.draw(graphicBuffer);
         renderOrigin();
+
+        if (canRenderText() && isTextRendered)
+            renderCellsText();
 
         window.display();
 
