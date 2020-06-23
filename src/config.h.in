@@ -12,7 +12,7 @@
 #define VERTEX_ARRAY_MAX_SIZE 5*100*100
 
 // Change to the FPS you want to achieve given your GPU/CPU configuration
-#define TARGET_FPS 60
+#define TARGET_FPS 80
 
 // Zoom factor threshold under which text is not rendered for performance
 #define ZOOM_FACTOR_TEXT_THRESH 0.5

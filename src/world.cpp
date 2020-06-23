@@ -75,7 +75,7 @@ std::vector<CellPosAndCell> World::findCarryPropUpdates()
             toRet.push_back(std::make_pair(cellPos, updatedCell));
             //printf("Carry update: %d %d\n", cellPos.x, cellPos.y);
             // Manage edge case of left most cell on a line
-            if (!doesCellExists(cellPos + WEST) && !doesCellExists(cellPos + WEST + NORTH) && updatedCell.sum()>=1) {
+            if (!doesCellExists(cellPos + WEST) && !doesCellExists(cellPos + WEST + NORTH) && updatedCell.sum() >= 1) {
                 //printf("Finite edge case update: %d %d\n", (cellPos + WEST).x, (cellPos + WEST).y);
                 toRet.push_back(std::make_pair(cellPos + WEST, Cell(ZERO, UNDEF)));
             }
