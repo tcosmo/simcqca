@@ -23,6 +23,16 @@
 #define COLOR_SPECIAL_CARRY sf::Color(0.4 * 255, 0.1 * 255, 0.1 * 255)
 #define COLOR_DARKER_GREEN sf::Color(0.2 * 255, 0.9 * 255, 0.2 * 255)
 
+// Vertex Array layer indexing
+#define NB_LAYERS 3
+#define CELL_BACKGROUND 0 // Background of cell (defined/half defined)
+#define CELL_COLOR 1 // Cell color when cell defined
+#define CELL_TEXT 2 // Cell "text" for symbols (more efficient than rendering a font)
+static sf::PrimitiveType LAYER_PRIMITIVE_TYPE[3] = { sf::Quads, sf::Quads, sf::Quads };
+#define NB_TEXT_VERTICES 8 // Max number of vertices needed to draw  0, 1, \bar 0 or \bar 1
+
+static sf::Color CELL_DEFINED_COLORS[4] = {COLOR_DARKER_GREEN, sf::Color::Black, sf::Color::Magenta, sf::Quads};
+
 class GraphicEngine {
     /***
      * Class which renders the world and its evolution.
@@ -71,12 +81,15 @@ private:
     void handleCameraEvents(const sf::Event& event);
 
     // Graphic cells
-    std::vector<sf::VertexArray> graphicCells;
-    std::map<sf::Vector2i, std::pair<int, int>, compareWorldPositions> vertexArrayCell; // Mapping world pos to where are the cell's quad in `graphicCells`
+    std::vector<sf::VertexArray> graphicCells[NB_LAYERS];
+    std::map<sf::Vector2i, std::pair<int, int>, compareWorldPositions> vertexArrayCell[NB_LAYERS]; // Mapping world pos to where are the cell's quad in `graphicCells`
     void updateGraphicCells();
-    void newGraphicBuffer();
-    void appendOrUpdateQuadForCell(const sf::Vector2i& cellPos, const Cell& cell);
+    void newGraphicBuffer(int iLayer);
+    void appendOrUpdateCell(const sf::Vector2i& cellPos, const Cell& cell);
     int totalGraphicBufferSize();
-    sf::VertexArray& currentBuffer();
-    bool hasBufferLimitExceeded();
+    sf::VertexArray& currentBuffer(int iLayer);
+    bool hasBufferLimitExceeded(int iLayer);
+    std::vector<sf::Vertex> getCellBackgroundVertices(const sf::Vector2i& cellPos, const Cell& cell);
+    std::vector<sf::Vertex> getCellColorVertices(const sf::Vector2i& cellPos, const Cell& cell);
+    std::vector<sf::Vertex> getCellTextVertices(const sf::Vector2i& cellPos, const Cell& cell);
 };

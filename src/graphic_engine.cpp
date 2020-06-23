@@ -16,17 +16,19 @@ GraphicEngine::GraphicEngine(World& world, int screen_w, int screen_h)
     cameraMouseLeft = false;
     currentZoom = 1.0;
 
-    newGraphicBuffer();
+    for (int iLayer = 0; iLayer < NB_LAYERS; iLayer += 1)
+        newGraphicBuffer(iLayer);
 }
 
 GraphicEngine::~GraphicEngine()
 {
 }
 
-void GraphicEngine::newGraphicBuffer()
+void GraphicEngine::newGraphicBuffer(int iLayer)
 {
-    graphicCells.push_back(sf::VertexArray());
-    graphicCells[graphicCells.size() - 1].setPrimitiveType(sf::Quads);
+
+    graphicCells[iLayer].push_back(sf::VertexArray());
+    graphicCells[iLayer][graphicCells[iLayer].size() - 1].setPrimitiveType(LAYER_PRIMITIVE_TYPE[iLayer]);
 }
 
 int GraphicEngine::totalGraphicBufferSize()
@@ -36,8 +38,10 @@ int GraphicEngine::totalGraphicBufferSize()
     */
 
     int toRet = 0;
-    for (const auto& buffer : graphicCells)
-        toRet += buffer.getVertexCount();
+    for (int iLayer = 1; iLayer < NB_LAYERS; iLayer += 1)
+        for (const auto& buffer : graphicCells[CELL_BACKGROUND])
+            toRet += buffer.getVertexCount();
+
     return toRet;
 }
 
@@ -65,62 +69,123 @@ bool GraphicEngine::isShiftPressed()
     return sf::Keyboard::isKeyPressed(sf::Keyboard::LShift) || sf::Keyboard::isKeyPressed(sf::Keyboard::RShift);
 }
 
-void GraphicEngine::appendOrUpdateQuadForCell(const sf::Vector2i& cellPos, const Cell& cell)
+std::vector<sf::Vertex> GraphicEngine::getCellBackgroundVertices(const sf::Vector2i& cellPos, const Cell& cell)
 {
-    /**
-     * Vertices a,b,c,d will do a cell a  b
-     *                                 d  c
-    */
-    assert(cell.getStatus() >= HALF_DEFINED);
-
-    sf::Vertex a, b, c, d;
-    a.position = mapWorldPosToCoords(cellPos);
-    b.position = mapWorldPosToCoords(cellPos + EAST);
-    c.position = mapWorldPosToCoords(cellPos + SOUTH + EAST);
-    d.position = mapWorldPosToCoords(cellPos + SOUTH);
-
     sf::Color color = BACKGROUND_COLOR_HALF_DEFINED;
     if (cell.getStatus() == DEFINED)
         color = BACKGROUND_COLOR_DEFINED;
 
-    a.color = color;
-    b.color = color;
-    c.color = color;
-    d.color = color;
+    std::vector<sf::Vertex> toRet;
+    for (int i = 0; i < 4; i += 1) {
+        sf::Vertex v;
+        v.color = color;
+        toRet.push_back(v);
+    }
 
-    if (vertexArrayCell.find(cellPos) == vertexArrayCell.end()) {
-        vertexArrayCell[cellPos] = std::make_pair(graphicCells.size() - 1, currentBuffer().getVertexCount());
-        currentBuffer().append(a);
-        currentBuffer().append(b);
-        currentBuffer().append(c);
-        currentBuffer().append(d);
-    } else {
-        const auto& arrayAndPos = vertexArrayCell[cellPos];
-        graphicCells[arrayAndPos.first][arrayAndPos.second] = a;
-        graphicCells[arrayAndPos.first][arrayAndPos.second + 1] = b;
-        graphicCells[arrayAndPos.first][arrayAndPos.second + 2] = c;
-        graphicCells[arrayAndPos.first][arrayAndPos.second + 3] = d;
+    toRet[0].position = mapWorldPosToCoords(cellPos);
+    toRet[1].position = mapWorldPosToCoords(cellPos + EAST);
+    toRet[2].position = mapWorldPosToCoords(cellPos + SOUTH + EAST);
+    toRet[3].position = mapWorldPosToCoords(cellPos + SOUTH);
+
+    return toRet;
+}
+
+std::vector<sf::Vertex> GraphicEngine::getCellColorVertices(const sf::Vector2i& cellPos, const Cell& cell)
+{
+    sf::Color color = BACKGROUND_COLOR_HALF_DEFINED;
+    if (cell.getStatus() == DEFINED)
+        color = CELL_DEFINED_COLORS[cell.index()];
+        
+    std::vector<sf::Vertex> toRet;
+    for (int i = 0; i < 4; i += 1) {
+        sf::Vertex v;
+        v.color = color;
+        toRet.push_back(v);
+    }
+
+    toRet[0].position = mapWorldPosToCoords(cellPos);
+    toRet[1].position = mapWorldPosToCoords(cellPos + EAST);
+    toRet[2].position = mapWorldPosToCoords(cellPos + SOUTH + EAST);
+    toRet[3].position = mapWorldPosToCoords(cellPos + SOUTH);
+
+    return toRet;
+}
+
+std::vector<sf::Vertex> GraphicEngine::getCellTextVertices(const sf::Vector2i& cellPos, const Cell& cell)
+{
+    std::vector<sf::Vertex> toRet;
+    for(int iVertex = 0 ; iVertex < NB_TEXT_VERTICES ; iVertex += 1)
+        toRet.push_back(sf::Vertex());
+
+    if(cell.bit != UNDEF) {
+        if(cell.bit == ONE) {
+            sf::Vertex up, down;
+            sf::Vector2f upCoords = mapWorldPosToCoords(cellPos);
+            upCoords.x += CELL_W/2;
+            upCoords.y += 5; // Tweaking
+            up.position = upCoords;
+            sf::Vector2f downCoords = upCoords;
+            upCoords.y += CELL_H-10;
+            down.position = downCoords;
+
+            up.color = sf::Color::White;
+            down.color = sf::Color::White;
+            toRet[0] = up;
+            toRet[1] = down;
+        }
+    }
+
+    return toRet;
+}
+
+void GraphicEngine::appendOrUpdateCell(const sf::Vector2i& cellPos, const Cell& cell)
+{
+    assert(cell.getStatus() >= HALF_DEFINED);
+
+    auto verticesBackground = getCellBackgroundVertices(cellPos, cell);
+    auto verticesColor = getCellColorVertices(cellPos, cell);
+    auto verticesText = getCellTextVertices(cellPos, cell);
+
+    std::vector<sf::Vertex> allVertices[NB_LAYERS] = { verticesBackground, verticesColor, verticesText };
+
+    bool append = false;
+    if (vertexArrayCell[CELL_BACKGROUND].find(cellPos) == vertexArrayCell[CELL_BACKGROUND].end()) {
+        append = true;
+        for (int iLayer = 0; iLayer < NB_LAYERS; iLayer += 1) {
+            vertexArrayCell[iLayer][cellPos] = std::make_pair(graphicCells[iLayer].size() - 1, currentBuffer(iLayer).getVertexCount());
+        }
+    }
+    // Fill background, color and text
+    for (int iLayer = 0; iLayer < NB_LAYERS; iLayer += 1) {
+        const auto& arrayAndPos = vertexArrayCell[iLayer][cellPos];
+        for (int iVertex = 0; iVertex < allVertices[iLayer].size(); iVertex += 1) {
+            if (!append)
+                graphicCells[iLayer][arrayAndPos.first][arrayAndPos.second + iVertex] = allVertices[iLayer][iVertex];
+            else
+                graphicCells[iLayer][arrayAndPos.first].append(allVertices[iLayer][iVertex]);
+        }
     }
 }
 
-sf::VertexArray& GraphicEngine::currentBuffer()
+sf::VertexArray& GraphicEngine::currentBuffer(int iLayer)
 {
-    assert(graphicCells.size() != 0);
-    return graphicCells[graphicCells.size() - 1];
+    assert(graphicCells[iLayer].size() != 0);
+    return graphicCells[iLayer][graphicCells[iLayer].size() - 1];
 }
 
-bool GraphicEngine::hasBufferLimitExceeded()
+bool GraphicEngine::hasBufferLimitExceeded(int iLayer)
 {
-    return currentBuffer().getVertexCount() >= VERTEX_ARRAY_MAX_SIZE;
+    return currentBuffer(iLayer).getVertexCount() >= VERTEX_ARRAY_MAX_SIZE;
 }
 
 void GraphicEngine::updateGraphicCells()
 {
     std::vector<sf::Vector2i> cellBuffer = world.getAndFlushGraphicBuffer();
     for (auto& cellPos : cellBuffer) {
-        if (hasBufferLimitExceeded())
-            newGraphicBuffer();
-        appendOrUpdateQuadForCell(cellPos, world.cells[cellPos]);
+        for (int iLayer = 0; iLayer < NB_LAYERS; iLayer += 1)
+            if (hasBufferLimitExceeded(iLayer))
+                newGraphicBuffer(iLayer);
+        appendOrUpdateCell(cellPos, world.cells[cellPos]);
     }
 }
 
@@ -151,7 +216,7 @@ void GraphicEngine::run()
 
                 case sf::Keyboard::F:
                     printf("FPS: %d\n", currentFPS);
-                    printf("Vertex array: %ld x O(%d)\n", graphicCells.size(), VERTEX_ARRAY_MAX_SIZE);
+                    printf("Vertex array (Background): %ld x O(%d)\n", graphicCells[CELL_BACKGROUND].size(), VERTEX_ARRAY_MAX_SIZE);
                     printf("Number of graphic cells (quads): %d\n", totalGraphicBufferSize());
                     printf("Number of half defined cells: %ld\n", world.halfDefinedCells.size());
                     printf("Current zoom factor: %lf\n", currentZoom);
@@ -176,8 +241,9 @@ void GraphicEngine::run()
         window.clear(BACKGROUND_COLOR);
 
         updateGraphicCells();
-        for (const auto& graphicBuffer : graphicCells)
-            window.draw(graphicBuffer);
+        for (int iLayer = 0; iLayer < NB_LAYERS; iLayer += 1)
+            for (const auto& graphicBuffer : graphicCells[iLayer])
+                window.draw(graphicBuffer);
         renderOrigin();
 
         if (canRenderText() && isTextForcedDisabled) {

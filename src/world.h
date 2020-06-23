@@ -48,6 +48,14 @@ struct Cell {
         assert(getStatus() == DEFINED);
         return static_cast<int>(bit) + static_cast<int>(carry);
     }
+    int index() const
+    {
+        /**
+         * Indexing in order {(0,0),(0,1),(1,0),(1,1)}.
+        */
+        assert(getStatus() == DEFINED);
+        return static_cast<int>(2*bit) + static_cast<int>(carry);
+    }
 };
 
 typedef std::pair<sf::Vector2i, Cell> CellPosAndCell;
