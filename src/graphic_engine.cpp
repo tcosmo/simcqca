@@ -180,7 +180,7 @@ void GraphicEngine::run()
             window.draw(graphicBuffer);
         renderOrigin();
 
-        if( canRenderText() && isTextForcedDisabled) {
+        if (canRenderText() && isTextForcedDisabled) {
             isTextForcedDisabled = false;
             isTextRendered = true;
         }
