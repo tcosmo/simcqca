@@ -141,7 +141,7 @@ void GraphicEngine::run()
                     break;
 
                 case sf::Keyboard::T:
-                    if( canRenderText() )
+                    if (canRenderText())
                         isTextRendered = !isTextRendered;
                     break;
 

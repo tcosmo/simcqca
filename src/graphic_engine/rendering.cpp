@@ -15,33 +15,33 @@ void GraphicEngine::renderOrigin()
 void GraphicEngine::renderCellText(const sf::Vector2i& cellPos, const Cell& cell)
 {
     sf::Vector2f graphicCellCoords = mapWorldPosToCoords(cellPos);
-    if( cell.bit != UNDEF ) {
+    if (cell.bit != UNDEF) {
         sf::Text text;
         text.setFont(defaultFont);
-        text.setString(std::string({(char)(cell.bit + '0')}));
+        text.setString(std::string({ (char)(cell.bit + '0') }));
         text.setCharacterSize(15);
 
         text.setFillColor(sf::Color::White);
-        
-        float textX = (CELL_W-text.getLocalBounds().width)/2;
-        float textY = (CELL_H-text.getLocalBounds().height)/2;
 
-        text.setPosition(graphicCellCoords + sf::Vector2f({textX-(float)1, textY-1}));//Tweaking text pos
+        float textX = (CELL_W - text.getLocalBounds().width) / 2;
+        float textY = (CELL_H - text.getLocalBounds().height) / 2;
+
+        text.setPosition(graphicCellCoords + sf::Vector2f({ textX - (float)1, textY - 1 })); //Tweaking text pos
         window.draw(text);
     }
 
-    if( cell.carry == ONE ) {
+    if (cell.carry == ONE) {
         sf::Text text;
         text.setFont(defaultFont);
         text.setString("_");
         text.setCharacterSize(15);
 
         text.setFillColor(sf::Color::White);
-        
-        float textX = (CELL_W-text.getLocalBounds().width)/2;
-        float textY = (CELL_H-text.getLocalBounds().height)/2-20;
 
-        text.setPosition(graphicCellCoords + sf::Vector2f({textX-(float)1, textY-1}));//Tweaking text pos
+        float textX = (CELL_W - text.getLocalBounds().width) / 2;
+        float textY = (CELL_H - text.getLocalBounds().height) / 2 - 20;
+
+        text.setPosition(graphicCellCoords + sf::Vector2f({ textX - (float)1, textY - 1 })); //Tweaking text pos
         window.draw(text);
     }
 }
@@ -53,7 +53,7 @@ void GraphicEngine::renderCellsText()
      * Warning: this is costful and should be disabled by pressing `T` when
      *          too many cells are drawn. 
     */
-   for(auto& cellPosAndCell: world.cells)
-    if(isCellInView(cellPosAndCell.first))
-        renderCellText(cellPosAndCell.first, cellPosAndCell.second);
+    for (auto& cellPosAndCell : world.cells)
+        if (isCellInView(cellPosAndCell.first))
+            renderCellText(cellPosAndCell.first, cellPosAndCell.second);
 }

@@ -48,7 +48,6 @@ private:
     bool isTextRendered;
     bool canRenderText(); // Render only if zoom factor not too small
 
-
     // Rendering routines
     void renderOrigin();
     void renderCellsText();
@@ -64,7 +63,7 @@ private:
     void cameraZoom(float zoom_factor);
     void cameraCenter(const sf::Vector2f& where);
     bool isCellInView(const sf::Vector2i& cellPos); // Cell pos is expressed in world positions
-    std::pair<sf::Vector2i,sf::Vector2i> getExtremalVisibleCellsPos(); // In world positions
+    std::pair<sf::Vector2i, sf::Vector2i> getExtremalVisibleCellsPos(); // In world positions
 
     // Event routines and handlers
     bool isControlPressed();
