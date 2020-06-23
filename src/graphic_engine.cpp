@@ -8,6 +8,7 @@ GraphicEngine::GraphicEngine(World& world, int screen_w, int screen_h)
 
     assert(defaultFont.loadFromFile(DEFAULT_FONT_PATH));
     isTextRendered = true;
+    isTextForcedDisabled = false;
 
     camera = window.getDefaultView();
     window.setView(camera);
@@ -157,8 +158,7 @@ void GraphicEngine::run()
                     break;
 
                 case sf::Keyboard::T:
-                    if (canRenderText())
-                        isTextRendered = !isTextRendered;
+                    isTextRendered = !isTextRendered;
                     break;
 
                 case sf::Keyboard::N:
@@ -180,7 +180,16 @@ void GraphicEngine::run()
             window.draw(graphicBuffer);
         renderOrigin();
 
-        if (canRenderText() && isTextRendered)
+        if( canRenderText() && isTextForcedDisabled) {
+            isTextForcedDisabled = false;
+            isTextRendered = true;
+        }
+        if (!canRenderText() && isTextRendered && !isTextForcedDisabled) {
+            isTextForcedDisabled = true;
+            isTextRendered = false;
+        }
+
+        if (isTextRendered)
             renderCellsText();
 
         window.display();
