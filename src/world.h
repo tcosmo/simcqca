@@ -8,7 +8,7 @@
 #include "arguments.h"
 #include "global.h"
 
-static const sf::Vector2i ORIGIN_BORDER_MODE = sf::Vector2i(0,0);
+static const sf::Vector2i ORIGIN_BORDER_MODE = sf::Vector2i(0, 0);
 
 enum AtomicInfo {
     /***
@@ -82,6 +82,7 @@ public:
     }
 
     void next(); // Next simulation step
+    bool isComputationDone(); // For border mode
 
     std::map<sf::Vector2i, Cell, compareWorldPositions> cells; // Contains only not undefined cells
     Poset cellsOnEdge; // Buffer containing position of all cells on the edge of the computed world

@@ -190,21 +190,31 @@ void World::cleanCellsOnEdge()
         cellsOnEdge.erase(cellPos);
 }
 
+bool World::isComputationDone()
+{
+    /**
+     * In border mode, the computation space is finite.
+    */
+    assert(inputType == BORDER);
+    sf::Vector2i topLeftCellPos = { -1 * static_cast<int>(inputStr.length()) + 1, 0 };
+    return doesCellExists(topLeftCellPos) && cells[topLeftCellPos].getStatus() == DEFINED;
+}
+
 bool World::isCellOnEdge(const sf::Vector2i& cellPos)
 {
     /**
      *  Determines whether a cell is on the edge of the computing region or not.
     */
 
-    if(!doesCellExists(cellPos))
+    if (!doesCellExists(cellPos))
         return false;
 
     if (inputType == LINE || inputType == COL) {
 
-        if( cells[cellPos].getStatus() == DEFINED )
+        if (cells[cellPos].getStatus() == DEFINED)
             return false;
 
-        if( cellPos.y == 0 && doesCellExists(cellPos + EAST)  && cells[cellPos+EAST].getStatus() == HALF_DEFINED )
+        if (cellPos.y == 0 && doesCellExists(cellPos + EAST) && cells[cellPos + EAST].getStatus() == HALF_DEFINED)
             return false;
 
         // Remove trailing 0s from edge
@@ -224,9 +234,9 @@ bool World::isCellOnEdge(const sf::Vector2i& cellPos)
     }
 
     if (inputType == BORDER) {
-        if( cellPos.y == ORIGIN_BORDER_MODE.y )
+        if (cellPos.y == ORIGIN_BORDER_MODE.y)
             return cells[cellPos].getStatus() == HALF_DEFINED;
-        return !doesCellExists(cellPos+NORTH);
+        return !doesCellExists(cellPos + NORTH);
     }
 }
 
@@ -240,8 +250,8 @@ void World::applyUpdates(const std::vector<CellPosAndCell>& updates)
         if (isCellOnEdge(cellPos))
             cellsOnEdge.insert(cellPos);
         if (inputType == LINE || inputType == COL)
-            if (isCellOnEdge(cellPos+WEST))
-                cellsOnEdge.insert(cellPos+WEST);
+            if (isCellOnEdge(cellPos + WEST))
+                cellsOnEdge.insert(cellPos + WEST);
     }
     cleanCellsOnEdge();
 }
