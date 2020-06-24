@@ -51,7 +51,7 @@ void World::setInputCellsBorder()
     assert(inputType == BORDER);
 
     std::vector<CellPosAndCell> updates;
-    sf::Vector2i currPos = { 0, 1 };
+    sf::Vector2i currPos = ORIGIN_BORDER_MODE;
     for (char parityBit : inputStr) {
         if (parityBit != '0' && parityBit != '1') {
             printf("A parity vector contains only `0`s and `1`s, symbol %c is invalid. Abort.\n", parityBit);
@@ -136,7 +136,7 @@ std::vector<CellPosAndCell> World::findCarryPropUpdates()
 {
     std::vector<CellPosAndCell> toRet;
     for (const sf::Vector2i& cellPos : cellsOnEdge) {
-        assert(doesCellExists(cellPos) && cells[cellPos].getStatus() == HALF_DEFINED);
+        assert(doesCellExists(cellPos));
         if (doesCellExists(cellPos + EAST) && cells[cellPos + EAST].getStatus() == DEFINED) {
             AtomicInfo bit = cells[cellPos].bit;
             AtomicInfo newCarry = static_cast<AtomicInfo>((bit + cells[cellPos + EAST].sum()) >= 2);
@@ -168,7 +168,7 @@ std::vector<CellPosAndCell> World::findBackwardDeductionUpdates()
 {
     std::vector<CellPosAndCell> toRet;
     for (const sf::Vector2i& cellPos : cellsOnEdge) {
-        assert(doesCellExists(cellPos) && cells[cellPos].getStatus() == HALF_DEFINED);
+        assert(doesCellExists(cellPos));
         if (!doesCellExists(cellPos + NORTH) && doesCellExists(cellPos + NORTH + EAST) && cells[cellPos + NORTH + EAST].getStatus() == DEFINED) {
             AtomicInfo northBit = static_cast<AtomicInfo>((cells[cellPos + NORTH + EAST].sum()) % 2 != static_cast<int>(cells[cellPos].bit));
             toRet.push_back(std::make_pair(cellPos + NORTH, Cell(northBit, UNDEF)));
@@ -196,9 +196,16 @@ bool World::isCellOnEdge(const sf::Vector2i& cellPos)
      *  Determines whether a cell is on the edge of the computing region or not.
     */
 
-    assert(doesCellExists(cellPos));
+    if(!doesCellExists(cellPos))
+        return false;
 
     if (inputType == LINE || inputType == COL) {
+
+        if( cells[cellPos].getStatus() == DEFINED )
+            return false;
+
+        if( cellPos.y == 0 && doesCellExists(cellPos + EAST)  && cells[cellPos+EAST].getStatus() == HALF_DEFINED )
+            return false;
 
         // Remove trailing 0s from edge
         bool isTrailingZero = true;
@@ -215,6 +222,12 @@ bool World::isCellOnEdge(const sf::Vector2i& cellPos)
 
         return cells[cellPos].getStatus() == HALF_DEFINED && !isTrailingZero;
     }
+
+    if (inputType == BORDER) {
+        if( cellPos.y == ORIGIN_BORDER_MODE.y )
+            return cells[cellPos].getStatus() == HALF_DEFINED;
+        return !doesCellExists(cellPos+NORTH);
+    }
 }
 
 void World::applyUpdates(const std::vector<CellPosAndCell>& updates)
@@ -226,6 +239,9 @@ void World::applyUpdates(const std::vector<CellPosAndCell>& updates)
         cellGraphicBuffer.push_back(cellPos);
         if (isCellOnEdge(cellPos))
             cellsOnEdge.insert(cellPos);
+        if (inputType == LINE || inputType == COL)
+            if (isCellOnEdge(cellPos+WEST))
+                cellsOnEdge.insert(cellPos+WEST);
     }
     cleanCellsOnEdge();
 }
@@ -263,8 +279,9 @@ void World::next()
 {
     // In BORDER or CYCLE mode non local steps are useless
     // As bootstrapping events are given by the parity vector
-    if (inputType == LINE || inputType == COL)
+    if (inputType == LINE || inputType == COL) {
         nextNonLocal();
+    }
     nextLocal();
 }
 

@@ -8,6 +8,8 @@
 #include "arguments.h"
 #include "global.h"
 
+static const sf::Vector2i ORIGIN_BORDER_MODE = sf::Vector2i(0,0);
+
 enum AtomicInfo {
     /***
      * Bits and carrys can be either 0, 1 or undef (\bot in latex).

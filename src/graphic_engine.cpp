@@ -251,6 +251,10 @@ void GraphicEngine::run()
     sf::Clock clock;
     int currentFPS = 1.0f;
     int framePassed = 0;
+    
+    updateGraphicCells();
+
+    window.setKeyRepeatEnabled(false);
 
     while (window.isOpen()) {
         sf::Event event;
@@ -291,8 +295,9 @@ void GraphicEngine::run()
                     break;
 
                 case sf::Keyboard::M:
-                    while (isSimulationInView())
+                    while (isSimulationInView()) {
                         world.next();
+                    }
                     break;
 
                 default:
