@@ -152,8 +152,10 @@ std::vector<sf::Vertex> GraphicEngine::getCellTextVertices(const sf::Vector2i& c
         toRet[i].position.y += 3;
 
     for (int i = 0; i < 4; i += 1)
-        toRet[i].texCoords = getFontTextureCharCoords(cell.bit + '0', i);
-
+        if (!cell.bit)
+            toRet[i].texCoords = getFontTextureCharCoords('O', i); // That's a O not a 0
+        else
+            toRet[i].texCoords = getFontTextureCharCoords('1', i);
     // Carry
     if (cell.carry == UNDEF || cell.carry == ZERO)
         return toRet;
@@ -224,6 +226,17 @@ void GraphicEngine::updateGraphicCells()
     }
 }
 
+bool GraphicEngine::isSimulationInView()
+{
+    auto boundaries = getExtremalVisibleCellsPos();
+    bool inView = false;
+    if (world.inputType == LINE || world.inputType == COL)
+        for (const auto& cellPos : world.halfDefinedCells)
+            if (cellPos.x >= boundaries.first.x)
+                inView = true;
+    return inView;
+}
+
 void GraphicEngine::run()
 {
     cameraZoom(3);
@@ -262,6 +275,11 @@ void GraphicEngine::run()
 
                 case sf::Keyboard::N:
                     world.next();
+                    break;
+
+                case sf::Keyboard::M:
+                    while (isSimulationInView())
+                        world.next();
                     break;
 
                 default:

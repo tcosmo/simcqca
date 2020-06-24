@@ -30,3 +30,4 @@ To build `simcqca` do:
 - `K`: enables colors for bit-carry-defined cells. One color per bit/carry possibility (0,0), (0,1), (1,0), (1,1).
 ## Simulation
 - `N`: next simulation step (Cellular Automaton-like evolution or sequential step depending on `--seq` flag)
+- `M`: runs simulation step until they are not in view anymore

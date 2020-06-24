@@ -84,6 +84,7 @@ public:
     std::map<sf::Vector2i, Cell, compareWorldPositions> cells; // Contains only not undefined cells
     Poset halfDefinedCells; // Buffer containing position of all half defined cells
     std::vector<sf::Vector2i> getAndFlushGraphicBuffer();
+    InputType inputType;
 
 private:
     bool isSequentialSim; // Run in sequential mode or CA-style mode?
@@ -100,7 +101,6 @@ private:
     bool doesCellExists(const sf::Vector2i& cellPos);
 
     // Input
-    InputType inputType;
     std::string inputStr;
     void setInputCells();
 
