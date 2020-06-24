@@ -148,7 +148,7 @@ void World::setInputCells()
 {
     switch (inputType) {
     case NONE:
-        printf("Cannot input nothing to the world. Abort.\n");
+        printf("Cannot input nothing to the world, you probably used a wrong command line argument. Abort. Please run `./simcqca --help` for help.\n");
         exit(0);
         break;
 

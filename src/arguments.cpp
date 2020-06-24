@@ -4,54 +4,57 @@ const char doc[] = "Welcome to the simulator for the 2D Colatz Quasi Cellular Au
 const char* argp_program_bug_address = "tristan.sterin@mu.ie";
 const char* argp_program_version = VERSION_LITERAL;
 
-struct argp argp = { options, parseOption, 0, doc };
 
-void setInputType(char* arg, Arguments* arguments, InputType inputType)
+void setInputType(const std::string& arg, Arguments& arguments, InputType inputType)
 {
-    if (arg == NULL)
+    static const char* modeName[5] = {"None","line","col","border","cycle"};
+    if (arg.size() == 0) {
+        printf("Input for mode `%s` should not be empty. Abort.", modeName[inputType]);
         return;
-    if (arguments->inputType != NONE) {
+    }
+    if (arguments.inputType != NONE) {
         printf("Only one input mode (line/col/border/cycle) should be chosen. Abort.");
         exit(0);
     }
-    arguments->inputType = inputType;
-    arguments->inputStr = std::string(arg);
+    arguments.inputType = inputType;
+    arguments.inputStr = arg;
 }
 
-static error_t parseOption(int key, char* arg, struct argp_state* state)
+const std::string& orStr(const std::string& one, const std::string& two)
 {
-    Arguments* arguments = (Arguments*)state->input;
-    switch (key) {
-    case 's':
-        arguments->isSequential = true;
-        break;
-    case 'l':
-        if (arg == NULL)
-            break;
-        setInputType(arg, arguments, LINE);
-        break;
-    case 'c':
-        if (arg == NULL)
-            break;
-        setInputType(arg, arguments, COL);
-        break;
-    case 'b':
-        if (arg == NULL)
-            break;
-        setInputType(arg, arguments, BORDER);
-        break;
-    case 'y':
-        if (arg == NULL)
-            break;
-        setInputType(arg, arguments, CYCLE);
-        break;
-    default:
-        return ARGP_ERR_UNKNOWN;
+    if(one.empty())
+        return two;
+    return one;
+}
+
+std::string getShortOptionStr(char c)
+{
+    std::string s = "-";
+    s.push_back(c);
+    return s;
+}
+
+std::string getLongOptionStr(const char* l)
+{
+    std::string s = "--";
+    s.append(l);
+    return s;
+}
+
+void parseArguments(int argc, char* argv[], Arguments& arguments)
+{
+    InputParser input(argc, argv);
+    if(input.cmdOptionExists("-s") || input.cmdOptionExists("--sequential") ) {
+        arguments.isSequential = true;
     }
-    return 0;
-}
 
-void parseArguments(int argc, char* argv[], Arguments* arguments)
-{
-    argp_parse(&argp, argc, argv, 0, 0, arguments);
+    for( int iOption = 1; iOption < 5; iOption += 1) {
+        std::string shortStr = getShortOptionStr(options[iOption].shortOption);
+        std::string longStr = getLongOptionStr(options[iOption].longOption);
+        if(input.cmdOptionExists(shortStr) || input.cmdOptionExists(longStr)) {
+            setInputType(orStr(input.getCmdOption(shortStr),input.getCmdOption(longStr)), arguments, static_cast<InputType>(iOption));
+        }
+    }
+
+
 }

@@ -31,7 +31,7 @@
 static sf::PrimitiveType LAYER_PRIMITIVE_TYPE[3] = { sf::Quads, sf::Quads, sf::Quads };
 #define NB_TEXT_VERTICES 8 // Max number of vertices needed to draw  0, 1, \bar 0 or \bar 1
 
-static sf::Color CELL_DEFINED_COLORS[4] = { COLOR_DARKER_GREEN, sf::Color::Black, sf::Color::Magenta, sf::Quads };
+static sf::Color CELL_DEFINED_COLORS[4] = { COLOR_DARKER_GREEN, sf::Color::Black, sf::Color::Magenta, sf::Color::Blue };
 
 class GraphicEngine {
     /***
