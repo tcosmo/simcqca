@@ -35,8 +35,8 @@ void World::setInputCellsCol()
     }
 
     // Bootstrapping col mode, this is the first half defined cell
-    sf::Vector2i posToAdd = {-1,0};
-    Cell cellToAdd = {ZERO, UNDEF};
+    sf::Vector2i posToAdd = { -1, 0 };
+    Cell cellToAdd = { ZERO, UNDEF };
     updates.push_back(std::make_pair(posToAdd, cellToAdd));
 
     applyUpdates(updates);
@@ -100,18 +100,18 @@ void World::manageEdgeCases(std::vector<CellPosAndCell>& toRet, const sf::Vector
 
     if (inputType == COL) {
         // Edge case at beginning of a column which is in theory (0)^\infty
-        if(!doesCellExists(cellPos+WEST) && updatedCell.sum() != 0) {
+        if (!doesCellExists(cellPos + WEST) && updatedCell.sum() != 0) {
             bool onlyZero = true;
             sf::Vector2i currentPos = cellPos + NORTH;
-            while(doesCellExists(currentPos)) {
+            while (doesCellExists(currentPos)) {
                 assert(cells[currentPos].getStatus() == DEFINED);
-                if(cells[currentPos].sum() != 0) {
+                if (cells[currentPos].sum() != 0) {
                     onlyZero = false;
                     break;
                 }
                 currentPos += NORTH;
             }
-            if(onlyZero) {
+            if (onlyZero) {
                 toRet.push_back(std::make_pair(cellPos + WEST, Cell(ZERO, UNDEF)));
             }
         }
