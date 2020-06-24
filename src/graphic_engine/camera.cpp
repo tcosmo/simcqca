@@ -32,6 +32,17 @@ void GraphicEngine::handleCameraEvents(const sf::Event& event)
         case sf::Keyboard::C:
             cameraCenter({ 0, 0 });
             break;
+
+        case sf::Keyboard::A:
+            if (event.key.control)
+                cameraZoom(DEFAULT_CAM_ZOOM_STEP);
+            break;
+
+        case sf::Keyboard::Z:
+            if (event.key.control)
+                cameraZoom(1 / DEFAULT_CAM_ZOOM_STEP);
+            break;
+
         case sf::Keyboard::Up:
             if (event.key.control)
                 cameraTranslate(0, -DEFAULT_CAM_TRANSLATION * CELL_H);

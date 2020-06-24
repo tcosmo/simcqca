@@ -15,11 +15,17 @@
 #define TARGET_FPS 80
 
 // Zoom factor threshold under which text is not rendered for performance
-#define ZOOM_FACTOR_TEXT_THRESH 2
+#define ZOOM_FACTOR_TEXT_THRESH 0.4
 
 #define DEFAULT_FONT "arial.ttf"
 #ifndef _WIN32
 #define DEFAULT_FONT_PATH "assets/fonts/" DEFAULT_FONT
+#define DEFAULT_FONT_TEXTURE_PATH "assets/fonts/font.png"
 #else
 #define DEAULT_FONT_PATH "assets\\fonts\\" DEFAULT_FONT
+#define DEFAULT_FONT_TEXTURE_PATH "assets\\fonts\\font.png"
 #endif
+
+#define DEFAULT_FONT_TEXTURE_CHAR_W 32
+#define DEFAULT_FONT_TEXTURE_CHAR_H 32
+#define DEFAULT_FONT_TEXTURE_W 16

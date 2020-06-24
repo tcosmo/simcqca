@@ -7,8 +7,12 @@ GraphicEngine::GraphicEngine(World& world, int screen_w, int screen_h)
     window.setFramerateLimit(TARGET_FPS);
 
     assert(defaultFont.loadFromFile(DEFAULT_FONT_PATH));
+    assert(fontTexture.loadFromFile(DEFAULT_FONT_TEXTURE_PATH));
+
     isTextRendered = true;
     isTextForcedDisabled = false;
+
+    isColorRendered = false;
 
     camera = window.getDefaultView();
     window.setView(camera);
@@ -111,29 +115,60 @@ std::vector<sf::Vertex> GraphicEngine::getCellColorVertices(const sf::Vector2i& 
     return toRet;
 }
 
+sf::Vector2f GraphicEngine::getFontTextureCharCoords(char c, int i)
+{
+    /**
+     * Returns the i^th coordinate for the character `c` in the default font texture.
+    */
+    assert(i < 4);
+    static sf::Vector2f textureVec[4] = { { 0, 0 }, { DEFAULT_FONT_TEXTURE_CHAR_W, 0 },
+        { DEFAULT_FONT_TEXTURE_CHAR_W, DEFAULT_FONT_TEXTURE_CHAR_H },
+        { 0, DEFAULT_FONT_TEXTURE_CHAR_H } };
+    c -= 1;
+    sf::Vector2f topLeft = { static_cast<float>((c % DEFAULT_FONT_TEXTURE_W) * DEFAULT_FONT_TEXTURE_CHAR_W),
+        static_cast<float>((c / DEFAULT_FONT_TEXTURE_W) * DEFAULT_FONT_TEXTURE_CHAR_H) };
+
+    return topLeft + textureVec[i];
+}
+
 std::vector<sf::Vertex> GraphicEngine::getCellTextVertices(const sf::Vector2i& cellPos, const Cell& cell)
 {
+    assert(cell.bit != UNDEF);
     std::vector<sf::Vertex> toRet;
-    for (int iVertex = 0; iVertex < NB_TEXT_VERTICES; iVertex += 1)
+    for (int iVertex = 0; iVertex < NB_TEXT_QUADS; iVertex += 1)
         toRet.push_back(sf::Vertex());
 
-    if (cell.bit != UNDEF) {
-        if (cell.bit == ONE) {
-            sf::Vertex up, down;
-            sf::Vector2f upCoords = mapWorldPosToCoords(cellPos);
-            upCoords.x += CELL_W / 2;
-            upCoords.y += 5; // Tweaking
-            up.position = upCoords;
-            sf::Vector2f downCoords = upCoords;
-            upCoords.y += CELL_H - 10;
-            down.position = downCoords;
+    // Bit
+    toRet[0].position = mapWorldPosToCoords(cellPos);
+    toRet[1].position = mapWorldPosToCoords(cellPos + EAST);
+    toRet[2].position = mapWorldPosToCoords(cellPos + SOUTH + EAST);
+    toRet[3].position = mapWorldPosToCoords(cellPos + SOUTH);
 
-            up.color = sf::Color::White;
-            down.color = sf::Color::White;
-            toRet[0] = up;
-            toRet[1] = down;
-        }
-    }
+    // Tweaking position
+    for (int i = 0; i < 4; i += 1)
+        toRet[i].position.y += 4;
+    // Tweaking scale
+    for (int i = 0; i < 2; i += 1)
+        toRet[i].position.y += 3;
+
+    for (int i = 0; i < 4; i += 1)
+        toRet[i].texCoords = getFontTextureCharCoords(cell.bit + '0', i);
+
+    // Carry
+    if (cell.carry == UNDEF || cell.carry == ZERO)
+        return toRet;
+
+    toRet[4].position = mapWorldPosToCoords(cellPos);
+    toRet[5].position = mapWorldPosToCoords(cellPos + EAST);
+    toRet[6].position = mapWorldPosToCoords(cellPos + SOUTH + EAST);
+    toRet[7].position = mapWorldPosToCoords(cellPos + SOUTH);
+
+    // Tweaking position
+    for (int i = 4; i < 8; i += 1)
+        toRet[i].position.y -= 4;
+
+    for (int i = 4; i < 8; i += 1)
+        toRet[i].texCoords = getFontTextureCharCoords('-', i - 4);
 
     return toRet;
 }
@@ -226,6 +261,10 @@ void GraphicEngine::run()
                     isTextRendered = !isTextRendered;
                     break;
 
+                case sf::Keyboard::K:
+                    isColorRendered = !isColorRendered;
+                    break;
+
                 case sf::Keyboard::N:
                     world.next();
                     break;
@@ -240,12 +279,6 @@ void GraphicEngine::run()
 
         window.clear(BACKGROUND_COLOR);
 
-        updateGraphicCells();
-        for (int iLayer = 0; iLayer < NB_LAYERS; iLayer += 1)
-            for (const auto& graphicBuffer : graphicCells[iLayer])
-                window.draw(graphicBuffer);
-        renderOrigin();
-
         if (canRenderText() && isTextForcedDisabled) {
             isTextForcedDisabled = false;
             isTextRendered = true;
@@ -253,10 +286,23 @@ void GraphicEngine::run()
         if (!canRenderText() && isTextRendered && !isTextForcedDisabled) {
             isTextForcedDisabled = true;
             isTextRendered = false;
+            isColorRendered = true;
         }
 
+        updateGraphicCells();
+
+        for (const auto& graphicBuffer : graphicCells[CELL_BACKGROUND])
+            window.draw(graphicBuffer);
+
+        if (isColorRendered)
+            for (const auto& graphicBuffer : graphicCells[CELL_COLOR])
+                window.draw(graphicBuffer);
+
         if (isTextRendered)
-            renderCellsText();
+            for (const auto& graphicBuffer : graphicCells[CELL_TEXT])
+                window.draw(graphicBuffer, &fontTexture);
+
+        renderOrigin();
 
         window.display();
 
