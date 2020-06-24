@@ -224,11 +224,6 @@ void GraphicEngine::updateGraphicCells()
     }
 }
 
-bool GraphicEngine::canRenderText()
-{
-    return currentZoom >= ZOOM_FACTOR_TEXT_THRESH;
-}
-
 void GraphicEngine::run()
 {
     cameraZoom(3);
@@ -278,16 +273,6 @@ void GraphicEngine::run()
         }
 
         window.clear(BACKGROUND_COLOR);
-
-        if (canRenderText() && isTextForcedDisabled) {
-            isTextForcedDisabled = false;
-            isTextRendered = true;
-        }
-        if (!canRenderText() && isTextRendered && !isTextForcedDisabled) {
-            isTextForcedDisabled = true;
-            isTextRendered = false;
-            isColorRendered = true;
-        }
 
         updateGraphicCells();
 

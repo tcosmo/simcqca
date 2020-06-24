@@ -26,7 +26,7 @@ To build `simcqca` do:
 - `MOUSE WHEEL BUTTON`: translates the view following the mouse
 - `CTRL + MOUSE WHEEL UP/DOWN` or `CTRL + A/Z`: zoom in and out
 ## Rendering
-- `T`: whether to render text information or not. Text rendering is quite efficient in the last versions of `simcqca` but it will automatically be disabled when you have zoomed out to far as it becomes to small to be readable. You can re enable it by pressing `T`.
+- `T`: whether to render text information or not. Text rendering is quite efficient (not CPU intensive) in the last versions of `simcqca` even when zoomed out far.
 - `K`: enables colors for bit-carry-defined cells. One color per bit/carry possibility (0,0), (0,1), (1,0), (1,1).
 ## Simulation
 - `N`: next simulation step (Cellular Automaton-like evolution or sequential step depending on `--seq` flag)

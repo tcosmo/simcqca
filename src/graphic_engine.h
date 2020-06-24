@@ -56,7 +56,6 @@ private:
     // Text attribute and routines
     sf::Font defaultFont;
     bool isTextRendered, isTextForcedDisabled;
-    bool canRenderText(); // Render only if zoom factor not too small
 
     // Color mode
     bool isColorRendered;
