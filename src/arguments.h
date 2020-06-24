@@ -59,8 +59,8 @@ static std::vector<InputOption> options = {
 
     // Default options
     { "help", 'h', NULL, "Give this help list" },
-    { "usage", 'u', NULL, "Give a short usage message"},
-    { "version", 'V', NULL, "Print program version"}
+    { "usage", 'u', NULL, "Give a short usage message" },
+    { "version", 'V', NULL, "Print program version" }
 };
 
 struct Arguments {

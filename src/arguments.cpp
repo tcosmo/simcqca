@@ -44,17 +44,17 @@ void usagePage()
 {
     printf("Usage: ./%s ", simcqca_PROG_NAME);
     int iOption = 0;
-    while( iOption < options.size() ) {
+    while (iOption < options.size()) {
         printf(" [-%c", options[iOption].shortOption);
-        if(options[iOption].argumentHelper)
+        if (options[iOption].argumentHelper)
             printf(" %s", options[iOption].argumentHelper);
         printf("] ");
         iOption += 1;
     }
     iOption = 0;
-    while( iOption < options.size() ) {
+    while (iOption < options.size()) {
         printf(" [--%s", options[iOption].longOption);
-        if(options[iOption].argumentHelper)
+        if (options[iOption].argumentHelper)
             printf(" %s", options[iOption].argumentHelper);
         printf("] ");
         iOption += 1;
@@ -67,9 +67,9 @@ void helpPage()
     printf("Usage ./%s [OPTION...]\n", simcqca_PROG_NAME);
     printf("%s\n\n", doc);
     int iOption = 0;
-    while( iOption < options.size() ) {
+    while (iOption < options.size()) {
         printf("   -%c,  --%s", options[iOption].shortOption, options[iOption].longOption);
-        if(options[iOption].argumentHelper)
+        if (options[iOption].argumentHelper)
             printf(" %s", options[iOption].argumentHelper);
         printf("\n");
         printf("\t\t\t%s\n", options[iOption].helpString);
