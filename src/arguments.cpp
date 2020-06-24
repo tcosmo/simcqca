@@ -4,10 +4,9 @@ const char doc[] = "Welcome to the simulator for the 2D Colatz Quasi Cellular Au
 const char* argp_program_bug_address = "tristan.sterin@mu.ie";
 const char* argp_program_version = VERSION_LITERAL;
 
-
 void setInputType(const std::string& arg, Arguments& arguments, InputType inputType)
 {
-    static const char* modeName[5] = {"None","line","col","border","cycle"};
+    static const char* modeName[5] = { "None", "line", "col", "border", "cycle" };
     if (arg.size() == 0) {
         printf("Input for mode `%s` should not be empty. Abort.", modeName[inputType]);
         return;
@@ -22,7 +21,7 @@ void setInputType(const std::string& arg, Arguments& arguments, InputType inputT
 
 const std::string& orStr(const std::string& one, const std::string& two)
 {
-    if(one.empty())
+    if (one.empty())
         return two;
     return one;
 }
@@ -44,17 +43,15 @@ std::string getLongOptionStr(const char* l)
 void parseArguments(int argc, char* argv[], Arguments& arguments)
 {
     InputParser input(argc, argv);
-    if(input.cmdOptionExists("-s") || input.cmdOptionExists("--sequential") ) {
+    if (input.cmdOptionExists("-s") || input.cmdOptionExists("--sequential")) {
         arguments.isSequential = true;
     }
 
-    for( int iOption = 1; iOption < 5; iOption += 1) {
+    for (int iOption = 1; iOption < 5; iOption += 1) {
         std::string shortStr = getShortOptionStr(options[iOption].shortOption);
         std::string longStr = getLongOptionStr(options[iOption].longOption);
-        if(input.cmdOptionExists(shortStr) || input.cmdOptionExists(longStr)) {
-            setInputType(orStr(input.getCmdOption(shortStr),input.getCmdOption(longStr)), arguments, static_cast<InputType>(iOption));
+        if (input.cmdOptionExists(shortStr) || input.cmdOptionExists(longStr)) {
+            setInputType(orStr(input.getCmdOption(shortStr), input.getCmdOption(longStr)), arguments, static_cast<InputType>(iOption));
         }
     }
-
-
 }
