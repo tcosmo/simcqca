@@ -255,7 +255,7 @@ bool GraphicEngine::isSimulationInView()
 
 void GraphicEngine::reset()
 {
-    for(int iLayer = 0 ; iLayer < NB_LAYERS ; iLayer += 1) {
+    for (int iLayer = 0; iLayer < NB_LAYERS; iLayer += 1) {
         graphicCells[iLayer].clear();
         vertexArrayCell[iLayer].clear();
     }
