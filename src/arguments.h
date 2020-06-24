@@ -50,13 +50,17 @@ struct InputOption {
     const char* helpString;
 };
 
-static InputOption options[] = {
-    { "sequential", 's', NULL, "Runs sequential simulation instead of CA-style simulation." },
-    { "line", 'l', "INPUT BASE 2", "Inputs a binary line to the process." },
-    { "col", 'c', "INPUT BASE 3", "Inputs a ternary column to the process.\n Base 3 -> base3' conversion is done internally." },
-    { "border", 'b', "INPUT PARITY VECTOR", "Inputs a parity vector to the process." },
-    { "cycle", 'y', "INPUT PARITY VECTOR", "Inputs a parity vector to the process with cyclic edges conditions." },
-    { 0 }
+static std::vector<InputOption> options = {
+    { "sequential", 's', NULL, "Runs sequential simulation instead of CA-style simulation" },
+    { "line", 'l', "INPUT BASE 2", "Inputs a binary line to the process" },
+    { "col", 'c', "INPUT BASE 3", "Inputs a ternary column to the process. Base 3 -> base3' conversion is done internally" },
+    { "border", 'b', "INPUT PARITY VECTOR", "Inputs a parity vector to the process" },
+    { "cycle", 'y', "INPUT PARITY VECTOR", "Inputs a parity vector to the process with cyclic edges conditions" },
+
+    // Default options
+    { "help", 'h', NULL, "Give this help list" },
+    { "usage", 'u', NULL, "Give a short usage message"},
+    { "version", 'V', NULL, "Print program version"}
 };
 
 struct Arguments {

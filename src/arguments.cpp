@@ -1,6 +1,6 @@
 #include "arguments.h"
 
-const char doc[] = "Welcome to the simulator for the 2D Colatz Quasi Cellular Automaton";
+const char doc[] = "Welcome to the simulator for the 2D Colatz Quasi Cellular Automaton.\nRefer to the Github repository for more info: https://github.com/tcosmo/simcqca.";
 const char* argp_program_bug_address = "tristan.sterin@mu.ie";
 const char* argp_program_version = VERSION_LITERAL;
 
@@ -40,6 +40,46 @@ std::string getLongOptionStr(const char* l)
     return s;
 }
 
+void usagePage()
+{
+    printf("Usage: ./%s ", simcqca_PROG_NAME);
+    int iOption = 0;
+    while( iOption < options.size() ) {
+        printf(" [-%c", options[iOption].shortOption);
+        if(options[iOption].argumentHelper)
+            printf(" %s", options[iOption].argumentHelper);
+        printf("] ");
+        iOption += 1;
+    }
+    iOption = 0;
+    while( iOption < options.size() ) {
+        printf(" [--%s", options[iOption].longOption);
+        if(options[iOption].argumentHelper)
+            printf(" %s", options[iOption].argumentHelper);
+        printf("] ");
+        iOption += 1;
+    }
+    printf("\n");
+}
+
+void helpPage()
+{
+    printf("Usage ./%s [OPTION...]\n", simcqca_PROG_NAME);
+    printf("%s\n\n", doc);
+    int iOption = 0;
+    while( iOption < options.size() ) {
+        printf("   -%c,  --%s", options[iOption].shortOption, options[iOption].longOption);
+        if(options[iOption].argumentHelper)
+            printf(" %s", options[iOption].argumentHelper);
+        printf("\n");
+        printf("\t\t\t%s\n", options[iOption].helpString);
+        iOption += 1;
+    }
+    printf("\n");
+    printf("Report bugs to: %s\n", argp_program_bug_address);
+    printf("\n");
+}
+
 void parseArguments(int argc, char* argv[], Arguments& arguments)
 {
     InputParser input(argc, argv);
@@ -53,5 +93,20 @@ void parseArguments(int argc, char* argv[], Arguments& arguments)
         if (input.cmdOptionExists(shortStr) || input.cmdOptionExists(longStr)) {
             setInputType(orStr(input.getCmdOption(shortStr), input.getCmdOption(longStr)), arguments, static_cast<InputType>(iOption));
         }
+    }
+
+    if (input.cmdOptionExists("-V") || input.cmdOptionExists("--version")) {
+        printf("%s\n", argp_program_version);
+        exit(0);
+    }
+
+    if (input.cmdOptionExists("-h") || input.cmdOptionExists("--help")) {
+        helpPage();
+        exit(0);
+    }
+
+    if (input.cmdOptionExists("-u") || input.cmdOptionExists("--usage")) {
+        usagePage();
+        exit(0);
     }
 }
