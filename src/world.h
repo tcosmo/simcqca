@@ -84,6 +84,7 @@ public:
     void next(); // Next simulation step
     bool isComputationDone(); // For border mode
     bool doesCellExists(const sf::Vector2i& cellPos);
+    void reset();
 
     std::map<sf::Vector2i, Cell, compareWorldPositions> cells; // Contains only not undefined cells
     Poset cellsOnEdge; // Buffer containing position of all cells on the edge of the computed world

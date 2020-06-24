@@ -23,12 +23,17 @@ GraphicEngine::GraphicEngine(World& world, int screen_w, int screen_h)
     cameraMouseLeft = false;
     currentZoom = 1.0;
 
-    for (int iLayer = 0; iLayer < NB_LAYERS; iLayer += 1)
-        newGraphicBuffer(iLayer);
+    initGraphicBuffers();
 }
 
 GraphicEngine::~GraphicEngine()
 {
+}
+
+void GraphicEngine::initGraphicBuffers()
+{
+    for (int iLayer = 0; iLayer < NB_LAYERS; iLayer += 1)
+        newGraphicBuffer(iLayer);
 }
 
 void GraphicEngine::newGraphicBuffer(int iLayer)
@@ -248,6 +253,15 @@ bool GraphicEngine::isSimulationInView()
     return inView;
 }
 
+void GraphicEngine::reset()
+{
+    for(int iLayer = 0 ; iLayer < NB_LAYERS ; iLayer += 1) {
+        graphicCells[iLayer].clear();
+        vertexArrayCell[iLayer].clear();
+    }
+    initGraphicBuffers();
+}
+
 void GraphicEngine::run()
 {
     cameraZoom(3);
@@ -301,6 +315,11 @@ void GraphicEngine::run()
                 case sf::Keyboard::M:
                     while (isSimulationInView())
                         world.next();
+                    break;
+
+                case sf::Keyboard::R:
+                    reset();
+                    world.reset();
                     break;
 
                 default:

@@ -379,3 +379,11 @@ void World::setInputCells()
         break;
     }
 }
+
+void World::reset()
+{
+    cells.clear();
+    cellsOnEdge.clear();
+    cellGraphicBuffer.clear();
+    setInputCells();
+}

@@ -92,6 +92,7 @@ private:
     std::vector<sf::VertexArray> graphicCells[NB_LAYERS];
     std::map<sf::Vector2i, std::pair<int, int>, compareWorldPositions> vertexArrayCell[NB_LAYERS]; // Mapping world pos to where are the cell's quad in `graphicCells`
     void updateGraphicCells();
+    void initGraphicBuffers();
     void newGraphicBuffer(int iLayer);
     void appendOrUpdateCell(const sf::Vector2i& cellPos, const Cell& cell);
     int totalGraphicBufferSize();
@@ -100,4 +101,6 @@ private:
     std::vector<sf::Vertex> getCellBackgroundVertices(const sf::Vector2i& cellPos, const Cell& cell);
     std::vector<sf::Vertex> getCellColorVertices(const sf::Vector2i& cellPos, const Cell& cell);
     std::vector<sf::Vertex> getCellTextVertices(const sf::Vector2i& cellPos, const Cell& cell);
+
+    void reset();
 };

@@ -43,6 +43,7 @@ Building `simcqca` has been tested on Linux and Mac OS, if it doesn't work for y
 ## Simulation
 - `N`: next simulation step (Cellular Automaton-like evolution or sequential step depending on `--seq` flag)
 - `M`: runs simulation step until they are not in view anymore
+- `R`: resets the simulation
 # Advanced graphic configuration
 <a name="advanceConf"></a>
 In the file `src/config.h.in` the following constants have an impact on the rendering engine and its CPU/GPU performances. If you modify these values, they will be taken into account at your next `make`:
