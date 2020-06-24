@@ -18,6 +18,14 @@ void World::setInputCellsLine()
         updates.push_back(std::make_pair(posToAdd, cellToAdd));
     }
     applyUpdates(updates);
+
+    // Tweak to bootstrap the process when input has trailing 0s
+    int x = 0;
+    while (x < inputStr.length() && inputStr[inputStr.length() - x - 1] == '0')
+        x += 1;
+    if (x == inputStr.length())
+        return;
+    cellsOnEdge.insert({ -x - 1, 0 });
 }
 
 void World::setInputCellsCol()

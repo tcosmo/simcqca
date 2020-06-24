@@ -239,6 +239,12 @@ bool GraphicEngine::isSimulationInView()
         for (const auto& cellPos : world.cellsOnEdge)
             if (cellPos.x >= boundaries.first.x)
                 inView = true;
+    if (world.inputType == BORDER) {
+        if (world.isComputationDone())
+            return false;
+        sf::Vector2i topLeftCell = { boundaries.first.x, 0 };
+        return !world.doesCellExists(topLeftCell) || world.cells[topLeftCell].getStatus() == HALF_DEFINED;
+    }
     return inView;
 }
 
@@ -253,8 +259,6 @@ void GraphicEngine::run()
     int framePassed = 0;
 
     updateGraphicCells();
-
-    //window.setKeyRepeatEnabled(false);
 
     while (window.isOpen()) {
         sf::Event event;
@@ -295,12 +299,8 @@ void GraphicEngine::run()
                     break;
 
                 case sf::Keyboard::M:
-                    if (world.inputType == LINE || world.inputType == COL)
-                        while (isSimulationInView())
-                            world.next();
-                    if (world.inputType == BORDER)
-                        while (!world.isComputationDone())
-                            world.next();
+                    while (isSimulationInView())
+                        world.next();
                     break;
 
                 default:
