@@ -254,7 +254,7 @@ void GraphicEngine::run()
 
     updateGraphicCells();
 
-    window.setKeyRepeatEnabled(false);
+    //window.setKeyRepeatEnabled(false);
 
     while (window.isOpen()) {
         sf::Event event;
