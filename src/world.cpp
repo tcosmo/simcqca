@@ -5,6 +5,7 @@ void World::setInputCellsLine()
     /**
      * Set up the initial configuration in Line mode. 
     */
+    assert(inputType == LINE);
     std::vector<CellPosAndCell> updates;
     for (int x = -1; x >= -1 * inputStr.length(); x -= 1) {
         char current = inputStr[inputStr.length() - abs(x)];
@@ -24,10 +25,11 @@ void World::setInputCellsCol()
     /**
      * Set up the initial configuration in Col mode. 
     */
+    assert(inputType == COL);
     std::vector<CellPosAndCell> updates;
     std::vector<int> base3p = base3To3p(inputStr);
-    for (int y = 0; y < base3p.size(); y += 1) {
-        int current = base3p[y];
+    for (int y = 1; y <= base3p.size(); y += 1) {
+        int current = base3p[y - 1];
         sf::Vector2i posToAdd = { 0, y };
         halfDefinedCells.insert(posToAdd); // For compliance with first assert in applyUpdates
         Cell cellToAdd = Cell(static_cast<AtomicInfo>(current / 2), static_cast<AtomicInfo>(current % 2));
@@ -35,11 +37,19 @@ void World::setInputCellsCol()
     }
 
     // Bootstrapping col mode, this is the first half defined cell
-    sf::Vector2i posToAdd = { -1, 0 };
+    sf::Vector2i posToAdd = { -1, 1 };
     Cell cellToAdd = { ZERO, UNDEF };
     updates.push_back(std::make_pair(posToAdd, cellToAdd));
 
     applyUpdates(updates);
+}
+
+void World::setInputCellsBorder()
+{
+    /**
+     * Set up the initial configuration in Border mode. 
+    */
+    assert(inputType == BORDER);
 }
 
 std::vector<CellPosAndCell> World::findNonLocalUpdates()
@@ -170,10 +180,20 @@ void World::applyUpdates(const std::vector<CellPosAndCell>& updates)
 
 void World::nextLocal()
 {
+    // First find the update then apply them
+    // Do not apply some updates before they were all found
+    // That would break the CA logic
     auto carryPropUpdates = findCarryPropUpdates();
-    auto forwardDeductionUpdates = findForwardDeductionUpdates();
+
+    // LINE mode and COL mode use forward deduction
+    auto forwardDeductionUpdates = std::vector<CellPosAndCell>();
+    if (inputType == LINE || inputType == COL)
+        forwardDeductionUpdates = findForwardDeductionUpdates();
+
     applyUpdates(carryPropUpdates);
-    applyUpdates(forwardDeductionUpdates);
+
+    if (inputType == LINE || inputType == COL)
+        applyUpdates(forwardDeductionUpdates);
 }
 
 void World::next()
@@ -246,6 +266,10 @@ void World::setInputCells()
 
     case COL:
         setInputCellsCol();
+        break;
+
+    case BORDER:
+        setInputCellsBorder();
         break;
 
     default:

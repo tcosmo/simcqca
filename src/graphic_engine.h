@@ -53,6 +53,7 @@ private:
     sf::Vector2f mapWorldPosToCoords(const sf::Vector2i& world_coords);
     sf::Vector2i mapCoordsToWorldPos(const sf::Vector2f& coords);
     bool isSimulationInView();
+    bool isOriginRendered;
 
     // Text attribute and routines
     sf::Font defaultFont;

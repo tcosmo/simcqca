@@ -113,6 +113,9 @@ private:
     std::vector<int> base3To3p(std::string base3);
     void setInputCellsCol();
 
+    // Border mode
+    void setInputCellsBorder();
+
     // For rendering
     std::vector<sf::Vector2i> cellGraphicBuffer; // Cells that are not drawn yet
 };

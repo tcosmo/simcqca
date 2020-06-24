@@ -35,13 +35,14 @@ Building `simcqca` has been tested on Linux and Mac OS, if it doesn't work for y
 - `MOUSE WHEEL BUTTON`: translates the view following the mouse
 - `CTRL + MOUSE WHEEL UP/DOWN` or `CTRL + A/Z`: zoom in and out
 ## Rendering
-- `T`: whether to render text information or not. Text rendering is quite efficient (not CPU intensive) in the last versions of `simcqca` even when zoomed out far.
-- `K`: enables colors for bit-carry-defined cells. One color per bit/carry possibility (0,0), (0,1), (1,0), (1,1).
+- `T`: whether to render text information or not. Text rendering is quite efficient (not CPU intensive) in the last versions of `simcqca` even when zoomed out far
+- `K`: enables colors for bit-carry-defined cells. One color per bit/carry possibility (0,0), (0,1), (1,0), (1,1)
+- `O`: shows where the origin is by putting a blue border around it. When you are lost press `C` to center the view on the origin
 ## Simulation
 - `N`: next simulation step (Cellular Automaton-like evolution or sequential step depending on `--seq` flag)
 - `M`: runs simulation step until they are not in view anymore
 # Advanced graphic configuration
 <a name="advanceConf"></a>
 In the file `src/config.h.in` the following constants have an impact on the rendering engine and its CPU/GPU performances. If you modify these values, they will be taken into account at your next `make`:
-- `TARGET_FPS`: the frame per seconds rate that is enforced by the engine. Default is 80. Higher rates are more CPU/GPU intensive.    
-- `VERTEX_ARRAY_MAX_SIZE`: the number of vertices which are rendered at once by the GPU. Defaulft value is `5*100*100` which is quite conservative. Advanced GPUs should be able to handle a lot more.
+- `TARGET_FPS`: the frame per seconds rate that is enforced by the engine. Default is 80. Higher rates are more CPU/GPU intensive.   
+- `VERTEX_ARRAY_MAX_SIZE`: the number of vertices which are rendered at once by the GPU. Defaulft value is `5*100*100` which is quite conservative Advanced GPUs should be able to handle a lot more

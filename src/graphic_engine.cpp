@@ -6,6 +6,8 @@ GraphicEngine::GraphicEngine(World& world, int screen_w, int screen_h)
     window.create(sf::VideoMode(screen_w, screen_h), simcqca_PROG_NAME);
     window.setFramerateLimit(TARGET_FPS);
 
+    isOriginRendered = false;
+
     assert(defaultFont.loadFromFile(DEFAULT_FONT_PATH));
     assert(fontTexture.loadFromFile(DEFAULT_FONT_TEXTURE_PATH));
 
@@ -267,6 +269,10 @@ void GraphicEngine::run()
                     printf("Current zoom factor: %lf\n", currentZoom);
                     break;
 
+                case sf::Keyboard::O:
+                    isOriginRendered = !isOriginRendered;
+                    break;
+
                 case sf::Keyboard::T:
                     isTextRendered = !isTextRendered;
                     break;
@@ -307,7 +313,8 @@ void GraphicEngine::run()
             for (const auto& graphicBuffer : graphicCells[CELL_TEXT])
                 window.draw(graphicBuffer, &fontTexture);
 
-        renderOrigin();
+        if (isOriginRendered)
+            renderOrigin();
 
         window.display();
 
