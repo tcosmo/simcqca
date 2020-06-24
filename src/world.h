@@ -82,7 +82,7 @@ public:
     void next(); // Next simulation step
 
     std::map<sf::Vector2i, Cell, compareWorldPositions> cells; // Contains only not undefined cells
-    Poset halfDefinedCells; // Buffer containing position of all half defined cells
+    Poset cellsOnEdge; // Buffer containing position of all cells on the edge of the computed world
     std::vector<sf::Vector2i> getAndFlushGraphicBuffer();
     InputType inputType;
 
@@ -95,9 +95,13 @@ private:
     void nextLocal();
     std::vector<CellPosAndCell> findCarryPropUpdates();
     std::vector<CellPosAndCell> findForwardDeductionUpdates();
+    std::vector<CellPosAndCell> findBackwardDeductionUpdates();
     void applyUpdates(const std::vector<CellPosAndCell>& updates);
     // Because we simulate an infinite process with finite means we have some edge cases to deal with
     void manageEdgeCases(std::vector<CellPosAndCell>& toRet, const sf::Vector2i& cellPos, const Cell& updatedCell);
+
+    bool isCellOnEdge(const sf::Vector2i& cellPos);
+    void cleanCellsOnEdge();
 
     // Routines
     bool doesCellExists(const sf::Vector2i& cellPos);

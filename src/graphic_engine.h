@@ -54,6 +54,7 @@ private:
     sf::Vector2i mapCoordsToWorldPos(const sf::Vector2f& coords);
     bool isSimulationInView();
     bool isOriginRendered;
+    bool isEdgeRendered;
 
     // Text attribute and routines
     sf::Font defaultFont;
@@ -66,7 +67,9 @@ private:
     sf::Texture fontTexture;
     sf::Vector2f getFontTextureCharCoords(char c, int i);
     // Rendering routines
+    void outlineCell(const sf::Vector2i& cellPos, sf::Color outlineColor);
     void renderOrigin();
+    void renderEdge(); // FIXME: Not optimized
 
     // Camera attributes and routines
     sf::View camera;

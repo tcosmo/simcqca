@@ -7,6 +7,7 @@ GraphicEngine::GraphicEngine(World& world, int screen_w, int screen_h)
     window.setFramerateLimit(TARGET_FPS);
 
     isOriginRendered = false;
+    isEdgeRendered = false;
 
     assert(defaultFont.loadFromFile(DEFAULT_FONT_PATH));
     assert(fontTexture.loadFromFile(DEFAULT_FONT_TEXTURE_PATH));
@@ -235,7 +236,7 @@ bool GraphicEngine::isSimulationInView()
     auto boundaries = getExtremalVisibleCellsPos();
     bool inView = false;
     if (world.inputType == LINE || world.inputType == COL)
-        for (const auto& cellPos : world.halfDefinedCells)
+        for (const auto& cellPos : world.cellsOnEdge)
             if (cellPos.x >= boundaries.first.x)
                 inView = true;
     return inView;
@@ -265,12 +266,16 @@ void GraphicEngine::run()
                     printf("FPS: %d\n", currentFPS);
                     printf("Vertex array (Background): %ld x O(%d)\n", graphicCells[CELL_BACKGROUND].size(), VERTEX_ARRAY_MAX_SIZE);
                     printf("Number of graphic cells (quads): %d\n", totalGraphicBufferSize());
-                    printf("Number of half defined cells: %ld\n", world.halfDefinedCells.size());
+                    printf("Number of cells on edge: %ld\n", world.cellsOnEdge.size());
                     printf("Current zoom factor: %lf\n", currentZoom);
                     break;
 
                 case sf::Keyboard::O:
                     isOriginRendered = !isOriginRendered;
+                    break;
+
+                case sf::Keyboard::E:
+                    isEdgeRendered = !isEdgeRendered;
                     break;
 
                 case sf::Keyboard::T:
@@ -312,6 +317,9 @@ void GraphicEngine::run()
         if (isTextRendered)
             for (const auto& graphicBuffer : graphicCells[CELL_TEXT])
                 window.draw(graphicBuffer, &fontTexture);
+
+        if (isEdgeRendered)
+            renderEdge();
 
         if (isOriginRendered)
             renderOrigin();

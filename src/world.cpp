@@ -31,7 +31,6 @@ void World::setInputCellsCol()
     for (int y = 1; y <= base3p.size(); y += 1) {
         int current = base3p[y - 1];
         sf::Vector2i posToAdd = { 0, y };
-        halfDefinedCells.insert(posToAdd); // For compliance with first assert in applyUpdates
         Cell cellToAdd = Cell(static_cast<AtomicInfo>(current / 2), static_cast<AtomicInfo>(current % 2));
         updates.push_back(std::make_pair(posToAdd, cellToAdd));
     }
@@ -50,6 +49,25 @@ void World::setInputCellsBorder()
      * Set up the initial configuration in Border mode. 
     */
     assert(inputType == BORDER);
+
+    std::vector<CellPosAndCell> updates;
+    sf::Vector2i currPos = { 0, 1 };
+    for (char parityBit : inputStr) {
+        if (parityBit != '0' && parityBit != '1') {
+            printf("A parity vector contains only `0`s and `1`s, symbol %c is invalid. Abort.\n", parityBit);
+            exit(0);
+        }
+        if (parityBit == '0') {
+            Cell cellToAdd = { ZERO, UNDEF };
+            updates.push_back(std::make_pair(currPos, cellToAdd));
+            currPos += WEST;
+        } else {
+            Cell cellToAdd = { ZERO, ONE };
+            updates.push_back(std::make_pair(currPos, cellToAdd));
+            currPos += SOUTH + WEST;
+        }
+    }
+    applyUpdates(updates);
 }
 
 std::vector<CellPosAndCell> World::findNonLocalUpdates()
@@ -58,7 +76,7 @@ std::vector<CellPosAndCell> World::findNonLocalUpdates()
      * Finding candidate cells for applying the non-local rule of the 2D CQCA.
     */
     std::vector<CellPosAndCell> toRet;
-    for (const sf::Vector2i& cellPos : halfDefinedCells) {
+    for (const sf::Vector2i& cellPos : cellsOnEdge) {
         assert(doesCellExists(cellPos) && cells[cellPos].getStatus() == HALF_DEFINED);
         if (cells[cellPos].bit == ONE) {
             bool lastOneOnLine = true;
@@ -70,8 +88,6 @@ std::vector<CellPosAndCell> World::findNonLocalUpdates()
             }
             if (lastOneOnLine) {
                 if (!doesCellExists(cellPos + EAST) || cells[cellPos + EAST].getStatus() == HALF_DEFINED) {
-                    if (!doesCellExists(cellPos + EAST))
-                        toRet.push_back(std::make_pair(cellPos + EAST, Cell(ZERO, UNDEF))); // For soundess of assert in applyUpdates
                     toRet.push_back(std::make_pair(cellPos + EAST, Cell(ZERO, ONE)));
                 }
             }
@@ -85,18 +101,6 @@ void World::nextNonLocal()
 {
     auto nonLocalUpdates = findNonLocalUpdates();
     applyUpdates(nonLocalUpdates);
-
-    // Although they are half defined, for performance, we remove
-    // trailing zero's from the half defined buffer
-    for (const auto& update : nonLocalUpdates) {
-        const auto& cellPos = update.first;
-        sf::Vector2i currPos = cellPos + EAST;
-        while (doesCellExists(currPos)) {
-            assert(halfDefinedCells.find(currPos) != halfDefinedCells.end());
-            halfDefinedCells.erase(currPos);
-            currPos += EAST;
-        }
-    }
 }
 
 void World::manageEdgeCases(std::vector<CellPosAndCell>& toRet, const sf::Vector2i& cellPos, const Cell& updatedCell)
@@ -131,7 +135,7 @@ void World::manageEdgeCases(std::vector<CellPosAndCell>& toRet, const sf::Vector
 std::vector<CellPosAndCell> World::findCarryPropUpdates()
 {
     std::vector<CellPosAndCell> toRet;
-    for (const sf::Vector2i& cellPos : halfDefinedCells) {
+    for (const sf::Vector2i& cellPos : cellsOnEdge) {
         assert(doesCellExists(cellPos) && cells[cellPos].getStatus() == HALF_DEFINED);
         if (doesCellExists(cellPos + EAST) && cells[cellPos + EAST].getStatus() == DEFINED) {
             AtomicInfo bit = cells[cellPos].bit;
@@ -150,7 +154,7 @@ std::vector<CellPosAndCell> World::findCarryPropUpdates()
 std::vector<CellPosAndCell> World::findForwardDeductionUpdates()
 {
     std::vector<CellPosAndCell> toRet;
-    for (const sf::Vector2i& cellPos : halfDefinedCells) {
+    for (const sf::Vector2i& cellPos : cellsOnEdge) {
         assert(doesCellExists(cellPos) && cells[cellPos].getStatus() == HALF_DEFINED);
         if (doesCellExists(cellPos + EAST) && cells[cellPos + EAST].getStatus() == DEFINED) {
             AtomicInfo southBit = static_cast<AtomicInfo>((static_cast<int>(cells[cellPos].bit) + cells[cellPos + EAST].sum()) % 2);
@@ -160,6 +164,59 @@ std::vector<CellPosAndCell> World::findForwardDeductionUpdates()
     return toRet;
 }
 
+std::vector<CellPosAndCell> World::findBackwardDeductionUpdates()
+{
+    std::vector<CellPosAndCell> toRet;
+    for (const sf::Vector2i& cellPos : cellsOnEdge) {
+        assert(doesCellExists(cellPos) && cells[cellPos].getStatus() == HALF_DEFINED);
+        if (!doesCellExists(cellPos + NORTH) && doesCellExists(cellPos + NORTH + EAST) && cells[cellPos + NORTH + EAST].getStatus() == DEFINED) {
+            AtomicInfo northBit = static_cast<AtomicInfo>((cells[cellPos + NORTH + EAST].sum()) % 2 != static_cast<int>(cells[cellPos].bit));
+            toRet.push_back(std::make_pair(cellPos + NORTH, Cell(northBit, UNDEF)));
+        }
+    }
+    return toRet;
+}
+
+void World::cleanCellsOnEdge()
+{
+    /**
+     * Remove the cells which are not anymore on edge from the edge.
+    */
+    std::vector<sf::Vector2i> toRemove;
+    for (const auto& cellPos : cellsOnEdge)
+        if (!isCellOnEdge(cellPos))
+            toRemove.push_back(cellPos);
+    for (const auto& cellPos : toRemove)
+        cellsOnEdge.erase(cellPos);
+}
+
+bool World::isCellOnEdge(const sf::Vector2i& cellPos)
+{
+    /**
+     *  Determines whether a cell is on the edge of the computing region or not.
+    */
+
+    assert(doesCellExists(cellPos));
+
+    if (inputType == LINE || inputType == COL) {
+
+        // Remove trailing 0s from edge
+        bool isTrailingZero = true;
+        if (cells[cellPos].bit == ZERO && doesCellExists(cellPos + WEST) && cells[cellPos + WEST].getStatus() == HALF_DEFINED) {
+            sf::Vector2i pos = cellPos + EAST;
+            while (doesCellExists(pos)) {
+                if (cells[pos].bit == ONE)
+                    isTrailingZero = false;
+                pos += EAST;
+            }
+        } else {
+            isTrailingZero = false;
+        }
+
+        return cells[cellPos].getStatus() == HALF_DEFINED && !isTrailingZero;
+    }
+}
+
 void World::applyUpdates(const std::vector<CellPosAndCell>& updates)
 {
     for (const auto& info : updates) {
@@ -167,38 +224,47 @@ void World::applyUpdates(const std::vector<CellPosAndCell>& updates)
         const Cell& cell = info.second;
         cells[cellPos] = cell;
         cellGraphicBuffer.push_back(cellPos);
-        if (cell.getStatus() == DEFINED) {
-            assert(halfDefinedCells.find(cellPos) != halfDefinedCells.end());
-            halfDefinedCells.erase(cellPos);
-        }
-        if (cell.getStatus() == HALF_DEFINED) {
-            assert(halfDefinedCells.find(cellPos) == halfDefinedCells.end());
-            halfDefinedCells.insert(cellPos);
-        }
+        if (isCellOnEdge(cellPos))
+            cellsOnEdge.insert(cellPos);
     }
+    cleanCellsOnEdge();
 }
 
 void World::nextLocal()
 {
-    // First find the update then apply them
-    // Do not apply some updates before they were all found
-    // That would break the CA logic
-    auto carryPropUpdates = findCarryPropUpdates();
+    /**
+     * Applies one pass of the local rule. 
+    */
 
-    // LINE mode and COL mode use forward deduction
-    auto forwardDeductionUpdates = std::vector<CellPosAndCell>();
-    if (inputType == LINE || inputType == COL)
-        forwardDeductionUpdates = findForwardDeductionUpdates();
-
-    applyUpdates(carryPropUpdates);
-
-    if (inputType == LINE || inputType == COL)
+    // In LINE and COL mode, the local rule is
+    // carry propagation followed by forward deduction
+    if (inputType == LINE || inputType == COL) {
+        // First find the update then apply them
+        // Do not apply some updates before they were all found
+        // That would break the CA logic
+        auto carryPropUpdates = findCarryPropUpdates();
+        auto forwardDeductionUpdates = findForwardDeductionUpdates();
+        applyUpdates(carryPropUpdates);
         applyUpdates(forwardDeductionUpdates);
+    }
+
+    // In BORDER mode, the local rule is
+    // carry propagation followed by backward deduction
+    // note that in this mode the non local rule will never be applied
+    if (inputType == BORDER) {
+        auto carryPropUpdates = findCarryPropUpdates();
+        auto backwardDeductionUpdates = findBackwardDeductionUpdates();
+        applyUpdates(carryPropUpdates);
+        applyUpdates(backwardDeductionUpdates);
+    }
 }
 
 void World::next()
 {
-    nextNonLocal();
+    // In BORDER or CYCLE mode non local steps are useless
+    // As bootstrapping events are given by the parity vector
+    if (inputType == LINE || inputType == COL)
+        nextNonLocal();
     nextLocal();
 }
 
