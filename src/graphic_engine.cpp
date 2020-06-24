@@ -166,8 +166,10 @@ std::vector<sf::Vertex> GraphicEngine::getCellTextVertices(const sf::Vector2i& c
     toRet[7].position = mapWorldPosToCoords(cellPos + SOUTH);
 
     // Tweaking position
-    for (int i = 4; i < 8; i += 1)
-        toRet[i].position.y -= 4;
+    for (int i = 4; i < 8; i += 1) {
+        toRet[i].position.y -= 4.4;
+        toRet[i].position.x += 1;
+    }
 
     for (int i = 4; i < 8; i += 1)
         toRet[i].texCoords = getFontTextureCharCoords('-', i - 4);

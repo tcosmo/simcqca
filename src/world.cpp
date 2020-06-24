@@ -2,6 +2,10 @@
 
 void World::setInputCellsLine()
 {
+    /**
+     * Set up the initial configuration in Line mode. 
+    */
+    std::vector<CellPosAndCell> updates;
     for (int x = -1; x >= -1 * inputStr.length(); x -= 1) {
         char current = inputStr[inputStr.length() - abs(x)];
         if (current != '0' && current != '1') {
@@ -9,10 +13,33 @@ void World::setInputCellsLine()
             exit(0);
         }
         sf::Vector2i posToAdd = { x, 0 };
-        cells[posToAdd] = Cell(static_cast<AtomicInfo>(current - '0'), UNDEF);
-        cellGraphicBuffer.push_back(posToAdd);
-        halfDefinedCells.insert(posToAdd);
+        Cell cellToAdd = Cell(static_cast<AtomicInfo>(current - '0'), UNDEF);
+        updates.push_back(std::make_pair(posToAdd, cellToAdd));
     }
+    applyUpdates(updates);
+}
+
+void World::setInputCellsCol()
+{
+    /**
+     * Set up the initial configuration in Col mode. 
+    */
+    std::vector<CellPosAndCell> updates;
+    std::vector<int> base3p = base3To3p(inputStr);
+    for (int y = 0; y < base3p.size(); y += 1) {
+        int current = base3p[y];
+        sf::Vector2i posToAdd = { 0, y };
+        halfDefinedCells.insert(posToAdd); // For compliance with first assert in applyUpdates
+        Cell cellToAdd = Cell(static_cast<AtomicInfo>(current / 2), static_cast<AtomicInfo>(current % 2));
+        updates.push_back(std::make_pair(posToAdd, cellToAdd));
+    }
+
+    // Bootstrapping col mode, this is the first half defined cell
+    sf::Vector2i posToAdd = {-1,0};
+    Cell cellToAdd = {ZERO, UNDEF};
+    updates.push_back(std::make_pair(posToAdd, cellToAdd));
+
+    applyUpdates(updates);
 }
 
 std::vector<CellPosAndCell> World::findNonLocalUpdates()
@@ -33,9 +60,8 @@ std::vector<CellPosAndCell> World::findNonLocalUpdates()
             }
             if (lastOneOnLine) {
                 if (!doesCellExists(cellPos + EAST) || cells[cellPos + EAST].getStatus() == HALF_DEFINED) {
-                    //pritnf("Non local update: %d %d\n", (cellPos + EAST).x, (cellPos + EAST).y);
                     if (!doesCellExists(cellPos + EAST))
-                        toRet.push_back(std::make_pair(cellPos + EAST, Cell(ZERO, UNDEF))); // For soundess of assert line 96
+                        toRet.push_back(std::make_pair(cellPos + EAST, Cell(ZERO, UNDEF))); // For soundess of assert in applyUpdates
                     toRet.push_back(std::make_pair(cellPos + EAST, Cell(ZERO, ONE)));
                 }
             }
@@ -63,6 +89,35 @@ void World::nextNonLocal()
     }
 }
 
+void World::manageEdgeCases(std::vector<CellPosAndCell>& toRet, const sf::Vector2i& cellPos, const Cell& updatedCell)
+{
+    if (inputType == LINE) {
+        // Edge case at end of a line which is in theory (0)^\infty
+        if (!doesCellExists(cellPos + WEST) && !doesCellExists(cellPos + WEST + NORTH) && updatedCell.sum() >= 1) {
+            toRet.push_back(std::make_pair(cellPos + WEST, Cell(ZERO, UNDEF)));
+        }
+    }
+
+    if (inputType == COL) {
+        // Edge case at beginning of a column which is in theory (0)^\infty
+        if(!doesCellExists(cellPos+WEST) && updatedCell.sum() != 0) {
+            bool onlyZero = true;
+            sf::Vector2i currentPos = cellPos + NORTH;
+            while(doesCellExists(currentPos)) {
+                assert(cells[currentPos].getStatus() == DEFINED);
+                if(cells[currentPos].sum() != 0) {
+                    onlyZero = false;
+                    break;
+                }
+                currentPos += NORTH;
+            }
+            if(onlyZero) {
+                toRet.push_back(std::make_pair(cellPos + WEST, Cell(ZERO, UNDEF)));
+            }
+        }
+    }
+}
+
 std::vector<CellPosAndCell> World::findCarryPropUpdates()
 {
     std::vector<CellPosAndCell> toRet;
@@ -73,12 +128,10 @@ std::vector<CellPosAndCell> World::findCarryPropUpdates()
             AtomicInfo newCarry = static_cast<AtomicInfo>((bit + cells[cellPos + EAST].sum()) >= 2);
             Cell updatedCell = Cell(bit, newCarry);
             toRet.push_back(std::make_pair(cellPos, updatedCell));
-            //printf("Carry update: %d %d\n", cellPos.x, cellPos.y);
-            // Manage edge case of left most cell on a line
-            if (!doesCellExists(cellPos + WEST) && !doesCellExists(cellPos + WEST + NORTH) && updatedCell.sum() >= 1) {
-                //printf("Finite edge case update: %d %d\n", (cellPos + WEST).x, (cellPos + WEST).y);
-                toRet.push_back(std::make_pair(cellPos + WEST, Cell(ZERO, UNDEF)));
-            }
+
+            // Because we do a finite simulation of an infinite process
+            // we have some edge cases to deal with.
+            manageEdgeCases(toRet, cellPos, updatedCell);
         }
     }
     return toRet;
@@ -92,7 +145,6 @@ std::vector<CellPosAndCell> World::findForwardDeductionUpdates()
         if (doesCellExists(cellPos + EAST) && cells[cellPos + EAST].getStatus() == DEFINED) {
             AtomicInfo southBit = static_cast<AtomicInfo>((static_cast<int>(cells[cellPos].bit) + cells[cellPos + EAST].sum()) % 2);
             toRet.push_back(std::make_pair(cellPos + SOUTH, Cell(southBit, UNDEF)));
-            //printf("Forward update: %d %d\n", (cellPos + SOUTH).x, (cellPos + SOUTH).y);
         }
     }
     return toRet;
@@ -110,7 +162,6 @@ void World::applyUpdates(const std::vector<CellPosAndCell>& updates)
             halfDefinedCells.erase(cellPos);
         }
         if (cell.getStatus() == HALF_DEFINED) {
-            //printf("%d %d\n", cellPos.x, cellPos.y);
             assert(halfDefinedCells.find(cellPos) == halfDefinedCells.end());
             halfDefinedCells.insert(cellPos);
         }
@@ -121,7 +172,6 @@ void World::nextLocal()
 {
     auto carryPropUpdates = findCarryPropUpdates();
     auto forwardDeductionUpdates = findForwardDeductionUpdates();
-    //printf("\n");
     applyUpdates(carryPropUpdates);
     applyUpdates(forwardDeductionUpdates);
 }
@@ -144,6 +194,44 @@ std::vector<sf::Vector2i> World::getAndFlushGraphicBuffer()
     return toRet;
 }
 
+std::vector<int> World::base3To3p(std::string base3)
+{
+    /***
+     * Base 3 to base 3' conversion. See paper for more details.
+    */
+    std::reverse(base3.begin(), base3.end());
+    std::vector<int> toReturn;
+
+    bool lastSeenZero = true;
+    int i = 0;
+    for (char c : base3) {
+        switch (c) {
+        case '0':
+            toReturn.push_back(0);
+            lastSeenZero = true;
+            break;
+        case '1':
+            if (lastSeenZero)
+                toReturn.push_back(1);
+            else
+                toReturn.push_back(2);
+            break;
+        case '2':
+            toReturn.push_back(3);
+            lastSeenZero = false;
+            break;
+        default:
+            printf("Character `%c` is invalid base 3 digit. Abort.\n", c);
+            exit(1);
+            break;
+        }
+        i += 1;
+    }
+
+    std::reverse(toReturn.begin(), toReturn.end());
+    return toReturn;
+}
+
 void World::setInputCells()
 {
     switch (inputType) {
@@ -156,8 +244,12 @@ void World::setInputCells()
         setInputCellsLine();
         break;
 
+    case COL:
+        setInputCellsCol();
+        break;
+
     default:
-        printf("Not implemented. Abort.\n");
+        printf("Not implemented yet. Abort.\n");
         exit(0);
         break;
     }

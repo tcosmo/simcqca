@@ -96,6 +96,8 @@ private:
     std::vector<CellPosAndCell> findCarryPropUpdates();
     std::vector<CellPosAndCell> findForwardDeductionUpdates();
     void applyUpdates(const std::vector<CellPosAndCell>& updates);
+    // Because we simulate an infinite process with finite means we have some edge cases to deal with
+    void manageEdgeCases(std::vector<CellPosAndCell>& toRet, const sf::Vector2i& cellPos, const Cell& updatedCell);
 
     // Routines
     bool doesCellExists(const sf::Vector2i& cellPos);
@@ -106,6 +108,10 @@ private:
 
     // Line mode
     void setInputCellsLine();
+
+    // Col mode
+    std::vector<int> base3To3p(std::string base3);
+    void setInputCellsCol();
 
     // For rendering
     std::vector<sf::Vector2i> cellGraphicBuffer; // Cells that are not drawn yet
