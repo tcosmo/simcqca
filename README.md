@@ -1,3 +1,7 @@
+# What is SimCQCA
+
+`simcqca` is a simulator for the 2D Collatz Quasi Cellular Automaton. Please refer to the paper and the following [Example section](#examples) for more details: ... 
+
 # Build SimCQCA
 
 You need to install the graphic library `SFML` (>=2.5) in order to build `simcqca` as well as the `cmake` toolchain.              
@@ -14,7 +18,10 @@ To build `simcqca` do:
 6. `make`
 7. You are good to go! Look at the examples and controls to get started!
 
+Building `simcqca` has been tested on Linux and Mac OS, if it doesn't work for you please feel free to open an [issue](https://github.com/tcosmo/simcqca/issues).
+
 # Examples
+<a href="examples"></a>
 - `./simcqca --line 10001010111000110000000000001111111111111111110001111111111111111111001`
 - `./simcqca --col 12210000100011100110111112000`
 
