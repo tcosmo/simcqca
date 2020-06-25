@@ -56,7 +56,7 @@ void World::setInputCellsBorder()
     /**
      * Set up the initial configuration in Border mode. 
     */
-    assert(inputType == BORDER);
+    assert(inputType == BORDER || inputType == CYCLE);
 
     std::vector<CellPosAndCell> updates;
     sf::Vector2i currPos = ORIGIN_BORDER_MODE;
@@ -76,6 +76,31 @@ void World::setInputCellsBorder()
         }
     }
     applyUpdates(updates);
+}
+
+void World::computeParityVectorSpan()
+{
+    parityVectorSpan = 0;
+    for (const auto& c : inputStr)
+        parityVectorSpan += (c == '1');
+}
+
+void World::setInputCellsCycle()
+{
+    /**
+     * Set up the initial configuration in Cycle mode. 
+    */
+    assert(inputType == CYCLE);
+    setInputCellsBorder();
+
+    computeParityVectorSpan();
+    cyclicForwardVector = ORIGIN_BORDER_MODE;
+    for (int iWest = 0; iWest < inputStr.length(); iWest += 1)
+        cyclicForwardVector += WEST;
+    for (int iSouth = 0; iSouth < parityVectorSpan; iSouth += 1)
+        cyclicForwardVector += SOUTH;
+
+    applyUpdates({ std::make_pair(cyclicForwardVector, cells[ORIGIN_BORDER_MODE]) });
 }
 
 std::vector<CellPosAndCell> World::findNonLocalUpdates()
@@ -241,11 +266,13 @@ bool World::isCellOnEdge(const sf::Vector2i& cellPos)
         return cells[cellPos].getStatus() == HALF_DEFINED && !isTrailingZero;
     }
 
-    if (inputType == BORDER) {
-        if (cellPos.y == ORIGIN_BORDER_MODE.y)
+    if (inputType == BORDER || inputType == CYCLE) {
+        if (inputType == BORDER && cellPos.y == ORIGIN_BORDER_MODE.y)
             return cells[cellPos].getStatus() == HALF_DEFINED;
         return !doesCellExists(cellPos + NORTH);
     }
+
+    return false;
 }
 
 void World::applyUpdates(const std::vector<CellPosAndCell>& updates)
@@ -262,6 +289,27 @@ void World::applyUpdates(const std::vector<CellPosAndCell>& updates)
                 cellsOnEdge.insert(cellPos + WEST);
     }
     cleanCellsOnEdge();
+}
+
+std::vector<CellPosAndCell> World::findCyclicUpdates(const std::vector<CellPosAndCell>& updates)
+{
+    /**
+     * Find cells on which we can apply the cyclic equivalence relation. 
+    */
+
+    std::vector<CellPosAndCell> toRet;
+
+    for (const auto& update : updates) {
+        const sf::Vector2i& pos = update.first;
+        const Cell& cell = update.second;
+
+        if ((pos - cyclicForwardVector).x == ORIGIN_BORDER_MODE.x) {
+            sf::Vector2i eqPos = { 0, pos.y - parityVectorSpan };
+            toRet.push_back(std::make_pair(eqPos, cell));
+        }
+    }
+
+    return toRet;
 }
 
 void World::nextLocal()
@@ -282,14 +330,24 @@ void World::nextLocal()
         applyUpdates(forwardDeductionUpdates);
     }
 
-    // In BORDER mode, the local rule is
+    // In BORDER/CYCLE mode, the local rule is
     // carry propagation followed by backward deduction
     // note that in this mode the non local rule will never be applied
-    if (inputType == BORDER) {
+    if (inputType == BORDER || inputType == CYCLE) {
         auto carryPropUpdates = findCarryPropUpdates();
         auto backwardDeductionUpdates = findBackwardDeductionUpdates();
+
         applyUpdates(carryPropUpdates);
         applyUpdates(backwardDeductionUpdates);
+
+        // In cycle mode we need to enforce the equivalence relation on
+        // cells of the world in order to compute
+        if (inputType == CYCLE) {
+            auto cyclicUpdates = findCyclicUpdates(carryPropUpdates);
+            applyUpdates(cyclicUpdates);
+            cyclicUpdates = findCyclicUpdates(backwardDeductionUpdates);
+            applyUpdates(cyclicUpdates);
+        }
     }
 }
 
@@ -371,6 +429,10 @@ void World::setInputCells()
 
     case BORDER:
         setInputCellsBorder();
+        break;
+
+    case CYCLE:
+        setInputCellsCycle();
         break;
 
     default:

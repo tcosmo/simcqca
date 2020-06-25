@@ -244,12 +244,15 @@ bool GraphicEngine::isSimulationInView()
         for (const auto& cellPos : world.cellsOnEdge)
             if (cellPos.x >= boundaries.first.x)
                 inView = true;
-    if (world.inputType == BORDER) {
-        if (world.isComputationDone())
+    if (world.inputType == BORDER || world.inputType == CYCLE) {
+        if (world.inputType == BORDER && world.isComputationDone())
             return false;
-        sf::Vector2i topLeftCell = { boundaries.first.x, 0 };
-        return !world.doesCellExists(topLeftCell) || world.cells[topLeftCell].getStatus() == HALF_DEFINED;
+
+        for (const auto& cellPos : world.cellsOnEdge)
+            if (cellPos.y >= boundaries.first.y)
+                inView = true;
     }
+
     return inView;
 }
 

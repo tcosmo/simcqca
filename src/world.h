@@ -122,6 +122,13 @@ private:
     // Border mode
     void setInputCellsBorder();
 
+    // Cycle mode
+    void setInputCellsCycle();
+    sf::Vector2i cyclicForwardVector;
+    void computeParityVectorSpan();
+    int parityVectorSpan;
+    std::vector<CellPosAndCell> findCyclicUpdates(const std::vector<CellPosAndCell>& updates);
+
     // For rendering
     std::vector<sf::Vector2i> cellGraphicBuffer; // Cells that are not drawn yet
 };
