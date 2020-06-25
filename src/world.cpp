@@ -267,7 +267,7 @@ bool World::isCellOnEdge(const sf::Vector2i& cellPos)
     }
 
     if (inputType == BORDER || inputType == CYCLE) {
-        if (inputType == BORDER && cellPos.y == ORIGIN_BORDER_MODE.y)
+        if ((inputType == BORDER || (inputType == CYCLE && constructCycleInLine)) && cellPos.y == ORIGIN_BORDER_MODE.y)
             return cells[cellPos].getStatus() == HALF_DEFINED;
         return !doesCellExists(cellPos + NORTH);
     }
@@ -303,9 +303,14 @@ std::vector<CellPosAndCell> World::findCyclicUpdates(const std::vector<CellPosAn
         const sf::Vector2i& pos = update.first;
         const Cell& cell = update.second;
 
-        if ((pos - cyclicForwardVector).x == ORIGIN_BORDER_MODE.x) {
-            sf::Vector2i eqPos = { 0, pos.y - parityVectorSpan };
-            toRet.push_back(std::make_pair(eqPos, cell));
+        if (!constructCycleInLine) {
+            if ((pos - cyclicForwardVector).x == ORIGIN_BORDER_MODE.x) {
+                sf::Vector2i posEquivalent = pos - cyclicForwardVector;
+                toRet.push_back(std::make_pair(posEquivalent, cell));
+            }
+        } else if ((pos + cyclicForwardVector).y == ORIGIN_BORDER_MODE.y + parityVectorSpan) {
+            sf::Vector2i posEquivalent = pos + cyclicForwardVector;
+            toRet.push_back(std::make_pair(posEquivalent, cell));
         }
     }
 

@@ -248,9 +248,15 @@ bool GraphicEngine::isSimulationInView()
         if (world.inputType == BORDER && world.isComputationDone())
             return false;
 
-        for (const auto& cellPos : world.cellsOnEdge)
-            if (cellPos.y >= boundaries.first.y)
-                inView = true;
+        if (!world.constructCycleInLine) {
+            for (const auto& cellPos : world.cellsOnEdge)
+                if (cellPos.y >= boundaries.first.y)
+                    inView = true;
+        } else {
+            for (const auto& cellPos : world.cellsOnEdge)
+                if (cellPos.x >= boundaries.first.x)
+                    inView = true;
+        }
     }
 
     return inView;

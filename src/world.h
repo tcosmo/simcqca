@@ -68,10 +68,11 @@ class World {
      * It can also be simulated in a sequential manner.
     */
 public:
-    World(bool isSequentialSim, InputType inputType, std::string inputStr)
+    World(bool isSequentialSim, InputType inputType, std::string inputStr, bool constructCycleInLine)
         : isSequentialSim(isSequentialSim)
         , inputType(inputType)
         , inputStr(inputStr)
+        , constructCycleInLine(constructCycleInLine)
     {
         if (isSequentialSim) {
             printf("Sequential simulation not implemented yet. Abort.\n");
@@ -90,6 +91,8 @@ public:
     Poset cellsOnEdge; // Buffer containing position of all cells on the edge of the computed world
     std::vector<sf::Vector2i> getAndFlushGraphicBuffer();
     InputType inputType;
+
+    bool constructCycleInLine; // Construct cycle line per line instead of col per col
 
 private:
     bool isSequentialSim; // Run in sequential mode or CA-style mode?

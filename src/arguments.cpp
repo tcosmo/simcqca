@@ -83,7 +83,7 @@ void helpPage()
 void parseArguments(int argc, char* argv[], Arguments& arguments)
 {
     InputParser input(argc, argv);
-    if (input.cmdOptionExists("-s") || input.cmdOptionExists("--sequential")) {
+    if (input.cmdOptionExists(getShortOptionStr(options[0].shortOption)) || input.cmdOptionExists(getLongOptionStr(options[0].longOption))) {
         arguments.isSequential = true;
     }
 
@@ -93,6 +93,15 @@ void parseArguments(int argc, char* argv[], Arguments& arguments)
         if (input.cmdOptionExists(shortStr) || input.cmdOptionExists(longStr)) {
             setInputType(orStr(input.getCmdOption(shortStr), input.getCmdOption(longStr)), arguments, static_cast<InputType>(iOption));
         }
+    }
+
+    // Cycle line
+    if (input.cmdOptionExists(getShortOptionStr(options[5].shortOption)) || input.cmdOptionExists(getLongOptionStr(options[5].longOption))) {
+        if (arguments.inputType != CYCLE) {
+            printf("The `--%s` option is only valid in cycle mode. Abort.\n", options[5].longOption);
+            exit(0);
+        }
+        arguments.constructCycleInLine = true;
     }
 
     if (input.cmdOptionExists("-V") || input.cmdOptionExists("--version")) {

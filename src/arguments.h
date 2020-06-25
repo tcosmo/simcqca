@@ -56,6 +56,7 @@ static std::vector<InputOption> options = {
     { "col", 'c', "INPUT BASE 3", "Inputs a ternary column to the process. Base 3 -> base3' conversion is done internally" },
     { "border", 'b', "INPUT PARITY VECTOR", "Inputs a parity vector to the process" },
     { "cycle", 'y', "INPUT PARITY VECTOR", "Inputs a parity vector to the process with cyclic edges conditions" },
+    { "cycle-line", 'j', NULL, "Combine this option with cycle mode to run the construction per line and not per column" },
 
     // Default options
     { "help", 'h', NULL, "Give this help list" },
@@ -67,10 +68,12 @@ struct Arguments {
     bool isSequential;
     InputType inputType;
     std::string inputStr;
+    bool constructCycleInLine;
 
     Arguments()
         : isSequential(false)
         , inputType(NONE)
+        , constructCycleInLine(false)
     {
     }
 };
