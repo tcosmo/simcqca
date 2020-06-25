@@ -27,6 +27,7 @@ Building `simcqca` has been tested on Linux and Mac OS, if it doesn't work for y
 - `./simcqca --col 12210000100011100110111112000`
 - `./simcqca --border 1100000000000000011111000101011011`
 - `./simcqca --cycle 1000110`
+- `./simcqca --cycle 1000110 --cycle-line`
 
 # Controls
 ## General
