@@ -326,6 +326,14 @@ void GraphicEngine::run()
                         world.next();
                     break;
 
+                case sf::Keyboard::P:
+                    if (world.inputType == CYCLE) {
+                        while (!world.isCycleDetected())
+                            world.next();
+                        world.printCycleInformation();
+                    }
+                    break;
+
                 case sf::Keyboard::R:
                     reset();
                     world.reset();

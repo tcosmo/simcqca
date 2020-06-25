@@ -1,175 +1,12 @@
 #include "world.h"
 
-void World::setInputCellsLine()
-{
-    /**
-     * Set up the initial configuration in Line mode. 
-    */
-    assert(inputType == LINE);
-    std::vector<CellPosAndCell> updates;
-    for (int x = -1; x >= -1 * inputStr.length(); x -= 1) {
-        char current = inputStr[inputStr.length() - abs(x)];
-        if (current != '0' && current != '1') {
-            printf("Input mode LINE expects binary inputs only. Character `%c` is invalid. Abort.\n", current);
-            exit(0);
-        }
-        sf::Vector2i posToAdd = { x, 0 };
-        Cell cellToAdd = Cell(static_cast<AtomicInfo>(current - '0'), UNDEF);
-        updates.push_back(std::make_pair(posToAdd, cellToAdd));
-    }
-    applyUpdates(updates);
-
-    // Tweak to bootstrap the process when input has trailing 0s
-    int x = 0;
-    while (x < inputStr.length() && inputStr[inputStr.length() - x - 1] == '0')
-        x += 1;
-    if (x == inputStr.length())
-        return;
-    cellsOnEdge.insert({ -x - 1, 0 });
-}
-
-void World::setInputCellsCol()
-{
-    /**
-     * Set up the initial configuration in Col mode. 
-    */
-    assert(inputType == COL);
-    std::vector<CellPosAndCell> updates;
-    std::vector<int> base3p = base3To3p(inputStr);
-    for (int y = 1; y <= base3p.size(); y += 1) {
-        int current = base3p[y - 1];
-        sf::Vector2i posToAdd = { 0, y };
-        Cell cellToAdd = Cell(static_cast<AtomicInfo>(current / 2), static_cast<AtomicInfo>(current % 2));
-        updates.push_back(std::make_pair(posToAdd, cellToAdd));
-    }
-
-    // Bootstrapping col mode, this is the first half defined cell
-    sf::Vector2i posToAdd = { -1, 1 };
-    Cell cellToAdd = { ZERO, UNDEF };
-    updates.push_back(std::make_pair(posToAdd, cellToAdd));
-
-    applyUpdates(updates);
-}
-
-void World::setInputCellsBorder()
-{
-    /**
-     * Set up the initial configuration in Border mode. 
-    */
-    assert(inputType == BORDER || inputType == CYCLE);
-
-    std::vector<CellPosAndCell> updates;
-    sf::Vector2i currPos = ORIGIN_BORDER_MODE;
-    for (char parityBit : inputStr) {
-        if (parityBit != '0' && parityBit != '1') {
-            printf("A parity vector contains only `0`s and `1`s, symbol %c is invalid. Abort.\n", parityBit);
-            exit(0);
-        }
-        if (parityBit == '0') {
-            Cell cellToAdd = { ZERO, UNDEF };
-            updates.push_back(std::make_pair(currPos, cellToAdd));
-            currPos += WEST;
-        } else {
-            Cell cellToAdd = { ZERO, ONE };
-            updates.push_back(std::make_pair(currPos, cellToAdd));
-            currPos += SOUTH + WEST;
-        }
-    }
-    applyUpdates(updates);
-}
-
-void World::computeParityVectorSpan()
-{
-    parityVectorSpan = 0;
-    for (const auto& c : inputStr)
-        parityVectorSpan += (c == '1');
-}
-
-void World::setInputCellsCycle()
-{
-    /**
-     * Set up the initial configuration in Cycle mode. 
-    */
-    assert(inputType == CYCLE);
-    setInputCellsBorder();
-
-    computeParityVectorSpan();
-    cyclicForwardVector = ORIGIN_BORDER_MODE;
-    for (int iWest = 0; iWest < inputStr.length(); iWest += 1)
-        cyclicForwardVector += WEST;
-    for (int iSouth = 0; iSouth < parityVectorSpan; iSouth += 1)
-        cyclicForwardVector += SOUTH;
-
-    applyUpdates({ std::make_pair(cyclicForwardVector, cells[ORIGIN_BORDER_MODE]) });
-}
-
-std::vector<CellPosAndCell> World::findNonLocalUpdates()
-{
-    /**
-     * Finding candidate cells for applying the non-local rule of the 2D CQCA.
-    */
-    std::vector<CellPosAndCell> toRet;
-    for (const sf::Vector2i& cellPos : cellsOnEdge) {
-        assert(doesCellExists(cellPos) && cells[cellPos].getStatus() == HALF_DEFINED);
-        if (cells[cellPos].bit == ONE) {
-            bool lastOneOnLine = true;
-            sf::Vector2i currPos = cellPos + EAST;
-            while (doesCellExists(currPos)) {
-                if (cells[currPos].bit == ONE)
-                    lastOneOnLine = false;
-                currPos += EAST;
-            }
-            if (lastOneOnLine) {
-                if (!doesCellExists(cellPos + EAST) || cells[cellPos + EAST].getStatus() == HALF_DEFINED) {
-                    toRet.push_back(std::make_pair(cellPos + EAST, Cell(ZERO, ONE)));
-                }
-            }
-        }
-    }
-
-    return toRet;
-}
-
-void World::nextNonLocal()
-{
-    auto nonLocalUpdates = findNonLocalUpdates();
-    applyUpdates(nonLocalUpdates);
-}
-
-void World::manageEdgeCases(std::vector<CellPosAndCell>& toRet, const sf::Vector2i& cellPos, const Cell& updatedCell)
-{
-    if (inputType == LINE) {
-        // Edge case at end of a line which is in theory (0)^\infty
-        if (!doesCellExists(cellPos + WEST) && !doesCellExists(cellPos + WEST + NORTH) && updatedCell.sum() >= 1) {
-            toRet.push_back(std::make_pair(cellPos + WEST, Cell(ZERO, UNDEF)));
-        }
-    }
-
-    if (inputType == COL) {
-        // Edge case at beginning of a column which is in theory (0)^\infty
-        if (!doesCellExists(cellPos + WEST) && updatedCell.sum() != 0) {
-            bool onlyZero = true;
-            sf::Vector2i currentPos = cellPos + NORTH;
-            while (doesCellExists(currentPos)) {
-                assert(cells[currentPos].getStatus() == DEFINED);
-                if (cells[currentPos].sum() != 0) {
-                    onlyZero = false;
-                    break;
-                }
-                currentPos += NORTH;
-            }
-            if (onlyZero) {
-                toRet.push_back(std::make_pair(cellPos + WEST, Cell(ZERO, UNDEF)));
-            }
-        }
-    }
-}
-
 std::vector<CellPosAndCell> World::findCarryPropUpdates()
 {
     std::vector<CellPosAndCell> toRet;
     for (const sf::Vector2i& cellPos : cellsOnEdge) {
         assert(doesCellExists(cellPos));
+        if(cells[cellPos].getStatus() != HALF_DEFINED)
+            continue;
         if (doesCellExists(cellPos + EAST) && cells[cellPos + EAST].getStatus() == DEFINED) {
             AtomicInfo bit = cells[cellPos].bit;
             AtomicInfo newCarry = static_cast<AtomicInfo>((bit + cells[cellPos + EAST].sum()) >= 2);
@@ -221,16 +58,6 @@ void World::cleanCellsOnEdge()
             toRemove.push_back(cellPos);
     for (const auto& cellPos : toRemove)
         cellsOnEdge.erase(cellPos);
-}
-
-bool World::isComputationDone()
-{
-    /**
-     * In border mode, the computation space is finite.
-    */
-    assert(inputType == BORDER);
-    sf::Vector2i topLeftCellPos = { -1 * static_cast<int>(inputStr.length()) + 1, 0 };
-    return doesCellExists(topLeftCellPos) && cells[topLeftCellPos].getStatus() == DEFINED;
 }
 
 bool World::isCellOnEdge(const sf::Vector2i& cellPos)
@@ -289,32 +116,6 @@ void World::applyUpdates(const std::vector<CellPosAndCell>& updates)
                 cellsOnEdge.insert(cellPos + WEST);
     }
     cleanCellsOnEdge();
-}
-
-std::vector<CellPosAndCell> World::findCyclicUpdates(const std::vector<CellPosAndCell>& updates)
-{
-    /**
-     * Find cells on which we can apply the cyclic equivalence relation. 
-    */
-
-    std::vector<CellPosAndCell> toRet;
-
-    for (const auto& update : updates) {
-        const sf::Vector2i& pos = update.first;
-        const Cell& cell = update.second;
-
-        if (!constructCycleInLine) {
-            if ((pos - cyclicForwardVector).x == ORIGIN_BORDER_MODE.x) {
-                sf::Vector2i posEquivalent = pos - cyclicForwardVector;
-                toRet.push_back(std::make_pair(posEquivalent, cell));
-            }
-        } else if ((pos + cyclicForwardVector).y == ORIGIN_BORDER_MODE.y + parityVectorSpan) {
-            sf::Vector2i posEquivalent = pos + cyclicForwardVector;
-            toRet.push_back(std::make_pair(posEquivalent, cell));
-        }
-    }
-
-    return toRet;
 }
 
 void World::nextLocal()

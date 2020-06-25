@@ -17,7 +17,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_FLAGS "-O3")
 
-file(GLOB SOURCES "src/*.cpp" "src/graphic_engine/*.cpp")
+file(GLOB SOURCES "src/*.cpp" "src/graphic_engine/*.cpp" "src/world/*.cpp")
 
 set(EXECUTABLE_NAME "simcqca")
 add_executable(simcqca ${SOURCES})

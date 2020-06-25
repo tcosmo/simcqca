@@ -22,12 +22,27 @@ Building `simcqca` has been tested on Linux and Mac OS, if it doesn't work for y
 
 # Examples
 <a href="examples"></a>
+
+## Line mode
+In Line mode, the input is a binary string. Each successive line corresponds to a new odd iteration of the Collatz process expressed in binary.
 - `./simcqca --line 10001010111000110000000000001111111111111111110001111111111111111111001`
 - `./simcqca --line 1001011111001000`
+## Column mode
+In Column mode, the input is a ternary string. Each successive column corresponds to a new iteration of the Collata process expressed in ternary.
 - `./simcqca --col 12210000100011100110111112000`
+## Border mode
+In Border mode, the input is a parity vector. The automaton reconstructs the corresponding input line.
 - `./simcqca --border 1100000000000000011111000101011011`
+## Cycle mode
+In cycle mode, the input is a parity vector supposed to be the support of a cycle. The automaton reconstructs the 3-adic expansion of the corresponding rational cycling over this parity vector. If the option `--cycle-line` is given, the automaton will reconstruct the 2-adic expansion of the same number (rational Collatz cyclic numbers are both 2-adic and 3-adic integers).
 - `./simcqca --cycle 1000110`
 - `./simcqca --cycle 1000110 --cycle-line`
+### Integer cycles
+You can try it on the 4 known non-zero integer cycles (1 non-negative and 3 non-positive):
+- `./simcqca --cycle 101010` : constructs the cycle (1,2,1,...)
+- `./simcqca --cycle 111111` : constructs the cycle (-1,-1,...)
+- `./simcqca --cycle 110110` : constructs the cycle (-5,  -7, -10, -5, ...)
+- `./simcqca --cycle 11110111000` : constructs the cycle (-17, -25, -37, -55, -82, -41, -61, -91, -136, -68, -34, -17, ...)
 
 # Controls
 ## General

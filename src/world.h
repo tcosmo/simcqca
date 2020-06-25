@@ -84,8 +84,10 @@ public:
 
     void next(); // Next simulation step
     bool isComputationDone(); // For border mode
+    bool isCycleDetected(); // For cycle mode
     bool doesCellExists(const sf::Vector2i& cellPos);
     void reset();
+    void printCycleInformation();
 
     std::map<sf::Vector2i, Cell, compareWorldPositions> cells; // Contains only not undefined cells
     Poset cellsOnEdge; // Buffer containing position of all cells on the edge of the computed world
@@ -131,7 +133,10 @@ private:
     void computeParityVectorSpan();
     int parityVectorSpan;
     std::vector<CellPosAndCell> findCyclicUpdates(const std::vector<CellPosAndCell>& updates);
-
+    std::vector<sf::Vector2i> cellPosOnCyclicCut(int layerToCompute);
+    std::map<std::string, int> cycleDetectionMap;
+    std::string stringOfCyclicCut(const std::vector<sf::Vector2i>& cellPosOnCut);
     // For rendering
     std::vector<sf::Vector2i> cellGraphicBuffer; // Cells that are not drawn yet
+    std::pair<int,int> indexesDetectedCycle; // Contains the information about the detected cycle
 };
