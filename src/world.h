@@ -30,9 +30,11 @@ struct Cell {
      * A cell contains a bit and a carry.
     */
     AtomicInfo bit, carry;
-    Cell(AtomicInfo bit = UNDEF, AtomicInfo carry = UNDEF)
+    bool isBootstrappingCarry;
+    Cell(AtomicInfo bit = UNDEF, AtomicInfo carry = UNDEF, bool isBootstrappingCarry = false)
         : bit(bit)
         , carry(carry)
+        , isBootstrappingCarry(isBootstrappingCarry)
     {
     }
     CellStatus getStatus() const
@@ -138,5 +140,5 @@ private:
     std::string stringOfCyclicCut(const std::vector<sf::Vector2i>& cellPosOnCut);
     // For rendering
     std::vector<sf::Vector2i> cellGraphicBuffer; // Cells that are not drawn yet
-    std::pair<int,int> indexesDetectedCycle; // Contains the information about the detected cycle
+    std::pair<int, int> indexesDetectedCycle; // Contains the information about the detected cycle
 };

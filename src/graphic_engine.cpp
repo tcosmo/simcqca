@@ -152,6 +152,10 @@ std::vector<sf::Vertex> GraphicEngine::getCellTextVertices(const sf::Vector2i& c
     toRet[2].position = mapWorldPosToCoords(cellPos + SOUTH + EAST);
     toRet[3].position = mapWorldPosToCoords(cellPos + SOUTH);
 
+    // Setting color
+    for (int i = 0; i < 4; i += 1)
+        toRet[i].color = sf::Color::White;
+
     // Tweaking position
     for (int i = 0; i < 4; i += 1)
         toRet[i].position.y += 4;
@@ -172,6 +176,13 @@ std::vector<sf::Vertex> GraphicEngine::getCellTextVertices(const sf::Vector2i& c
     toRet[5].position = mapWorldPosToCoords(cellPos + EAST);
     toRet[6].position = mapWorldPosToCoords(cellPos + SOUTH + EAST);
     toRet[7].position = mapWorldPosToCoords(cellPos + SOUTH);
+
+    // Setting color
+    sf::Color carryColor = sf::Color::White;
+    if (cell.isBootstrappingCarry)
+        carryColor = COLOR_SPECIAL_CARRY;
+    for (int i = 4; i < 8; i += 1)
+        toRet[i].color = carryColor;
 
     // Tweaking position
     for (int i = 4; i < 8; i += 1) {

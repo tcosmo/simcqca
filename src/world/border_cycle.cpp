@@ -24,7 +24,7 @@ void World::setInputCellsBorder()
             updates.push_back(std::make_pair(currPos, cellToAdd));
             currPos += WEST;
         } else {
-            Cell cellToAdd = { ZERO, ONE };
+            Cell cellToAdd = { ZERO, ONE, true };
             updates.push_back(std::make_pair(currPos, cellToAdd));
             currPos += SOUTH + WEST;
         }

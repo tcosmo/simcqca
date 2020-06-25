@@ -61,6 +61,7 @@ You can try it on the 4 known non-zero integer cycles (1 non-negative and 3 non-
 ## Simulation
 - `N`: next simulation step (Cellular Automaton-like evolution or sequential step depending on `--seq` flag)
 - `M`: runs simulation step until they are not in view anymore
+- `P`: in cycle mode will run the simulation until the period of the 3-adic/2-adic expansion of the cycle is found. Will then output in the console the initial segment and period of that expansion (little endian convention)
 - `R`: resets the simulation
 # Advanced graphic configuration
 <a name="advanceConf"></a>

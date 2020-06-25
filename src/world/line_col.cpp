@@ -74,7 +74,7 @@ std::vector<CellPosAndCell> World::findNonLocalUpdates()
             }
             if (lastOneOnLine) {
                 if (!doesCellExists(cellPos + EAST) || cells[cellPos + EAST].getStatus() == HALF_DEFINED) {
-                    toRet.push_back(std::make_pair(cellPos + EAST, Cell(ZERO, ONE)));
+                    toRet.push_back(std::make_pair(cellPos + EAST, Cell(ZERO, ONE, true)));
                     sf::Vector2i newPos = cellPos + EAST + EAST;
                     while(doesCellExists(newPos)) {
                         toRet.push_back(std::make_pair(newPos, Cell(ZERO, ZERO)));

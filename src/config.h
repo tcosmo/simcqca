@@ -10,7 +10,7 @@
 
 // Feel free to change that constant given your GPU/CPU configuration
 // It corresponds to the number of quads which are sent at once to the GPU for rendering
-#define VERTEX_ARRAY_MAX_SIZE 5*100*100
+#define VERTEX_ARRAY_MAX_SIZE 5 * 100 * 100
 
 // Change to the FPS you want to achieve given your GPU/CPU configuration
 #define TARGET_FPS 80

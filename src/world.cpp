@@ -5,7 +5,7 @@ std::vector<CellPosAndCell> World::findCarryPropUpdates()
     std::vector<CellPosAndCell> toRet;
     for (const sf::Vector2i& cellPos : cellsOnEdge) {
         assert(doesCellExists(cellPos));
-        if(cells[cellPos].getStatus() != HALF_DEFINED)
+        if (cells[cellPos].getStatus() != HALF_DEFINED)
             continue;
         if (doesCellExists(cellPos + EAST) && cells[cellPos + EAST].getStatus() == DEFINED) {
             AtomicInfo bit = cells[cellPos].bit;
