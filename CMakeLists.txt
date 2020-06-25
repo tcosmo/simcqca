@@ -5,6 +5,7 @@ project(simcqca LANGUAGES CXX)
 set(simcqca_VERSION_MAJOR 0)
 set(simcqca_VERSION_MINOR 3)
 set(simcqca_PROG_NAME "SimCQCA")
+set(simcqca_PROG_NAME_EXEC "simcqca")
 configure_file(
   "${PROJECT_SOURCE_DIR}/src/config.h.in"
   "${PROJECT_SOURCE_DIR}/src/config.h"

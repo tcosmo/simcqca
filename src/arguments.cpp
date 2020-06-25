@@ -42,7 +42,7 @@ std::string getLongOptionStr(const char* l)
 
 void usagePage()
 {
-    printf("Usage: ./%s ", simcqca_PROG_NAME);
+    printf("Usage: ./%s ", simcqca_PROG_NAME_EXEC);
     int iOption = 0;
     while (iOption < options.size()) {
         printf(" [-%c", options[iOption].shortOption);
@@ -64,7 +64,7 @@ void usagePage()
 
 void helpPage()
 {
-    printf("Usage ./%s [OPTION...]\n", simcqca_PROG_NAME);
+    printf("Usage ./%s [OPTION...]\n", simcqca_PROG_NAME_EXEC);
     printf("%s\n\n", doc);
     int iOption = 0;
     while (iOption < options.size()) {

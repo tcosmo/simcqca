@@ -1,6 +1,7 @@
 #define simcqca_VERSION_MAJOR @simcqca_VERSION_MAJOR@
 #define simcqca_VERSION_MINOR @simcqca_VERSION_MINOR@
 #define simcqca_PROG_NAME "@simcqca_PROG_NAME@"
+#define simcqca_PROG_NAME_EXEC "@simcqca_PROG_NAME_EXEC@"
 
 #define STRINGIFY2(X) #X
 #define STRINGIFY(X) STRINGIFY2(X)
