@@ -63,6 +63,12 @@ You can try it on the 4 known non-zero integer cycles (1 non-negative and 3 non-
 - `M`: runs simulation step until they are not in view anymore
 - `P`: in cycle mode will run the simulation until the period of the 3-adic/2-adic expansion of the cycle is found. Will then output in the console the initial segment and period of that expansion (little endian convention)
 - `R`: resets the simulation
+## Selectors
+In order to visually outline some pattern of your choice you can select cells on the screen:
+- `SHIFT + LEFT CLICK`: toggles (i.e. selects if not selected and unselect otherwise) the clicked cell with the current selection color
+- `SHIFT + LEFT CLICK + MOUSE MOVE`: selects all the mouse hovered cells (does not toggle, just selects)
+- `SHIFT + RIGHT/LEFT ARROW`: changes the current selection color (2 colors available at the moment)
+- `SHIFT + RIGHT CLICK`: unselects all the cell sharing the same selection color (if any) as the clicked cell
 # Advanced graphic configuration
 <a name="advanceConf"></a>
 In the file `src/config.h.in` the following constants have an impact on the rendering engine and its CPU/GPU performances. If you modify these values, they will be taken into account at your next `make`:

@@ -90,14 +90,16 @@ bool GraphicEngine::isSimulationInView() {
   return inView;
 }
 
-void GraphicEngine::toggleSelectedCell(const sf::Vector2i& cellPos) {
+void GraphicEngine::toggleSelectedCell(const sf::Vector2i& cellPos,
+                                       bool onlyAdd) {
   /**
-   * Select the cell if not selected and unselect otherwise.
+   * Select the cell if not selected and unselect otherwise. If `onlyAdd` is on
+   * the toggling will be applyied only if the cell was not already selected.
    */
-  if (selectedCells.find(cellPos) != selectedCells.end())
-    selectedCells.erase(cellPos);
-  else
+  if (selectedCells.find(cellPos) == selectedCells.end())
     selectedCells[cellPos] = SELECTED_CELLS_WHEEL[currentSelectedColor];
+  else if (!onlyAdd)
+    selectedCells.erase(cellPos);
 }
 
 void GraphicEngine::clearSelectedColor(const sf::Vector2i& cellPos) {
@@ -123,6 +125,14 @@ void GraphicEngine::handleSelectorsEvents(const sf::Event& event) {
     }
     if ((event.mouseButton.button == sf::Mouse::Right)) {
       clearSelectedColor(clickedCellPos);
+    }
+  }
+
+  if (event.type == sf::Event::MouseMoved) {
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+      sf::Vector2i hoveredCellPos = mapCoordsToWorldPos(
+          window.mapPixelToCoords(sf::Mouse::getPosition(window)));
+      toggleSelectedCell(hoveredCellPos, true);
     }
   }
 

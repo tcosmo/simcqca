@@ -40,7 +40,7 @@ static sf::Color CELL_DEFINED_COLORS[4] = {COLOR_DARKER_GREEN, sf::Color::Black,
 #define COLORED_SELECTORS_WHEEL_SIZE 2  // 2 colors for selected cells
 
 static sf::Color SELECTED_CELLS_WHEEL[2] = {sf::Color::Magenta,
-                                            sf::Color::Cyan};
+                                            sf::Color::Blue};
 
 class GraphicEngine {
   /***
@@ -123,7 +123,7 @@ class GraphicEngine {
   std::map<sf::Vector2i, sf::Color, compareWorldPositions> selectedCells;
   void renderSelectedCells();
   void handleSelectorsEvents(const sf::Event& event);
-  void toggleSelectedCell(const sf::Vector2i& cellPos);
+  void toggleSelectedCell(const sf::Vector2i& cellPos, bool onlyAdd = false);
   void clearSelectedColor(const sf::Vector2i& cellPos);
   int currentSelectedColor;
 };
