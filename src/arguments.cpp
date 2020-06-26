@@ -93,6 +93,7 @@ void parseArguments(int argc, char* argv[], Arguments& arguments) {
     exit(0);
   }
 
+  bool atLeastOne = false;
   for (int iOption = 1; iOption < 5; iOption += 1) {
     std::string shortStr = getShortOptionStr(options[iOption].shortOption);
     std::string longStr = getLongOptionStr(options[iOption].longOption);
@@ -100,6 +101,7 @@ void parseArguments(int argc, char* argv[], Arguments& arguments) {
       setInputType(
           orStr(input.getCmdOption(shortStr), input.getCmdOption(longStr)),
           arguments, static_cast<InputType>(iOption));
+      if (iOption < 4) atLeastOne = true;
     }
   }
 
@@ -119,7 +121,8 @@ void parseArguments(int argc, char* argv[], Arguments& arguments) {
     exit(0);
   }
 
-  if (input.cmdOptionExists("-h") || input.cmdOptionExists("--help")) {
+  if (input.cmdOptionExists("-h") || input.cmdOptionExists("--help") ||
+      !atLeastOne) {
     helpPage();
     exit(0);
   }

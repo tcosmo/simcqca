@@ -41,8 +41,8 @@ void World::setInputCellsCol() {
   assert(inputType == COL);
   std::vector<CellPosAndCell> updates;
   std::vector<int> base3p = base3To3p(inputStr);
-  for (int y = 1; y <= base3p.size(); y += 1) {
-    int current = base3p[y - 1];
+  for (int y = -1; y >= -1 * base3p.size(); y -= 1) {
+    int current = base3p[base3p.size() + y];
     sf::Vector2i posToAdd = {0, y};
     Cell cellToAdd = Cell(static_cast<AtomicInfo>(current / 2),
                           static_cast<AtomicInfo>(current % 2));
@@ -50,7 +50,7 @@ void World::setInputCellsCol() {
   }
 
   // Bootstrapping col mode, this is the first half defined cell
-  sf::Vector2i posToAdd = {-1, 1};
+  sf::Vector2i posToAdd = {-1, -1 * static_cast<int>(base3p.size())};
   Cell cellToAdd = {ZERO, UNDEF};
   updates.push_back(std::make_pair(posToAdd, cellToAdd));
 
