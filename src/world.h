@@ -88,10 +88,14 @@ class World {
   Poset cellsOnEdge;  // Buffer containing position of all cells on the edge of
                       // the computed world
   std::vector<sf::Vector2i> getAndFlushGraphicBuffer();
+  std::string inputStr;  // FIXME: public only required for
+                         // GraphicEngine::renderSelectedBorder()
   InputType inputType;
 
   bool constructCycleInLine;  // Construct cycle line per line instead of col
                               // per col
+
+  sf::Vector2i cyclicForwardVector;
 
  private:
   bool isSequentialSim;  // Run in sequential mode or CA-style mode?
@@ -113,7 +117,6 @@ class World {
   void cleanCellsOnEdge();
 
   // Input
-  std::string inputStr;
   void setInputCells();
 
   // Line mode
@@ -128,7 +131,6 @@ class World {
 
   // Cycle mode
   void setInputCellsCycle();
-  sf::Vector2i cyclicForwardVector;
   void computeParityVectorSpan();
   int parityVectorSpan;
   std::vector<CellPosAndCell> findCyclicUpdates(

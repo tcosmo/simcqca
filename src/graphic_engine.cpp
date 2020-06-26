@@ -57,8 +57,14 @@ bool GraphicEngine::isShiftPressed() {
          sf::Keyboard::isKeyPressed(sf::Keyboard::RShift);
 }
 
+bool GraphicEngine::isAltPressed() {
+  return sf::Keyboard::isKeyPressed(sf::Keyboard::LAlt) ||
+         sf::Keyboard::isKeyPressed(sf::Keyboard::RAlt);
+}
+
 void GraphicEngine::reset() {
   selectedCells.clear();
+  selectedBorder.clear();
   for (int iLayer = 0; iLayer < NB_LAYERS; iLayer += 1) {
     graphicCells[iLayer].clear();
     vertexArrayCell[iLayer].clear();
@@ -91,15 +97,29 @@ bool GraphicEngine::isSimulationInView() {
 }
 
 void GraphicEngine::toggleSelectedCell(const sf::Vector2i& cellPos,
-                                       bool onlyAdd) {
+                                       bool onlyAdd, bool toggleParityVector) {
   /**
    * Select the cell if not selected and unselect otherwise. If `onlyAdd` is on
    * the toggling will be applyied only if the cell was not already selected.
    */
-  if (selectedCells.find(cellPos) == selectedCells.end())
+  if (selectedCells.find(cellPos) == selectedCells.end()) {
     selectedCells[cellPos] = SELECTED_CELLS_WHEEL[currentSelectedColor];
-  else if (!onlyAdd)
+    if (toggleParityVector) {
+      assert(world.inputType == CYCLE);
+      selectedBorder[cellPos] = SELECTED_CELLS_WHEEL[currentSelectedColor];
+      selectedCells[cellPos - world.cyclicForwardVector] =
+          SELECTED_CELLS_WHEEL[currentSelectedColor];
+    }
+  } else if (!onlyAdd) {
     selectedCells.erase(cellPos);
+    if (world.inputType == CYCLE) {
+      if (selectedBorder.find(cellPos) != selectedBorder.end())
+        selectedBorder.erase(cellPos);
+      if (selectedCells.find(cellPos - world.cyclicForwardVector) !=
+          selectedCells.end())
+        selectedCells.erase(cellPos - world.cyclicForwardVector);
+    }
+  }
 }
 
 void GraphicEngine::clearSelectedColor(const sf::Vector2i& cellPos) {
@@ -121,7 +141,9 @@ void GraphicEngine::handleSelectorsEvents(const sf::Event& event) {
     sf::Vector2i clickedCellPos = mapCoordsToWorldPos(
         window.mapPixelToCoords(sf::Mouse::getPosition(window)));
     if ((event.mouseButton.button == sf::Mouse::Left)) {
-      toggleSelectedCell(clickedCellPos);
+      bool toggleParityVec = false;
+      if (world.inputType == CYCLE && isAltPressed()) toggleParityVec = true;
+      toggleSelectedCell(clickedCellPos, false, toggleParityVec);
     }
     if ((event.mouseButton.button == sf::Mouse::Right)) {
       clearSelectedColor(clickedCellPos);
@@ -245,9 +267,10 @@ void GraphicEngine::run() {
 
     if (isEdgeRendered) renderEdge();
 
-    if (isOriginRendered) renderOrigin();
-
     renderSelectedCells();
+    if (world.inputType == CYCLE) renderSelectedBorder();
+
+    if (isOriginRendered) renderOrigin();
 
     window.display();
 

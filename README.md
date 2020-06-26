@@ -69,6 +69,8 @@ In order to visually outline some pattern of your choice you can select cells on
 - `SHIFT + RIGHT/LEFT ARROW`: changes the current selection color (2 colors)
 - `SHIFT + RIGHT CLICK`: unselects all the cell sharing the same selection color (if any) as the clicked cell
 - `CTRL + LEFT CLICK + MOUSE MOVE`: selects all the cells hovered by the mouse (does not toggle, just selects)
+- `SHIFT + ALT + LEFT CLICK`: in cycle mode toggles the cell and outlines the underlying parity vector which sets the equivalence relation on the world
+
 # Advanced graphic configuration
 <a name="advanceConf"></a>
 In the file `src/config.h.in` the following constants have an impact on the rendering engine and its CPU/GPU performances. If you modify these values, they will be taken into account at your next `make`:

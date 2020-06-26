@@ -8,9 +8,31 @@ void GraphicEngine::outlineCell(const sf::Vector2i& cellPos,
   sf::RectangleShape carre(sf::Vector2f(CELL_W, CELL_H));
   carre.setOutlineColor(outlineColor);
   carre.setFillColor(sf::Color::Transparent);
-  carre.setOutlineThickness(2);
+  carre.setOutlineThickness(DEFAULT_OUTLINE_THICKNESS);
   carre.setPosition(mapWorldPosToCoords(cellPos));
   window.draw(carre);
+}
+
+void GraphicEngine::outlineCell(const sf::Vector2i& cellPos,
+                                sf::Color outlineColor,
+                                const sf::Vector2i& side) {
+  /**
+   * Outlines the border of a cell with the given `outlineColor`.
+   */
+  if (side == SOUTH) {
+    sf::RectangleShape rec(sf::Vector2f(CELL_W + DEFAULT_OUTLINE_THICKNESS,
+                                        DEFAULT_OUTLINE_THICKNESS));
+    rec.setOutlineThickness(0);
+    rec.setFillColor(outlineColor);
+    rec.setPosition(mapWorldPosToCoords(cellPos + SOUTH));
+    window.draw(rec);
+  } else if (side == EAST) {
+    sf::RectangleShape rec(sf::Vector2f(DEFAULT_OUTLINE_THICKNESS, CELL_H));
+    rec.setOutlineThickness(0);
+    rec.setFillColor(outlineColor);
+    rec.setPosition(mapWorldPosToCoords(cellPos + EAST));
+    window.draw(rec);
+  }
 }
 
 void GraphicEngine::renderOrigin() {
@@ -35,6 +57,26 @@ void GraphicEngine::renderSelectedCells() {
 
   for (const auto& posAndColor : selectedCells)
     outlineCell(posAndColor.first, posAndColor.second);
+}
+
+void GraphicEngine::renderSelectedBorder() {
+  /**
+   * In cyclic mode renders the parity vector beneath selected cells.
+   */
+  for (const auto& posAndColor : selectedBorder) {
+    sf::Vector2i currentPos = posAndColor.first - world.cyclicForwardVector;
+    // FIXME: should not have access to world inputStr, world should give
+    // a public access to the step to take.
+    for (int i = 0; i < world.inputStr.length(); i++) {
+      const char& c = world.inputStr[i];
+      outlineCell(currentPos, posAndColor.second, SOUTH);
+      currentPos += WEST;
+      if (c == '1') {
+        currentPos += SOUTH;
+        outlineCell(currentPos, posAndColor.second, EAST);
+      }
+    }
+  }
 }
 
 void GraphicEngine::initGraphicBuffers() {

@@ -14,6 +14,9 @@
 #define DEFAULT_CAM_TRANSLATION 20
 #define DEFAULT_CAM_ZOOM_STEP 1.5
 
+// When outlining a cell
+#define DEFAULT_OUTLINE_THICKNESS 2
+
 // Defining some colors!!
 #define BACKGROUND_COLOR sf::Color(0.3 * 255, 0.3 * 255, 0.3 * 255)
 #define GRID_COLOR sf::Color(0.5 * 255, 0.5 * 255, 0.5 * 255)
@@ -77,6 +80,8 @@ class GraphicEngine {
   sf::Vector2f getFontTextureCharCoords(char c, int i);
   // Rendering routines
   void outlineCell(const sf::Vector2i& cellPos, sf::Color outlineColor);
+  void outlineCell(const sf::Vector2i& cellPos, sf::Color outlineColor,
+                   const sf::Vector2i& side);
   void renderOrigin();
   void renderEdge();  // FIXME: Not optimized
 
@@ -97,6 +102,7 @@ class GraphicEngine {
   // Event routines and handlers
   bool isControlPressed();
   bool isShiftPressed();
+  bool isAltPressed();
   void handleCameraEvents(const sf::Event& event);
 
   // Graphic cells
@@ -121,9 +127,12 @@ class GraphicEngine {
 
   // Selected cells
   std::map<sf::Vector2i, sf::Color, compareWorldPositions> selectedCells;
+  std::map<sf::Vector2i, sf::Color, compareWorldPositions> selectedBorder;
   void renderSelectedCells();
+  void renderSelectedBorder();
   void handleSelectorsEvents(const sf::Event& event);
-  void toggleSelectedCell(const sf::Vector2i& cellPos, bool onlyAdd = false);
+  void toggleSelectedCell(const sf::Vector2i& cellPos, bool onlyAdd = false,
+                          bool toggleParityVector = false);
   void clearSelectedColor(const sf::Vector2i& cellPos);
   int currentSelectedColor;
 };
