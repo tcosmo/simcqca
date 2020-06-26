@@ -37,22 +37,22 @@ void GraphicEngine::handleCameraEvents(const sf::Event& event) {
         break;
 
       case sf::Keyboard::Up:
-        if (event.key.control)
+        if (event.key.control && isShiftPressed())
           cameraTranslate(0, -DEFAULT_CAM_TRANSLATION * CELL_H);
         break;
 
       case sf::Keyboard::Down:
-        if (event.key.control)
+        if (event.key.control && isShiftPressed())
           cameraTranslate(0, DEFAULT_CAM_TRANSLATION * CELL_H);
         break;
 
       case sf::Keyboard::Right:
-        if (event.key.control)
+        if (event.key.control && isShiftPressed())
           cameraTranslate(DEFAULT_CAM_TRANSLATION * CELL_W, 0);
         break;
 
       case sf::Keyboard::Left:
-        if (event.key.control)
+        if (event.key.control && isShiftPressed())
           cameraTranslate(-DEFAULT_CAM_TRANSLATION * CELL_W, 0);
         break;
     }

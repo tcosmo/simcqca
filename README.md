@@ -49,8 +49,11 @@ You can try it on the 4 known non-zero integer cycles (1 non-negative and 3 non-
 - `ESC`: quit
 - `F`: outputs some performance information (FPS, vertex array size, etc..)
 ## Camera
+
+We recommend the use of an **optical mouse** to manage the camera as functions of the trackpad are not supported and keyboard camera controls potentially cumbersome to use.
+
 - `C`: centers the view on the origin
-- `CTRL + ARROWS`: translates the view
+- `CTRL + SHIFT + ARROWS`: translates the view
 - `MOUSE WHEEL BUTTON`: translates the view following the mouse
 - `CTRL + MOUSE WHEEL UP/DOWN` or `CTRL + A/Z`: zoom in and out
 ## Rendering
