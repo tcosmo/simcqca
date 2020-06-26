@@ -249,3 +249,19 @@ void World::reset() {
   cellGraphicBuffer.clear();
   setInputCells();
 }
+
+std::string rotateStr(std::string toRotate, int offset) {
+  std::string toRet = toRotate;
+  for (int i = 0; i < toRotate.size(); i += 1)
+    toRet[i] = toRotate[(toRotate.size() + offset + i) % (toRotate.size())];
+  return toRet;
+}
+
+void World::rotate(int direction) {
+  /**
+   * In cycle mode rotates the input parity vector.
+   */
+  assert(inputType == CYCLE);
+  inputStr = rotateStr(inputStr, direction);
+  reset();
+}

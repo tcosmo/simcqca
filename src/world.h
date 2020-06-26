@@ -81,6 +81,7 @@ class World {
   bool isCycleDetected();    // For cycle mode
   bool doesCellExists(const sf::Vector2i& cellPos);
   void reset();
+  void rotate(int direction);
   void printCycleInformation();
 
   std::map<sf::Vector2i, Cell, compareWorldPositions>

@@ -231,6 +231,22 @@ void GraphicEngine::run() {
             while (isSimulationInView()) world.next();
             break;
 
+          case sf::Keyboard::Right:
+            if (isAltPressed() && world.inputType == CYCLE) {
+              reset();
+              world.rotate(1);
+              while (isSimulationInView()) world.next();
+            }
+            break;
+
+          case sf::Keyboard::Left:
+            if (isAltPressed() && world.inputType == CYCLE) {
+              reset();
+              world.rotate(-1);
+              while (isSimulationInView()) world.next();
+            }
+            break;
+
           case sf::Keyboard::P:
             if (world.inputType == CYCLE) {
               while (!world.isCycleDetected()) world.next();
