@@ -63,8 +63,8 @@ You can try it on the 4 known non-zero integer cycles (1 non-negative and 3 non-
 - `M`: runs simulation step until they are not in view anymore
 - `R`: resets the simulation
 ### Specific to cycle mode
-- `ALT + LEFT ARROW/RIGHT ARROW`: rotates the input parity vector to the left/right and re-runs the simulation until it is not in view anymore
 - `P`: will run the simulation until the period of the 3-adic/2-adic expansion of the cycle is found. Will then output in the console the initial segment and period of that expansion (both little and big endian conventions)
+- `ALT + LEFT ARROW/RIGHT ARROW`: rotates the input parity vector to the left/right and re-runs the simulation until it is not in view anymore
 ## Selectors
 In order to visually outline some pattern of your choice you can select cells on the screen:
 - `SHIFT + LEFT CLICK`: toggles (i.e. selects if not selected and unselect otherwise) the clicked cell with the current selection color

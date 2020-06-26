@@ -41,8 +41,9 @@ struct InputOption {
 };
 
 static std::vector<InputOption> options = {
-    {"sequential", 's', NULL,
-     "Runs sequential simulation instead of CA-style simulation"},
+    {"seq", 's', NULL,
+     "Not implemented yet: runs sequential simulation instead of CA-style "
+     "simulation"},
     {"line", 'l', "INPUT BASE 2", "Inputs a binary line to the process"},
     {"col", 'c', "INPUT BASE 3",
      "Inputs a ternary column to the process. Base 3 -> base3' conversion is "

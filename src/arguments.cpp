@@ -85,6 +85,12 @@ void parseArguments(int argc, char* argv[], Arguments& arguments) {
   if (input.cmdOptionExists(getShortOptionStr(options[0].shortOption)) ||
       input.cmdOptionExists(getLongOptionStr(options[0].longOption))) {
     arguments.isSequential = true;
+    printf(
+        "The sequential simulation of the CQCA is not implemented yet. Refer "
+        "to old project `nanopipes` (extremely CPU intensive and not well "
+        "documented: https://github.com/tcosmo/nanopipes)"
+        "if you wan to see what it loos like. Abort. Sorry :(\n");
+    exit(0);
   }
 
   for (int iOption = 1; iOption < 5; iOption += 1) {
