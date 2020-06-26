@@ -168,7 +168,7 @@ void World::printCycleInformation() {
     printf("3-adic ");
   else
     printf("2-adic ");
-  printf("expansion (little endian convention):\n");
+  printf("expansion:\n");
 
   std::string initSeg = "";
   std::string period = "";
@@ -200,6 +200,16 @@ void World::printCycleInformation() {
     }
   }
 
+  printf("\nBig endian convention\n");
+  printf("=====================\n");
+
+  printf("Initial segment: %s\n", initSeg.c_str());
+  printf("Period: %s\n", period.c_str());
+  printf("Number: %s (%s)^inf\n\n", initSeg.c_str(), period.c_str());
+
+  printf("\nLittle endian convention\n");
+  printf("========================\n");
+
   // To enforce little endian
   std::reverse(initSeg.begin(), initSeg.end());
   std::reverse(period.begin(), period.end());
@@ -208,7 +218,7 @@ void World::printCycleInformation() {
   printf("Period: %s\n", period.c_str());
   printf("Number: (%s)^inf %s\n\n", period.c_str(), initSeg.c_str());
   printf(
-      "Note that: due to the way it is detected, the initial segment can "
+      "\nNote that: due to the way it is detected, the initial segment can "
       "contain part of the period and that the period is not necessarily "
-      "minimal\n");
+      "minimal.\n");
 }
