@@ -88,8 +88,8 @@ void parseArguments(int argc, char* argv[], Arguments& arguments) {
     printf(
         "The sequential simulation of the CQCA is not implemented yet. Refer "
         "to old project `nanopipes` (extremely CPU intensive and not well "
-        "documented: https://github.com/tcosmo/nanopipes)"
-        "if you wan to see what it loos like. Abort. Sorry :(\n");
+        "documented: https://github.com/tcosmo/nanopipes) "
+        "if you want to see what it looks like. Abort. Sorry :(\n");
     exit(0);
   }
 
