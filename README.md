@@ -67,8 +67,8 @@ You can try it on the 4 known non-zero integer cycles (1 non-negative and 3 non-
 In order to visually outline some pattern of your choice you can select cells on the screen:
 - `SHIFT + LEFT CLICK`: toggles (i.e. selects if not selected and unselect otherwise) the clicked cell with the current selection color
 - `SHIFT + RIGHT/LEFT ARROW`: changes the current selection color (2 colors)
-- `SHIFT + LEFT CLICK + MOUSE MOVE`: selects all the cells hovered by the mouse (does not toggle, just selects)
 - `SHIFT + RIGHT CLICK`: unselects all the cell sharing the same selection color (if any) as the clicked cell
+- `CTRL + LEFT CLICK + MOUSE MOVE`: selects all the cells hovered by the mouse (does not toggle, just selects)
 # Advanced graphic configuration
 <a name="advanceConf"></a>
 In the file `src/config.h.in` the following constants have an impact on the rendering engine and its CPU/GPU performances. If you modify these values, they will be taken into account at your next `make`:

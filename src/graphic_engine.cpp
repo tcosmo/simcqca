@@ -129,7 +129,7 @@ void GraphicEngine::handleSelectorsEvents(const sf::Event& event) {
   }
 
   if (event.type == sf::Event::MouseMoved) {
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && isControlPressed()) {
       sf::Vector2i hoveredCellPos = mapCoordsToWorldPos(
           window.mapPixelToCoords(sf::Mouse::getPosition(window)));
       toggleSelectedCell(hoveredCellPos, true);
@@ -167,7 +167,7 @@ void GraphicEngine::run() {
     while (window.pollEvent(event)) {
       handleCameraEvents(event);
 
-      if (isShiftPressed()) handleSelectorsEvents(event);
+      if (isShiftPressed() || isControlPressed()) handleSelectorsEvents(event);
 
       if (event.type == sf::Event::KeyPressed) {
         switch (event.key.code) {
