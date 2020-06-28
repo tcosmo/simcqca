@@ -11,8 +11,9 @@ void setInputType(const std::string& arg, Arguments& arguments,
                   InputType inputType) {
   static const char* modeName[5] = {"None", "line", "col", "border", "cycle"};
   if (arg.size() == 0) {
-    printf("Input for mode `%s` should not be empty. Abort.",
+    printf("Input for mode `%s` should not be empty. Abort.\n",
            modeName[inputType]);
+    exit(0);
     return;
   }
   if (arguments.inputType != NONE) {
@@ -101,6 +102,12 @@ void parseArguments(int argc, char* argv[], Arguments& arguments) {
       setInputType(
           orStr(input.getCmdOption(shortStr), input.getCmdOption(longStr)),
           arguments, static_cast<InputType>(iOption));
+      if (atLeastOne) {
+        printf(
+            "Only one of the modes line/col/border/cycle can be launched at a "
+            "time. Abort.\n");
+        exit(0);
+      }
       atLeastOne = true;
     }
   }
