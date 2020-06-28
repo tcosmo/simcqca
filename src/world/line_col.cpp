@@ -57,44 +57,6 @@ void World::setInputCellsCol() {
   applyUpdates(updates);
 }
 
-std::vector<CellPosAndCell> World::findNonLocalUpdates() {
-  /**
-   * Finding candidate cells for applying the non-local rule of the 2D CQCA.
-   */
-  std::vector<CellPosAndCell> toRet;
-  for (const sf::Vector2i& cellPos : cellsOnEdge) {
-    assert(doesCellExists(cellPos) &&
-           cells[cellPos].getStatus() == HALF_DEFINED);
-    if (cells[cellPos].bit == ONE) {
-      bool lastOneOnLine = true;
-      sf::Vector2i currPos = cellPos + EAST;
-      while (doesCellExists(currPos)) {
-        if (cells[currPos].bit == ONE) lastOneOnLine = false;
-        currPos += EAST;
-      }
-      if (lastOneOnLine) {
-        if (!doesCellExists(cellPos + EAST) ||
-            cells[cellPos + EAST].getStatus() == HALF_DEFINED) {
-          toRet.push_back(
-              std::make_pair(cellPos + EAST, Cell(ZERO, ONE, true)));
-          sf::Vector2i newPos = cellPos + EAST + EAST;
-          while (doesCellExists(newPos)) {
-            toRet.push_back(std::make_pair(newPos, Cell(ZERO, ZERO)));
-            newPos += EAST;
-          }
-        }
-      }
-    }
-  }
-
-  return toRet;
-}
-
-void World::nextNonLocal() {
-  auto nonLocalUpdates = findNonLocalUpdates();
-  applyUpdates(nonLocalUpdates);
-}
-
 void World::manageEdgeCases(std::vector<CellPosAndCell>& toRet,
                             const sf::Vector2i& cellPos,
                             const Cell& updatedCell) {

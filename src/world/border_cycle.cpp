@@ -22,11 +22,11 @@ void World::setInputCellsBorder() {
       exit(0);
     }
     if (parityBit == '0') {
-      Cell cellToAdd = {ZERO, ZERO};
+      Cell cellToAdd = {ZERO, UNDEF};
       updates.push_back(std::make_pair(currPos, cellToAdd));
       currPos += WEST;
     } else {
-      Cell cellToAdd = {ZERO, ONE, true};
+      Cell cellToAdd = {ONE, UNDEF};
       updates.push_back(std::make_pair(currPos, cellToAdd));
       currPos += SOUTH + WEST;
     }

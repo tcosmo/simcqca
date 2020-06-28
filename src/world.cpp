@@ -135,7 +135,6 @@ void World::nextLocal() {
 
   // In BORDER/CYCLE mode, the local rule is
   // carry propagation followed by backward deduction
-  // note that in this mode the non local rule will never be applied
   if (inputType == BORDER || inputType == CYCLE) {
     auto carryPropUpdates = findCarryPropUpdates();
     auto backwardDeductionUpdates = findBackwardDeductionUpdates();
@@ -155,12 +154,49 @@ void World::nextLocal() {
 }
 
 void World::next() {
-  // In BORDER or CYCLE mode non local steps are useless
-  // As bootstrapping events are given by the parity vector
-  if (inputType == LINE || inputType == COL) {
-    nextNonLocal();
-  }
+
+  nextNonLocal();
   nextLocal();
+}
+
+std::vector<CellPosAndCell> World::findNonLocalUpdates() {
+  /**
+   * Finding candidate cells for applying the non-local rule of the 2D CQCA.
+   */
+  std::vector<CellPosAndCell> toRet;
+  for (const sf::Vector2i& cellPos : cellsOnEdge) {
+    if (inputType == CYCLE && !constructCycleInLine)
+      if(cellPos.x == ORIGIN_BORDER_MODE.x)
+        continue;
+    assert(doesCellExists(cellPos));
+    if (cells[cellPos].bit == ONE) {
+      bool lastOneOnLine = true;
+      sf::Vector2i currPos = cellPos + EAST;
+      while (doesCellExists(currPos)) {
+        if (cells[currPos].bit == ONE) lastOneOnLine = false;
+        currPos += EAST;
+      }
+      if (lastOneOnLine) {
+        if (!doesCellExists(cellPos + EAST) ||
+            cells[cellPos + EAST].getStatus() == HALF_DEFINED) {
+          toRet.push_back(
+              std::make_pair(cellPos + EAST, Cell(ZERO, ONE, true)));
+          sf::Vector2i newPos = cellPos + EAST + EAST;
+          while (doesCellExists(newPos)) {
+            toRet.push_back(std::make_pair(newPos, Cell(ZERO, ZERO)));
+            newPos += EAST;
+          }
+        }
+      }
+    }
+  }
+
+  return toRet;
+}
+
+void World::nextNonLocal() {
+  auto nonLocalUpdates = findNonLocalUpdates();
+  applyUpdates(nonLocalUpdates);
 }
 
 bool World::doesCellExists(const sf::Vector2i& cellPos) {

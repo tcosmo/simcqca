@@ -101,7 +101,7 @@ void parseArguments(int argc, char* argv[], Arguments& arguments) {
       setInputType(
           orStr(input.getCmdOption(shortStr), input.getCmdOption(longStr)),
           arguments, static_cast<InputType>(iOption));
-      if (iOption < 4) atLeastOne = true;
+      atLeastOne = true;
     }
   }
 
