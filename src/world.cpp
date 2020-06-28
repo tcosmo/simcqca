@@ -154,7 +154,6 @@ void World::nextLocal() {
 }
 
 void World::next() {
-
   nextNonLocal();
   nextLocal();
 }
@@ -166,8 +165,7 @@ std::vector<CellPosAndCell> World::findNonLocalUpdates() {
   std::vector<CellPosAndCell> toRet;
   for (const sf::Vector2i& cellPos : cellsOnEdge) {
     if (inputType == CYCLE && !constructCycleInLine)
-      if(cellPos.x == ORIGIN_BORDER_MODE.x)
-        continue;
+      if (cellPos.x == ORIGIN_BORDER_MODE.x) continue;
     assert(doesCellExists(cellPos));
     if (cells[cellPos].bit == ONE) {
       bool lastOneOnLine = true;
