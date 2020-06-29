@@ -159,6 +159,9 @@ void World::nextLocal() {
       cyclicUpdates = findCyclicUpdates(backwardDeductionUpdates);
       applyUpdates(cyclicUpdates);
     }
+    // Tweak to get the right amount of 0s on the south
+    auto tweakUpdates = findTweakSouthBorderUpdates();
+    applyUpdates(tweakUpdates);
   }
 }
 
@@ -214,9 +217,9 @@ std::vector<CellPosAndCell> World::findNonLocalUpdates() {
                                              Cell(ZERO, ZERO)));
             newPos += EAST;
           }
-          
+
           if (inputType == CYCLE) {
-            while(doesCellExists(newPos + cyclicForwardVector)) {
+            while (doesCellExists(newPos + cyclicForwardVector)) {
               toRet.push_back(std::make_pair(newPos + cyclicForwardVector,
                                              Cell(ZERO, ZERO)));
               newPos += EAST;
@@ -233,6 +236,11 @@ std::vector<CellPosAndCell> World::findNonLocalUpdates() {
 void World::nextNonLocal() {
   auto nonLocalUpdates = findNonLocalUpdates();
   applyUpdates(nonLocalUpdates);
+
+  if (inputType == CYCLE) {
+    auto cyclicUpdates = findCyclicUpdates(nonLocalUpdates);
+    applyUpdates(cyclicUpdates);
+  }
 }
 
 bool World::doesCellExists(const sf::Vector2i &cellPos) {

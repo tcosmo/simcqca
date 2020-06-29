@@ -146,4 +146,6 @@ private:
   std::vector<sf::Vector2i> cellGraphicBuffer; // Cells that are not drawn yet
   std::pair<int, int> indexesDetectedCycle;    // Contains the information about
                                                // the detected cycle
+  std::vector<CellPosAndCell>
+  findTweakSouthBorderUpdates(); // FIXME: do this more cleanly
 };

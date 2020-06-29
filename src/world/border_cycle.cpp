@@ -231,3 +231,31 @@ void World::printCycleInformation() {
          "contain part of the period and that the period is not necessarily "
          "minimal.\n");
 }
+
+std::vector<CellPosAndCell> World::findTweakSouthBorderUpdates() {
+  /*
+   * Because there is no forward deduction in cycle/border mode
+   * this step is needed to add some 0s that might be missing
+   * south of the border.
+   * In the paper that will be included in the non local rule.
+   */
+  static bool alreadyFound = false;
+
+  std::vector<CellPosAndCell> toRet;
+
+  if (alreadyFound)
+    return toRet;
+
+  for (const auto &cellPos : cellsOnEdge) {
+    assert(doesCellExists(cellPos));
+    if (cells[cellPos].bit == 0 && !doesCellExists(cellPos + EAST)) {
+      if (doesCellExists(cellPos + NORTH + EAST) &&
+          cells[cellPos + NORTH + EAST].bit == ONE) {
+        alreadyFound = true;
+        toRet.push_back(std::make_pair(cellPos + EAST, Cell({ZERO, ZERO})));
+      }
+    }
+  }
+
+  return toRet;
+}
