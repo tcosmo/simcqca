@@ -173,7 +173,7 @@ void World::printCycleInformation() {
   std::string initSeg = "";
   std::string period = "";
   if (!constructCycleInLine) {
-    for (int y = ORIGIN_BORDER_MODE.y - 1; y >= -1 * indexesDetectedCycle.first;
+    for (int y = ORIGIN_BORDER_MODE.y; y >= -1 * indexesDetectedCycle.first;
          y -= 1) {
       sf::Vector2i cellPos = {ORIGIN_BORDER_MODE.x, y};
       assert(doesCellExists(cellPos) && cells[cellPos].getStatus() == DEFINED);
@@ -186,7 +186,7 @@ void World::printCycleInformation() {
       period += cells[cellPos].sum() + '0';
     }
   } else {
-    for (int x = ORIGIN_BORDER_MODE.x - 1; x >= -1 * indexesDetectedCycle.first;
+    for (int x = ORIGIN_BORDER_MODE.x; x >= -1 * indexesDetectedCycle.first;
          x -= 1) {
       sf::Vector2i cellPos = {x, ORIGIN_BORDER_MODE.y};
       assert(doesCellExists(cellPos) && cells[cellPos].getStatus() == DEFINED);

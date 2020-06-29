@@ -30,6 +30,7 @@ In Line mode, the input is a binary string. Each successive line corresponds to 
 ## Column mode
 In Column mode, the input is a ternary string. Each successive column corresponds to a new iteration of the Collata process expressed in ternary.
 - `./simcqca --col 12210000100011100110111112000`
+- `./simcqca --col 110012201`
 ## Border mode
 In Border mode, the input is a parity vector. The automaton reconstructs the corresponding input line.
 - `./simcqca --border 1100000000000000011111000101011011`

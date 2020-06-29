@@ -55,6 +55,9 @@ void GraphicEngine::handleCameraEvents(const sf::Event& event) {
         if (event.key.control && isShiftPressed())
           cameraTranslate(-DEFAULT_CAM_TRANSLATION * CELL_W, 0);
         break;
+
+      default:
+        break;
     }
   }
 

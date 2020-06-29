@@ -169,6 +169,9 @@ void GraphicEngine::handleSelectorsEvents(const sf::Event& event) {
         currentSelectedColor -= 1;
         currentSelectedColor %= COLORED_SELECTORS_WHEEL_SIZE;
         break;
+
+      default:
+        break;
     }
   }
 }
