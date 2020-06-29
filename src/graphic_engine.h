@@ -69,6 +69,8 @@ private:
   bool isEdgeRendered;
   bool isParityVectorRendered;
 
+  void outlineResult();
+
   // Text attribute and routines
   sf::Font defaultFont;
   bool isTextRendered, isTextForcedDisabled;

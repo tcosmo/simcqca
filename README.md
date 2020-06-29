@@ -31,13 +31,17 @@ In Line mode, the input is a binary string. Each successive line corresponds to 
 In Column mode, the input is a ternary string. Each successive column corresponds to a new iteration of the Collata process expressed in ternary.
 - `./simcqca --col 12210000100011100110111112000`
 - `./simcqca --col 110012201`
+- `./simcqca --col 0001001010010222110010`
 ## Border mode
 In Border mode, the input is a parity vector. The automaton reconstructs the corresponding input line.
 - `./simcqca --border 1100000000000000011111000101011011`
+- `./simcqca --border 0011000`
 ## Cycle mode
 In cycle mode, the input is a parity vector supposed to be the support of a cycle. The automaton reconstructs the 3-adic expansion of the corresponding rational cycling over this parity vector. If the option `--cycle-line` is given, the automaton will reconstruct the 2-adic expansion of the same number (rational Collatz cyclic numbers are both 2-adic and 3-adic integers).
 - `./simcqca --cycle 1000110`
 - `./simcqca --cycle 1000110 --cycle-line`
+- `./simcqca --cycle 00010101100`
+- `./simcqca --cycle 00010101100 --cycle-line`
 ### Integer cycles
 You can try it on the 4 known non-zero integer cycles (1 non-negative and 3 non-positive):
 - `./simcqca --cycle 101010` : constructs the cycle (1,2,1,...)

@@ -77,6 +77,22 @@ public:
     setInputCells();
   }
 
+  static std::string base32(const std::string &base3) {
+    /**
+     * Performs base 3 -> base 2 conversion.
+     */
+    int x = 0;
+    for (const auto &c : base3)
+      x = 3 * x + (c - '0');
+    std::string base2;
+    while (x) {
+      base2.push_back('0' + (x % 2));
+      x /= 2;
+    }
+    std::reverse(base2.begin(), base2.end());
+    return base2;
+  }
+
   void next();              // Next simulation step
   bool isComputationDone(); // For border mode
   bool isCycleDetected();   // For cycle mode
