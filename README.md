@@ -1,5 +1,8 @@
 # What is SimCQCA
 
+![The Collatz process embeds a base conversion algorithm](https://github.com/tcosmo/simcqca/blob/master/base_conversion.png?raw=true)
+
+
 `simcqca` is a simulator for the 2D Collatz Quasi Cellular Automaton. Please refer to the paper and the following [Example section](#examples) for more details: ... 
 
 # Build SimCQCA
@@ -72,8 +75,10 @@ We recommend the use of an **optical mouse** to manage the camera as functions o
 - `N`: next simulation step (Cellular Automaton-like evolution or sequential step depending on `--seq` flag)
 - `M`: runs simulation step until they are not in view anymore
 - `R`: resets the simulation
+- `P`:    
+    - In line/column modes will outline one instance of the base conversion result in the 2D CQCA. The outlined column represents a number in base 3' (most significant trit on top) and thus in base 3 by mapping each cell (bit,carry) as follows: (0,0) maps to the trit 0, (0,1) maps to the trit 1, (1,0) maps to the trit 1 and (1,1) maps to the trit 2. The outlined line represents a number in base 2 (most significant bit to the left) by simply keeping each cell's bit and ignoring carries. Those two numbers are the same.
+    - In cycle mode, pressing `P` will run the simulation until the period of the 3-adic/2-adic expansion of the cycle is found. Will then output in the console the initial segment and period of that expansion (both little and big endian conventions).
 ### Specific to cycle mode
-- `P`: will run the simulation until the period of the 3-adic/2-adic expansion of the cycle is found. Will then output in the console the initial segment and period of that expansion (both little and big endian conventions)
 - `ALT + LEFT ARROW/RIGHT ARROW`: rotates the input parity vector to the left/right and re-runs the simulation until it is not in view anymore
 ## Selectors
 In order to visually outline some pattern of your choice you can select cells on the screen:
