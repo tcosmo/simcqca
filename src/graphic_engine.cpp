@@ -275,9 +275,9 @@ void GraphicEngine::outlineResult() {
   for (const auto &c : constructedBase2)
     z2 = 2 * z2 + (c - '0');
 
-  printf("The outlined column is a base 3' encoding of: %s = %d\n",
+  printf("The outlined vertical column is a base 3' encoding of: %s = %d\n",
          base3.c_str(), z3);
-  printf("The outlined line is a base 2 encoding of: %s = %d\n",
+  printf("The outlined horizontal row is a base 2 encoding of: %s = %d\n",
          constructedBase2.c_str(), z2);
   printf("Both represent the number: %d\n\n", z3);
   // while (isSimulationInView())
@@ -310,14 +310,17 @@ void GraphicEngine::run() {
           break;
 
         case sf::Keyboard::A:
-          printf("FPS: %d\n", currentFPS);
-          printf("Vertex array (Background): %ld x O(%d)\n",
-                 graphicCells[CELL_BACKGROUND].size(), VERTEX_ARRAY_MAX_SIZE);
-          printf("Number of graphic cells (quads): %d\n",
-                 totalGraphicBufferSize());
-          printf("Number of cells on edge: %ld\n", world.cellsOnEdge.size());
-          printf("Current zoom factor: %lf\n", currentZoom);
-          break;
+          // Not to clash with ctrl + A
+          if (!isControlPressed() {
+            printf("FPS: %d\n", currentFPS);
+            printf("Vertex array (Background): %ld x O(%d)\n",
+                   graphicCells[CELL_BACKGROUND].size(), VERTEX_ARRAY_MAX_SIZE);
+            printf("Number of graphic cells (quads): %d\n",
+                   totalGraphicBufferSize());
+            printf("Number of cells on edge: %ld\n", world.cellsOnEdge.size());
+            printf("Current zoom factor: %lf\n", currentZoom);
+            break;
+          }
 
         case sf::Keyboard::O:
           isOriginRendered = !isOriginRendered;
