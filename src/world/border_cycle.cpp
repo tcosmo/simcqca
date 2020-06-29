@@ -10,6 +10,7 @@ void World::setInputCellsBorder() {
    * Set up the initial configuration in Border mode.
    */
   assert(inputType == BORDER || inputType == CYCLE);
+  alreadyTweaked = false;
 
   std::vector<CellPosAndCell> updates;
   sf::Vector2i currPos = ORIGIN_BORDER_MODE;
@@ -239,11 +240,10 @@ std::vector<CellPosAndCell> World::findTweakSouthBorderUpdates() {
    * south of the border.
    * In the paper that will be included in the non local rule.
    */
-  static bool alreadyFound = false;
 
   std::vector<CellPosAndCell> toRet;
 
-  if (alreadyFound)
+  if (alreadyTweaked)
     return toRet;
 
   for (const auto &cellPos : cellsOnEdge) {
@@ -251,8 +251,11 @@ std::vector<CellPosAndCell> World::findTweakSouthBorderUpdates() {
     if (cells[cellPos].bit == 0 && !doesCellExists(cellPos + EAST)) {
       if (doesCellExists(cellPos + NORTH + EAST) &&
           cells[cellPos + NORTH + EAST].bit == ONE) {
-        alreadyFound = true;
-        toRet.push_back(std::make_pair(cellPos + EAST, Cell({ZERO, ZERO})));
+        alreadyTweaked = true;
+        if (cells[cellPos].getStatus() == DEFINED)
+          toRet.push_back(std::make_pair(cellPos + EAST, Cell({ZERO, ZERO})));
+        else
+          toRet.push_back(std::make_pair(cellPos + EAST, Cell({ZERO, UNDEF})));
       }
     }
   }

@@ -148,4 +148,5 @@ private:
                                                // the detected cycle
   std::vector<CellPosAndCell>
   findTweakSouthBorderUpdates(); // FIXME: do this more cleanly
+  bool alreadyTweaked;
 };
