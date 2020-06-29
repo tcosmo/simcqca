@@ -1,6 +1,6 @@
 #include "../graphic_engine.h"
 
-void GraphicEngine::outlineCell(const sf::Vector2i& cellPos,
+void GraphicEngine::outlineCell(const sf::Vector2i &cellPos,
                                 sf::Color outlineColor) {
   /**
    * Outlines the border of a cell with the given `outlineColor`.
@@ -13,9 +13,9 @@ void GraphicEngine::outlineCell(const sf::Vector2i& cellPos,
   window.draw(carre);
 }
 
-void GraphicEngine::outlineCell(const sf::Vector2i& cellPos,
+void GraphicEngine::outlineCell(const sf::Vector2i &cellPos,
                                 sf::Color outlineColor,
-                                const sf::Vector2i& side) {
+                                const sf::Vector2i &side) {
   /**
    * Outlines the border of a cell with the given `outlineColor`.
    */
@@ -46,7 +46,7 @@ void GraphicEngine::renderEdge() {
   /**
    * Outline each cells on the edge of the world.
    */
-  for (const auto& cellPos : world.cellsOnEdge)
+  for (const auto &cellPos : world.cellsOnEdge)
     outlineCell(cellPos, COLOR_DARKER_GREEN);
 }
 
@@ -55,7 +55,7 @@ void GraphicEngine::renderSelectedCells() {
    * Renders all cells which are being selected at the moment.
    */
 
-  for (const auto& posAndColor : selectedCells)
+  for (const auto &posAndColor : selectedCells)
     outlineCell(posAndColor.first, posAndColor.second);
 }
 
@@ -63,12 +63,12 @@ void GraphicEngine::renderSelectedBorder() {
   /**
    * In cyclic mode renders the parity vector beneath selected cells.
    */
-  for (const auto& posAndColor : selectedBorder) {
+  for (const auto &posAndColor : selectedBorder) {
     sf::Vector2i currentPos = posAndColor.first - world.cyclicForwardVector;
     // FIXME: should not have access to world inputStr, world should give
     // a public access to the step to take.
     for (int i = 0; i < world.inputStr.length(); i++) {
-      const char& c = world.inputStr[i];
+      const char &c = world.inputStr[i];
       outlineCell(currentPos, posAndColor.second, SOUTH);
       currentPos += WEST;
       if (c == '1') {
@@ -104,20 +104,22 @@ int GraphicEngine::totalGraphicBufferSize() {
 
   int toRet = 0;
   for (int iLayer = 1; iLayer < NB_LAYERS; iLayer += 1)
-    for (const auto& buffer : graphicCells[CELL_BACKGROUND])
+    for (const auto &buffer : graphicCells[CELL_BACKGROUND])
       toRet += buffer.getVertexCount();
 
   return toRet;
 }
 
-std::vector<sf::Vertex> GraphicEngine::getCellBackgroundVertices(
-    const sf::Vector2i& cellPos, const Cell& cell) {
+std::vector<sf::Vertex>
+GraphicEngine::getCellBackgroundVertices(const sf::Vector2i &cellPos,
+                                         const Cell &cell) {
   /**
    * Constructs the vertices for the background of a cell (layer
    * `CELL_BACKGROUND`).
    */
   sf::Color color = BACKGROUND_COLOR_HALF_DEFINED;
-  if (cell.getStatus() == DEFINED) color = BACKGROUND_COLOR_DEFINED;
+  if (cell.getStatus() == DEFINED)
+    color = BACKGROUND_COLOR_DEFINED;
 
   std::vector<sf::Vertex> toRet;
   for (int i = 0; i < 4; i += 1) {
@@ -134,14 +136,16 @@ std::vector<sf::Vertex> GraphicEngine::getCellBackgroundVertices(
   return toRet;
 }
 
-std::vector<sf::Vertex> GraphicEngine::getCellColorVertices(
-    const sf::Vector2i& cellPos, const Cell& cell) {
+std::vector<sf::Vertex>
+GraphicEngine::getCellColorVertices(const sf::Vector2i &cellPos,
+                                    const Cell &cell) {
   /**
    * Constructs the vertices for the color of a cell corresponding to the symbol
    * it holds when it is DEFINED (layer `CELL_COLOR`).
    */
   sf::Color color = BACKGROUND_COLOR_HALF_DEFINED;
-  if (cell.getStatus() == DEFINED) color = CELL_DEFINED_COLORS[cell.index()];
+  if (cell.getStatus() == DEFINED)
+    color = CELL_DEFINED_COLORS[cell.index()];
 
   std::vector<sf::Vertex> toRet;
   for (int i = 0; i < 4; i += 1) {
@@ -178,8 +182,9 @@ sf::Vector2f GraphicEngine::getFontTextureCharCoords(char c, int i) {
   return topLeft + textureVec[i];
 }
 
-std::vector<sf::Vertex> GraphicEngine::getCellTextVertices(
-    const sf::Vector2i& cellPos, const Cell& cell) {
+std::vector<sf::Vertex>
+GraphicEngine::getCellTextVertices(const sf::Vector2i &cellPos,
+                                   const Cell &cell) {
   /**
    * Constructs the vertices for the text inside a cell (layer `CELL_TEXT`).
    */
@@ -195,21 +200,25 @@ std::vector<sf::Vertex> GraphicEngine::getCellTextVertices(
   toRet[3].position = mapWorldPosToCoords(cellPos + SOUTH);
 
   // Setting color
-  for (int i = 0; i < 4; i += 1) toRet[i].color = sf::Color::White;
+  for (int i = 0; i < 4; i += 1)
+    toRet[i].color = sf::Color::White;
 
   // Tweaking position
-  for (int i = 0; i < 4; i += 1) toRet[i].position.y += 4;
+  for (int i = 0; i < 4; i += 1)
+    toRet[i].position.y += 4;
   // Tweaking scale
-  for (int i = 0; i < 2; i += 1) toRet[i].position.y += 3;
+  for (int i = 0; i < 2; i += 1)
+    toRet[i].position.y += 3;
 
   for (int i = 0; i < 4; i += 1)
     if (!cell.bit)
       toRet[i].texCoords =
-          getFontTextureCharCoords('O', i);  // That's a O not a 0
+          getFontTextureCharCoords('O', i); // That's a O not a 0
     else
       toRet[i].texCoords = getFontTextureCharCoords('1', i);
   // Carry
-  if (cell.carry == UNDEF || cell.carry == ZERO) return toRet;
+  if (cell.carry == UNDEF || cell.carry == ZERO)
+    return toRet;
 
   toRet[4].position = mapWorldPosToCoords(cellPos);
   toRet[5].position = mapWorldPosToCoords(cellPos + EAST);
@@ -218,8 +227,10 @@ std::vector<sf::Vertex> GraphicEngine::getCellTextVertices(
 
   // Setting color
   sf::Color carryColor = sf::Color::White;
-  if (cell.isBootstrappingCarry) carryColor = COLOR_SPECIAL_CARRY;
-  for (int i = 4; i < 8; i += 1) toRet[i].color = carryColor;
+  if (cell.isBootstrappingCarry)
+    carryColor = COLOR_SPECIAL_CARRY;
+  for (int i = 4; i < 8; i += 1)
+    toRet[i].color = carryColor;
 
   // Tweaking position
   for (int i = 4; i < 8; i += 1) {
@@ -233,8 +244,8 @@ std::vector<sf::Vertex> GraphicEngine::getCellTextVertices(
   return toRet;
 }
 
-void GraphicEngine::appendOrUpdateCell(const sf::Vector2i& cellPos,
-                                       const Cell& cell) {
+void GraphicEngine::appendOrUpdateCell(const sf::Vector2i &cellPos,
+                                       const Cell &cell) {
   /**
    * Adding or modifying a cell in the graphic buffer.
    */
@@ -259,7 +270,7 @@ void GraphicEngine::appendOrUpdateCell(const sf::Vector2i& cellPos,
   }
   // Fill background, color and text
   for (int iLayer = 0; iLayer < NB_LAYERS; iLayer += 1) {
-    const auto& arrayAndPos = vertexArrayCell[iLayer][cellPos];
+    const auto &arrayAndPos = vertexArrayCell[iLayer][cellPos];
     for (int iVertex = 0; iVertex < allVertices[iLayer].size(); iVertex += 1) {
       if (!append)
         graphicCells[iLayer][arrayAndPos.first][arrayAndPos.second + iVertex] =
@@ -271,7 +282,7 @@ void GraphicEngine::appendOrUpdateCell(const sf::Vector2i& cellPos,
   }
 }
 
-sf::VertexArray& GraphicEngine::currentBuffer(int iLayer) {
+sf::VertexArray &GraphicEngine::currentBuffer(int iLayer) {
   /**
    * Returns the graphic buffer currently in use on layer `iLayer`.
    */
@@ -292,9 +303,19 @@ void GraphicEngine::updateGraphicCells() {
    * Updates the graphic buffers with the information sent by the world.
    */
   std::vector<sf::Vector2i> cellBuffer = world.getAndFlushGraphicBuffer();
-  for (auto& cellPos : cellBuffer) {
+  for (auto &cellPos : cellBuffer) {
     for (int iLayer = 0; iLayer < NB_LAYERS; iLayer += 1)
-      if (hasBufferLimitExceeded(iLayer)) newGraphicBuffer(iLayer);
+      if (hasBufferLimitExceeded(iLayer))
+        newGraphicBuffer(iLayer);
     appendOrUpdateCell(cellPos, world.cells[cellPos]);
   }
+}
+
+void GraphicEngine::renderParityVector() {
+  /**
+   * Renders all cells on the input parity vector
+   */
+
+  for (const auto &pos : world.parityVectorCells)
+    outlineCell(pos, COLOR_PARITY_VECTOR);
 }

@@ -25,22 +25,22 @@
 #define BACKGROUND_COLOR_DEFINED sf::Color(0.6 * 255, 0.6 * 255, 0.6 * 255)
 #define COLOR_SPECIAL_CARRY sf::Color(0.4 * 255, 0.1 * 255, 0.1 * 255)
 #define COLOR_DARKER_GREEN sf::Color(0.2 * 255, 0.9 * 255, 0.2 * 255)
-
+#define COLOR_PARITY_VECTOR sf::Color(0.9 * 255, 0.2 * 255, 0.2 * 255)
 // Vertex Array layer indexing
 #define NB_LAYERS 3
-#define CELL_BACKGROUND 0  // Background of cell (defined/half defined)
-#define CELL_COLOR 1       // Cell color when cell defined
-#define CELL_TEXT \
-  2  // Cell "text" for symbols (more efficient than rendering a font)
+#define CELL_BACKGROUND 0 // Background of cell (defined/half defined)
+#define CELL_COLOR 1      // Cell color when cell defined
+#define CELL_TEXT                                                              \
+  2 // Cell "text" for symbols (more efficient than rendering a font)
 static sf::PrimitiveType LAYER_PRIMITIVE_TYPE[3] = {sf::Quads, sf::Quads,
                                                     sf::Quads};
-#define NB_TEXT_QUADS \
-  8  // We need 8 quads to render the four symbols {0,\bar 0,1,\bar 1}
+#define NB_TEXT_QUADS                                                          \
+  8 // We need 8 quads to render the four symbols {0,\bar 0,1,\bar 1}
 
 static sf::Color CELL_DEFINED_COLORS[4] = {COLOR_DARKER_GREEN, sf::Color::Black,
                                            sf::Color::Magenta, sf::Color::Blue};
 
-#define COLORED_SELECTORS_WHEEL_SIZE 2  // 2 colors for selected cells
+#define COLORED_SELECTORS_WHEEL_SIZE 2 // 2 colors for selected cells
 
 static sf::Color SELECTED_CELLS_WHEEL[2] = {sf::Color::Magenta,
                                             sf::Color::Blue};
@@ -50,23 +50,24 @@ class GraphicEngine {
    * Class which renders the world and its evolution.
    */
 
- public:
-  GraphicEngine(World& world, int screen_w, int screen_h);
+public:
+  GraphicEngine(World &world, int screen_w, int screen_h);
   ~GraphicEngine();
 
   void run();
 
- private:
-  World& world;
+private:
+  World &world;
 
   sf::RenderWindow window;
 
   // General routines
-  sf::Vector2f mapWorldPosToCoords(const sf::Vector2i& world_coords);
-  sf::Vector2i mapCoordsToWorldPos(const sf::Vector2f& coords);
+  sf::Vector2f mapWorldPosToCoords(const sf::Vector2i &world_coords);
+  sf::Vector2i mapCoordsToWorldPos(const sf::Vector2f &coords);
   bool isSimulationInView();
   bool isOriginRendered;
   bool isEdgeRendered;
+  bool isParityVectorRendered;
 
   // Text attribute and routines
   sf::Font defaultFont;
@@ -79,11 +80,12 @@ class GraphicEngine {
   sf::Texture fontTexture;
   sf::Vector2f getFontTextureCharCoords(char c, int i);
   // Rendering routines
-  void outlineCell(const sf::Vector2i& cellPos, sf::Color outlineColor);
-  void outlineCell(const sf::Vector2i& cellPos, sf::Color outlineColor,
-                   const sf::Vector2i& side);
+  void outlineCell(const sf::Vector2i &cellPos, sf::Color outlineColor);
+  void outlineCell(const sf::Vector2i &cellPos, sf::Color outlineColor,
+                   const sf::Vector2i &side);
   void renderOrigin();
-  void renderEdge();  // FIXME: Not optimized
+  void renderEdge();         // FIXME: Not optimized
+  void renderParityVector(); // FIXME: Not optimized
 
   // Camera attributes and routines
   sf::View camera;
@@ -91,38 +93,38 @@ class GraphicEngine {
   double currentZoom;
   sf::Vector2i cameraMousePosition;
   void cameraTranslate(float dx, float dy);
-  void cameraTranslate(const sf::Vector2f& vec);
+  void cameraTranslate(const sf::Vector2f &vec);
   void cameraZoom(float zoom_factor);
-  void cameraCenter(const sf::Vector2f& where);
+  void cameraCenter(const sf::Vector2f &where);
   bool isCellInView(
-      const sf::Vector2i& cellPos);  // Cell pos is expressed in world positions
+      const sf::Vector2i &cellPos); // Cell pos is expressed in world positions
   std::pair<sf::Vector2i, sf::Vector2i>
-  getExtremalVisibleCellsPos();  // In world positions
+  getExtremalVisibleCellsPos(); // In world positions
 
   // Event routines and handlers
   bool isControlPressed();
   bool isShiftPressed();
   bool isAltPressed();
-  void handleCameraEvents(const sf::Event& event);
+  void handleCameraEvents(const sf::Event &event);
 
   // Graphic cells
   std::vector<sf::VertexArray> graphicCells[NB_LAYERS];
   std::map<sf::Vector2i, std::pair<int, int>, compareWorldPositions>
-      vertexArrayCell[NB_LAYERS];  // Mapping world pos to where are the cell's
-                                   // quad in `graphicCells`
+      vertexArrayCell[NB_LAYERS]; // Mapping world pos to where are the cell's
+                                  // quad in `graphicCells`
   void updateGraphicCells();
   void initGraphicBuffers();
   void newGraphicBuffer(int iLayer);
-  void appendOrUpdateCell(const sf::Vector2i& cellPos, const Cell& cell);
+  void appendOrUpdateCell(const sf::Vector2i &cellPos, const Cell &cell);
   int totalGraphicBufferSize();
-  sf::VertexArray& currentBuffer(int iLayer);
+  sf::VertexArray &currentBuffer(int iLayer);
   bool hasBufferLimitExceeded(int iLayer);
-  std::vector<sf::Vertex> getCellBackgroundVertices(const sf::Vector2i& cellPos,
-                                                    const Cell& cell);
-  std::vector<sf::Vertex> getCellColorVertices(const sf::Vector2i& cellPos,
-                                               const Cell& cell);
-  std::vector<sf::Vertex> getCellTextVertices(const sf::Vector2i& cellPos,
-                                              const Cell& cell);
+  std::vector<sf::Vertex> getCellBackgroundVertices(const sf::Vector2i &cellPos,
+                                                    const Cell &cell);
+  std::vector<sf::Vertex> getCellColorVertices(const sf::Vector2i &cellPos,
+                                               const Cell &cell);
+  std::vector<sf::Vertex> getCellTextVertices(const sf::Vector2i &cellPos,
+                                              const Cell &cell);
   void reset();
 
   // Selected cells
@@ -130,9 +132,9 @@ class GraphicEngine {
   std::map<sf::Vector2i, sf::Color, compareWorldPositions> selectedBorder;
   void renderSelectedCells();
   void renderSelectedBorder();
-  void handleSelectorsEvents(const sf::Event& event);
-  void toggleSelectedCell(const sf::Vector2i& cellPos, bool onlyAdd = false,
+  void handleSelectorsEvents(const sf::Event &event);
+  void toggleSelectedCell(const sf::Vector2i &cellPos, bool onlyAdd = false,
                           bool toggleParityVector = false);
-  void clearSelectedColor(const sf::Vector2i& cellPos);
+  void clearSelectedColor(const sf::Vector2i &cellPos);
   int currentSelectedColor;
 };

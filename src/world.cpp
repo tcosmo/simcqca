@@ -2,9 +2,10 @@
 
 std::vector<CellPosAndCell> World::findCarryPropUpdates() {
   std::vector<CellPosAndCell> toRet;
-  for (const sf::Vector2i& cellPos : cellsOnEdge) {
+  for (const sf::Vector2i &cellPos : cellsOnEdge) {
     assert(doesCellExists(cellPos));
-    if (cells[cellPos].getStatus() != HALF_DEFINED) continue;
+    if (cells[cellPos].getStatus() != HALF_DEFINED)
+      continue;
     if (doesCellExists(cellPos + EAST) &&
         cells[cellPos + EAST].getStatus() == DEFINED) {
       AtomicInfo bit = cells[cellPos].bit;
@@ -23,7 +24,7 @@ std::vector<CellPosAndCell> World::findCarryPropUpdates() {
 
 std::vector<CellPosAndCell> World::findForwardDeductionUpdates() {
   std::vector<CellPosAndCell> toRet;
-  for (const sf::Vector2i& cellPos : cellsOnEdge) {
+  for (const sf::Vector2i &cellPos : cellsOnEdge) {
     assert(doesCellExists(cellPos) &&
            cells[cellPos].getStatus() == HALF_DEFINED);
     if (doesCellExists(cellPos + EAST) &&
@@ -39,7 +40,7 @@ std::vector<CellPosAndCell> World::findForwardDeductionUpdates() {
 
 std::vector<CellPosAndCell> World::findBackwardDeductionUpdates() {
   std::vector<CellPosAndCell> toRet;
-  for (const sf::Vector2i& cellPos : cellsOnEdge) {
+  for (const sf::Vector2i &cellPos : cellsOnEdge) {
     assert(doesCellExists(cellPos));
     if (!doesCellExists(cellPos + NORTH) &&
         doesCellExists(cellPos + NORTH + EAST) &&
@@ -58,20 +59,24 @@ void World::cleanCellsOnEdge() {
    * Remove the cells which are not anymore on edge from the edge.
    */
   std::vector<sf::Vector2i> toRemove;
-  for (const auto& cellPos : cellsOnEdge)
-    if (!isCellOnEdge(cellPos)) toRemove.push_back(cellPos);
-  for (const auto& cellPos : toRemove) cellsOnEdge.erase(cellPos);
+  for (const auto &cellPos : cellsOnEdge)
+    if (!isCellOnEdge(cellPos))
+      toRemove.push_back(cellPos);
+  for (const auto &cellPos : toRemove)
+    cellsOnEdge.erase(cellPos);
 }
 
-bool World::isCellOnEdge(const sf::Vector2i& cellPos) {
+bool World::isCellOnEdge(const sf::Vector2i &cellPos) {
   /**
    *  Determines whether a cell is on the edge of the computing region or not.
    */
 
-  if (!doesCellExists(cellPos)) return false;
+  if (!doesCellExists(cellPos))
+    return false;
 
   if (inputType == LINE || inputType == COL) {
-    if (cells[cellPos].getStatus() == DEFINED) return false;
+    if (cells[cellPos].getStatus() == DEFINED)
+      return false;
 
     if (inputType == LINE &&
         (cellPos.y == 0 && doesCellExists(cellPos + EAST) &&
@@ -84,7 +89,8 @@ bool World::isCellOnEdge(const sf::Vector2i& cellPos) {
         cells[cellPos + WEST].getStatus() == HALF_DEFINED) {
       sf::Vector2i pos = cellPos + EAST;
       while (doesCellExists(pos)) {
-        if (cells[pos].bit == ONE) isTrailingZero = false;
+        if (cells[pos].bit == ONE)
+          isTrailingZero = false;
         pos += EAST;
       }
     } else {
@@ -104,15 +110,17 @@ bool World::isCellOnEdge(const sf::Vector2i& cellPos) {
   return false;
 }
 
-void World::applyUpdates(const std::vector<CellPosAndCell>& updates) {
-  for (const auto& info : updates) {
-    const sf::Vector2i& cellPos = info.first;
-    const Cell& cell = info.second;
+void World::applyUpdates(const std::vector<CellPosAndCell> &updates) {
+  for (const auto &info : updates) {
+    const sf::Vector2i &cellPos = info.first;
+    const Cell &cell = info.second;
     cells[cellPos] = cell;
     cellGraphicBuffer.push_back(cellPos);
-    if (isCellOnEdge(cellPos)) cellsOnEdge.insert(cellPos);
+    if (isCellOnEdge(cellPos))
+      cellsOnEdge.insert(cellPos);
     if (inputType == LINE || inputType == COL)
-      if (isCellOnEdge(cellPos + WEST)) cellsOnEdge.insert(cellPos + WEST);
+      if (isCellOnEdge(cellPos + WEST))
+        cellsOnEdge.insert(cellPos + WEST);
   }
   cleanCellsOnEdge();
 }
@@ -164,26 +172,55 @@ std::vector<CellPosAndCell> World::findNonLocalUpdates() {
    * Finding candidate cells for applying the non-local rule of the 2D CQCA.
    */
   std::vector<CellPosAndCell> toRet;
-  for (const sf::Vector2i& cellPos : cellsOnEdge) {
+  for (const sf::Vector2i &cellPos : cellsOnEdge) {
+
     if (inputType == CYCLE && !constructCycleInLine)
-      if (cellPos.x == ORIGIN_BORDER_MODE.x) continue;
+      if (cellPos.x == ORIGIN_BORDER_MODE.x)
+        continue;
+
     assert(doesCellExists(cellPos));
+
+    // Detect if bootstrapping needed
     if (cells[cellPos].bit == ONE) {
+
       bool lastOneOnLine = true;
       sf::Vector2i currPos = cellPos + EAST;
+
       while (doesCellExists(currPos)) {
-        if (cells[currPos].bit == ONE) lastOneOnLine = false;
+        if (cells[currPos].bit == ONE)
+          lastOneOnLine = false;
         currPos += EAST;
       }
+
       if (lastOneOnLine) {
+
         if (!doesCellExists(cellPos + EAST) ||
             cells[cellPos + EAST].getStatus() == HALF_DEFINED) {
           toRet.push_back(
               std::make_pair(cellPos + EAST, Cell(ZERO, ONE, true)));
+
+          if (inputType == CYCLE &&
+              doesCellExists(cellPos + EAST + cyclicForwardVector))
+            toRet.push_back(std::make_pair(cellPos + EAST + cyclicForwardVector,
+                                           Cell(ZERO, ONE, true)));
+
           sf::Vector2i newPos = cellPos + EAST + EAST;
+
           while (doesCellExists(newPos)) {
             toRet.push_back(std::make_pair(newPos, Cell(ZERO, ZERO)));
+            if (inputType == CYCLE &&
+                doesCellExists(newPos + cyclicForwardVector))
+              toRet.push_back(std::make_pair(newPos + cyclicForwardVector,
+                                             Cell(ZERO, ZERO)));
             newPos += EAST;
+          }
+          
+          if (inputType == CYCLE) {
+            while(doesCellExists(newPos + cyclicForwardVector)) {
+              toRet.push_back(std::make_pair(newPos + cyclicForwardVector,
+                                             Cell(ZERO, ZERO)));
+              newPos += EAST;
+            }
           }
         }
       }
@@ -198,7 +235,7 @@ void World::nextNonLocal() {
   applyUpdates(nonLocalUpdates);
 }
 
-bool World::doesCellExists(const sf::Vector2i& cellPos) {
+bool World::doesCellExists(const sf::Vector2i &cellPos) {
   return cells.find(cellPos) != cells.end();
 }
 
@@ -219,24 +256,24 @@ std::vector<int> World::base3To3p(std::string base3) {
   int i = 0;
   for (char c : base3) {
     switch (c) {
-      case '0':
-        toReturn.push_back(0);
-        lastSeenZero = true;
-        break;
-      case '1':
-        if (lastSeenZero)
-          toReturn.push_back(1);
-        else
-          toReturn.push_back(2);
-        break;
-      case '2':
-        toReturn.push_back(3);
-        lastSeenZero = false;
-        break;
-      default:
-        printf("Character `%c` is invalid base 3 digit. Abort.\n", c);
-        exit(1);
-        break;
+    case '0':
+      toReturn.push_back(0);
+      lastSeenZero = true;
+      break;
+    case '1':
+      if (lastSeenZero)
+        toReturn.push_back(1);
+      else
+        toReturn.push_back(2);
+      break;
+    case '2':
+      toReturn.push_back(3);
+      lastSeenZero = false;
+      break;
+    default:
+      printf("Character `%c` is invalid base 3 digit. Abort.\n", c);
+      exit(1);
+      break;
     }
     i += 1;
   }
@@ -247,34 +284,33 @@ std::vector<int> World::base3To3p(std::string base3) {
 
 void World::setInputCells() {
   switch (inputType) {
-    case NONE:
-      printf(
-          "Cannot input nothing to the world, you probably used a wrong "
-          "command line argument. Abort. Please run `./simcqca --help` for "
-          "help.\n");
-      exit(0);
-      break;
+  case NONE:
+    printf("Cannot input nothing to the world, you probably used a wrong "
+           "command line argument. Abort. Please run `./simcqca --help` for "
+           "help.\n");
+    exit(0);
+    break;
 
-    case LINE:
-      setInputCellsLine();
-      break;
+  case LINE:
+    setInputCellsLine();
+    break;
 
-    case COL:
-      setInputCellsCol();
-      break;
+  case COL:
+    setInputCellsCol();
+    break;
 
-    case BORDER:
-      setInputCellsBorder();
-      break;
+  case BORDER:
+    setInputCellsBorder();
+    break;
 
-    case CYCLE:
-      setInputCellsCycle();
-      break;
+  case CYCLE:
+    setInputCellsCycle();
+    break;
 
-    default:
-      printf("Not implemented yet. Abort.\n");
-      exit(0);
-      break;
+  default:
+    printf("Not implemented yet. Abort.\n");
+    exit(0);
+    break;
   }
 }
 
@@ -282,6 +318,7 @@ void World::reset() {
   cells.clear();
   cellsOnEdge.clear();
   cellGraphicBuffer.clear();
+  parityVectorCells.clear();
   setInputCells();
 }
 

@@ -48,7 +48,7 @@ You can try it on the 4 known non-zero integer cycles (1 non-negative and 3 non-
 # Controls
 ## General
 - `ESC`: quit
-- `F`: outputs some performance information (FPS, vertex array size, etc..)
+- `A`: outputs some performance information (FPS, vertex array size, etc..)
 ## Camera
 
 We recommend the use of an **optical mouse** to manage the camera as functions of the trackpad are not supported and keyboard camera controls potentially cumbersome to use.
@@ -61,7 +61,9 @@ We recommend the use of an **optical mouse** to manage the camera as functions o
 - `T`: whether to render text information or not. Text rendering is quite efficient (not CPU intensive) in the last versions of `simcqca` even when zoomed out far
 - `K`: enables colors for bit-carry-defined cells. One color per bit/carry possibility (0,0), (0,1), (1,0), (1,1)
 - `O`: outlines the origin in blue. When you are lost press `C` to center the view on the origin
-- `E`: outlines all cells on the edge of the computed world in green. **Warning**: this rendering is not optimized hence potential performance issues if too many cells on the edge (too many being thousands).
+- `E`: outlines all cells on the edge of the computed world in green. 
+- `F`: in border and cycle mode outlines the original cells of the parity vector
+**Warning**: rendering for modes `E` and `F` are not optimized hence potential performance issues if used when too many cells on the edge/parity vector (too many being thousands).
 ## Simulation
 - `N`: next simulation step (Cellular Automaton-like evolution or sequential step depending on `--seq` flag)
 - `M`: runs simulation step until they are not in view anymore

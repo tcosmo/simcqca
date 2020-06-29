@@ -14,10 +14,9 @@ void World::setInputCellsLine() {
   for (int x = -1; x >= -1 * inputStr.length(); x -= 1) {
     char current = inputStr[inputStr.length() - abs(x)];
     if (current != '0' && current != '1') {
-      printf(
-          "Input mode LINE expects binary inputs only. Character `%c` is "
-          "invalid. Abort.\n",
-          current);
+      printf("Input mode LINE expects binary inputs only. Character `%c` is "
+             "invalid. Abort.\n",
+             current);
       exit(0);
     }
     sf::Vector2i posToAdd = {x, 0};
@@ -30,7 +29,8 @@ void World::setInputCellsLine() {
   int x = 0;
   while (x < inputStr.length() && inputStr[inputStr.length() - x - 1] == '0')
     x += 1;
-  if (x == inputStr.length()) return;
+  if (x == inputStr.length())
+    return;
   cellsOnEdge.insert({-x - 1, 0});
 }
 
@@ -57,9 +57,9 @@ void World::setInputCellsCol() {
   applyUpdates(updates);
 }
 
-void World::manageEdgeCases(std::vector<CellPosAndCell>& toRet,
-                            const sf::Vector2i& cellPos,
-                            const Cell& updatedCell) {
+void World::manageEdgeCases(std::vector<CellPosAndCell> &toRet,
+                            const sf::Vector2i &cellPos,
+                            const Cell &updatedCell) {
   if (inputType == LINE) {
     // Edge case at end of a line which is in theory (0)^\infty
     if (!doesCellExists(cellPos + WEST) &&

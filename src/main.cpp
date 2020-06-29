@@ -6,7 +6,7 @@
 
 #include <cstdio>
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
   Arguments arguments;
   parseArguments(argc, argv, arguments);
 

@@ -24,10 +24,12 @@ void World::setInputCellsBorder() {
     if (parityBit == '0') {
       Cell cellToAdd = {ZERO, UNDEF};
       updates.push_back(std::make_pair(currPos, cellToAdd));
+      parityVectorCells.push_back(currPos);
       currPos += WEST;
     } else {
       Cell cellToAdd = {ONE, UNDEF};
       updates.push_back(std::make_pair(currPos, cellToAdd));
+      parityVectorCells.push_back(currPos);
       currPos += SOUTH + WEST;
     }
   }
@@ -50,7 +52,8 @@ void World::computeParityVectorSpan() {
    * Returns the span (i.e. number of '1's) in the input parity vector.
    */
   parityVectorSpan = 0;
-  for (const auto& c : inputStr) parityVectorSpan += (c == '1');
+  for (const auto &c : inputStr)
+    parityVectorSpan += (c == '1');
 }
 
 void World::setInputCellsCycle() {
@@ -73,17 +76,17 @@ void World::setInputCellsCycle() {
       {std::make_pair(cyclicForwardVector, cells[ORIGIN_BORDER_MODE])});
 }
 
-std::vector<CellPosAndCell> World::findCyclicUpdates(
-    const std::vector<CellPosAndCell>& updates) {
+std::vector<CellPosAndCell>
+World::findCyclicUpdates(const std::vector<CellPosAndCell> &updates) {
   /**
    * Find cells on which we can apply the cyclic equivalence relation.
    */
 
   std::vector<CellPosAndCell> toRet;
 
-  for (const auto& update : updates) {
-    const sf::Vector2i& pos = update.first;
-    const Cell& cell = update.second;
+  for (const auto &update : updates) {
+    const sf::Vector2i &pos = update.first;
+    const Cell &cell = update.second;
 
     if (!constructCycleInLine) {
       if ((pos - cyclicForwardVector).x == ORIGIN_BORDER_MODE.x) {
@@ -113,22 +116,24 @@ std::vector<sf::Vector2i> World::cellPosOnCyclicCut(int layerToCompute) {
     currentPos = {ORIGIN_BORDER_MODE.x - layerToCompute, ORIGIN_BORDER_MODE.y};
   for (auto c : inputStr) {
     toRet.push_back(currentPos);
-    if (c == '1') currentPos += SOUTH;
+    if (c == '1')
+      currentPos += SOUTH;
     currentPos += WEST;
   }
   return toRet;
 }
 
-std::string World::stringOfCyclicCut(
-    const std::vector<sf::Vector2i>& cellPosOnCut) {
+std::string
+World::stringOfCyclicCut(const std::vector<sf::Vector2i> &cellPosOnCut) {
   /**
    * Transforms a cyclic cut into the string of its trit or "" if not all
    * defined.
    */
   assert(inputType == CYCLE);
   std::string toRet = "";
-  for (const auto& pos : cellPosOnCut) {
-    if (!doesCellExists(pos) || cells[pos].getStatus() != DEFINED) return "";
+  for (const auto &pos : cellPosOnCut) {
+    if (!doesCellExists(pos) || cells[pos].getStatus() != DEFINED)
+      return "";
     toRet += '0' + cells[pos].index();
   }
   return toRet;
@@ -136,14 +141,16 @@ std::string World::stringOfCyclicCut(
 
 bool World::isCycleDetected() {
   assert(inputType == CYCLE);
-  if (indexesDetectedCycle.first != -1) return true;
+  if (indexesDetectedCycle.first != -1)
+    return true;
 
   int layerToCompute = cycleDetectionMap.size();
   std::string stringOfLayer =
       stringOfCyclicCut(cellPosOnCyclicCut(layerToCompute));
 
   // Current layer not finishing computing yet
-  if (stringOfLayer.size() == 0) return false;
+  if (stringOfLayer.size() == 0)
+    return false;
 
   if (cycleDetectionMap.find(stringOfLayer) != cycleDetectionMap.end()) {
     indexesDetectedCycle =
@@ -188,13 +195,16 @@ void World::printCycleInformation() {
   } else {
     for (int x = ORIGIN_BORDER_MODE.x; x >= -1 * indexesDetectedCycle.first;
          x -= 1) {
-      sf::Vector2i cellPos = {x, ORIGIN_BORDER_MODE.y};
-      assert(doesCellExists(cellPos) && cells[cellPos].getStatus() == DEFINED);
+      sf::Vector2i cellPos = {x, ORIGIN_BORDER_MODE.y + 1};
+      if (!doesCellExists(cellPos))
+        continue;
+      // assert(doesCellExists(cellPos) && cells[cellPos].getStatus() ==
+      // DEFINED);
       initSeg += static_cast<int>(cells[cellPos].bit) + '0';
     }
     for (int x = -1 * indexesDetectedCycle.first - 1;
          x >= -1 * indexesDetectedCycle.second; x -= 1) {
-      sf::Vector2i cellPos = {x, ORIGIN_BORDER_MODE.y};
+      sf::Vector2i cellPos = {x, ORIGIN_BORDER_MODE.y + 1};
       assert(doesCellExists(cellPos) && cells[cellPos].getStatus() == DEFINED);
       period += static_cast<int>(cells[cellPos].bit) + '0';
     }
@@ -217,8 +227,7 @@ void World::printCycleInformation() {
   printf("Initial segment: %s\n", initSeg.c_str());
   printf("Period: %s\n", period.c_str());
   printf("Number: (%s)^inf %s\n\n", period.c_str(), initSeg.c_str());
-  printf(
-      "\nNote that: due to the way it is detected, the initial segment can "
-      "contain part of the period and that the period is not necessarily "
-      "minimal.\n");
+  printf("\nNote that: due to the way it is detected, the initial segment can "
+         "contain part of the period and that the period is not necessarily "
+         "minimal.\n");
 }

@@ -1,6 +1,6 @@
 #include "graphic_engine.h"
 
-GraphicEngine::GraphicEngine(World& world, int screen_w, int screen_h)
+GraphicEngine::GraphicEngine(World &world, int screen_w, int screen_h)
     : world(world) {
   window.create(sf::VideoMode(screen_w, screen_h), simcqca_PROG_NAME);
   window.setFramerateLimit(TARGET_FPS);
@@ -16,6 +16,8 @@ GraphicEngine::GraphicEngine(World& world, int screen_w, int screen_h)
 
   isColorRendered = false;
 
+  isParityVectorRendered = false;
+
   camera = window.getDefaultView();
   window.setView(camera);
   moveCameraMode = false;
@@ -29,7 +31,7 @@ GraphicEngine::GraphicEngine(World& world, int screen_w, int screen_h)
 
 GraphicEngine::~GraphicEngine() {}
 
-sf::Vector2f GraphicEngine::mapWorldPosToCoords(const sf::Vector2i& cellPos) {
+sf::Vector2f GraphicEngine::mapWorldPosToCoords(const sf::Vector2i &cellPos) {
   /**
    * Transform cell position to graphic coordinates.
    */
@@ -37,7 +39,7 @@ sf::Vector2f GraphicEngine::mapWorldPosToCoords(const sf::Vector2i& cellPos) {
                        static_cast<float>(cellPos.y * CELL_H)});
 }
 
-sf::Vector2i GraphicEngine::mapCoordsToWorldPos(const sf::Vector2f& coords) {
+sf::Vector2i GraphicEngine::mapCoordsToWorldPos(const sf::Vector2f &coords) {
   /**
    * Transforms graphic coordinates to cell position.
    */
@@ -79,24 +81,28 @@ bool GraphicEngine::isSimulationInView() {
   auto boundaries = getExtremalVisibleCellsPos();
   bool inView = false;
   if (world.inputType == LINE || world.inputType == COL)
-    for (const auto& cellPos : world.cellsOnEdge)
-      if (cellPos.x >= boundaries.first.x) inView = true;
+    for (const auto &cellPos : world.cellsOnEdge)
+      if (cellPos.x >= boundaries.first.x)
+        inView = true;
   if (world.inputType == BORDER || world.inputType == CYCLE) {
-    if (world.inputType == BORDER && world.isComputationDone()) return false;
+    if (world.inputType == BORDER && world.isComputationDone())
+      return false;
 
     if (!world.constructCycleInLine) {
-      for (const auto& cellPos : world.cellsOnEdge)
-        if (cellPos.y >= boundaries.first.y) inView = true;
+      for (const auto &cellPos : world.cellsOnEdge)
+        if (cellPos.y >= boundaries.first.y)
+          inView = true;
     } else {
-      for (const auto& cellPos : world.cellsOnEdge)
-        if (cellPos.x >= boundaries.first.x) inView = true;
+      for (const auto &cellPos : world.cellsOnEdge)
+        if (cellPos.x >= boundaries.first.x)
+          inView = true;
     }
   }
 
   return inView;
 }
 
-void GraphicEngine::toggleSelectedCell(const sf::Vector2i& cellPos,
+void GraphicEngine::toggleSelectedCell(const sf::Vector2i &cellPos,
                                        bool onlyAdd, bool toggleParityVector) {
   /**
    * Select the cell if not selected and unselect otherwise. If `onlyAdd` is on
@@ -122,27 +128,31 @@ void GraphicEngine::toggleSelectedCell(const sf::Vector2i& cellPos,
   }
 }
 
-void GraphicEngine::clearSelectedColor(const sf::Vector2i& cellPos) {
+void GraphicEngine::clearSelectedColor(const sf::Vector2i &cellPos) {
   /**
    * If cell is selected, clears all cells with that color.
    */
 
-  if (selectedCells.find(cellPos) == selectedCells.end()) return;
+  if (selectedCells.find(cellPos) == selectedCells.end())
+    return;
 
   sf::Color color = selectedCells[cellPos];
   std::vector<sf::Vector2i> toErase;
-  for (const auto& posAndColor : selectedCells)
-    if (posAndColor.second == color) toErase.push_back(posAndColor.first);
-  for (const auto& pos : toErase) selectedCells.erase(pos);
+  for (const auto &posAndColor : selectedCells)
+    if (posAndColor.second == color)
+      toErase.push_back(posAndColor.first);
+  for (const auto &pos : toErase)
+    selectedCells.erase(pos);
 }
 
-void GraphicEngine::handleSelectorsEvents(const sf::Event& event) {
+void GraphicEngine::handleSelectorsEvents(const sf::Event &event) {
   if (event.type == sf::Event::MouseButtonPressed) {
     sf::Vector2i clickedCellPos = mapCoordsToWorldPos(
         window.mapPixelToCoords(sf::Mouse::getPosition(window)));
     if ((event.mouseButton.button == sf::Mouse::Left)) {
       bool toggleParityVec = false;
-      if (world.inputType == CYCLE && isAltPressed()) toggleParityVec = true;
+      if (world.inputType == CYCLE && isAltPressed())
+        toggleParityVec = true;
       toggleSelectedCell(clickedCellPos, false, toggleParityVec);
     }
     if ((event.mouseButton.button == sf::Mouse::Right)) {
@@ -160,18 +170,18 @@ void GraphicEngine::handleSelectorsEvents(const sf::Event& event) {
 
   if (event.type == sf::Event::KeyPressed) {
     switch (event.key.code) {
-      case sf::Keyboard::Right:
-        currentSelectedColor += 1;
-        currentSelectedColor %= COLORED_SELECTORS_WHEEL_SIZE;
-        break;
+    case sf::Keyboard::Right:
+      currentSelectedColor += 1;
+      currentSelectedColor %= COLORED_SELECTORS_WHEEL_SIZE;
+      break;
 
-      case sf::Keyboard::Left:
-        currentSelectedColor -= 1;
-        currentSelectedColor %= COLORED_SELECTORS_WHEEL_SIZE;
-        break;
+    case sf::Keyboard::Left:
+      currentSelectedColor -= 1;
+      currentSelectedColor %= COLORED_SELECTORS_WHEEL_SIZE;
+      break;
 
-      default:
-        break;
+    default:
+      break;
     }
   }
 }
@@ -192,104 +202,121 @@ void GraphicEngine::run() {
     while (window.pollEvent(event)) {
       handleCameraEvents(event);
 
-      if (isShiftPressed() || isControlPressed()) handleSelectorsEvents(event);
+      if (isShiftPressed() || isControlPressed())
+        handleSelectorsEvents(event);
 
       if (event.type == sf::Event::KeyPressed) {
         switch (event.key.code) {
-          case sf::Keyboard::Escape:
-            window.close();
-            break;
+        case sf::Keyboard::Escape:
+          window.close();
+          break;
 
-          case sf::Keyboard::F:
-            printf("FPS: %d\n", currentFPS);
-            printf("Vertex array (Background): %ld x O(%d)\n",
-                   graphicCells[CELL_BACKGROUND].size(), VERTEX_ARRAY_MAX_SIZE);
-            printf("Number of graphic cells (quads): %d\n",
-                   totalGraphicBufferSize());
-            printf("Number of cells on edge: %ld\n", world.cellsOnEdge.size());
-            printf("Current zoom factor: %lf\n", currentZoom);
-            break;
+        case sf::Keyboard::A:
+          printf("FPS: %d\n", currentFPS);
+          printf("Vertex array (Background): %ld x O(%d)\n",
+                 graphicCells[CELL_BACKGROUND].size(), VERTEX_ARRAY_MAX_SIZE);
+          printf("Number of graphic cells (quads): %d\n",
+                 totalGraphicBufferSize());
+          printf("Number of cells on edge: %ld\n", world.cellsOnEdge.size());
+          printf("Current zoom factor: %lf\n", currentZoom);
+          break;
 
-          case sf::Keyboard::O:
-            isOriginRendered = !isOriginRendered;
-            break;
+        case sf::Keyboard::O:
+          isOriginRendered = !isOriginRendered;
+          break;
 
-          case sf::Keyboard::E:
-            isEdgeRendered = !isEdgeRendered;
-            break;
+        case sf::Keyboard::E:
+          isEdgeRendered = !isEdgeRendered;
+          break;
 
-          case sf::Keyboard::T:
-            isTextRendered = !isTextRendered;
-            break;
+        case sf::Keyboard::F:
+          isParityVectorRendered = !isParityVectorRendered;
+          break;
 
-          case sf::Keyboard::K:
-            isColorRendered = !isColorRendered;
-            break;
+        case sf::Keyboard::T:
+          isTextRendered = !isTextRendered;
+          break;
 
-          case sf::Keyboard::N:
+        case sf::Keyboard::K:
+          isColorRendered = !isColorRendered;
+          break;
+
+        case sf::Keyboard::N:
+          world.next();
+          break;
+
+        case sf::Keyboard::M:
+          while (isSimulationInView())
             world.next();
-            break;
+          break;
 
-          case sf::Keyboard::M:
-            while (isSimulationInView()) world.next();
-            break;
-
-          case sf::Keyboard::Right:
-            if (isAltPressed() && world.inputType == CYCLE) {
-              reset();
-              world.rotate(1);
-              while (isSimulationInView()) world.next();
-            }
-            break;
-
-          case sf::Keyboard::Left:
-            if (isAltPressed() && world.inputType == CYCLE) {
-              reset();
-              world.rotate(-1);
-              while (isSimulationInView()) world.next();
-            }
-            break;
-
-          case sf::Keyboard::P:
-            if (world.inputType == CYCLE) {
-              while (!world.isCycleDetected()) world.next();
-              world.printCycleInformation();
-            }
-            break;
-
-          case sf::Keyboard::R:
+        case sf::Keyboard::Right:
+          if (isAltPressed() && world.inputType == CYCLE) {
             reset();
-            world.reset();
-            break;
+            world.rotate(1);
+            while (isSimulationInView())
+              world.next();
+          }
+          break;
 
-          default:
-            break;
+        case sf::Keyboard::Left:
+          if (isAltPressed() && world.inputType == CYCLE) {
+            reset();
+            world.rotate(-1);
+            while (isSimulationInView())
+              world.next();
+          }
+          break;
+
+        case sf::Keyboard::P:
+          if (world.inputType == CYCLE) {
+            while (!world.isCycleDetected())
+              world.next();
+            world.printCycleInformation();
+          }
+          break;
+
+        case sf::Keyboard::R:
+          reset();
+          world.reset();
+          break;
+
+        default:
+          break;
         }
       }
-      if (event.type == sf::Event::Closed) window.close();
+      if (event.type == sf::Event::Closed)
+        window.close();
     }
 
     window.clear(BACKGROUND_COLOR);
 
     updateGraphicCells();
 
-    for (const auto& graphicBuffer : graphicCells[CELL_BACKGROUND])
+    for (const auto &graphicBuffer : graphicCells[CELL_BACKGROUND])
       window.draw(graphicBuffer);
 
     if (isColorRendered)
-      for (const auto& graphicBuffer : graphicCells[CELL_COLOR])
+      for (const auto &graphicBuffer : graphicCells[CELL_COLOR])
         window.draw(graphicBuffer);
 
     if (isTextRendered)
-      for (const auto& graphicBuffer : graphicCells[CELL_TEXT])
+      for (const auto &graphicBuffer : graphicCells[CELL_TEXT])
         window.draw(graphicBuffer, &fontTexture);
 
-    if (isEdgeRendered) renderEdge();
+    if (isEdgeRendered)
+      renderEdge();
+
+    if (isParityVectorRendered &&
+        (world.inputType == BORDER || world.inputType == CYCLE))
+      renderParityVector();
 
     renderSelectedCells();
-    if (world.inputType == CYCLE) renderSelectedBorder();
+    if (world.inputType == CYCLE)
+      renderSelectedBorder();
 
-    if (isOriginRendered) renderOrigin();
+    if (isOriginRendered)
+      renderOrigin();
 
     window.display();
 
