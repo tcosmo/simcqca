@@ -73,8 +73,9 @@ bool World::isCellOnEdge(const sf::Vector2i& cellPos) {
   if (inputType == LINE || inputType == COL) {
     if (cells[cellPos].getStatus() == DEFINED) return false;
 
-    if (inputType == LINE && (cellPos.y == 0 && doesCellExists(cellPos + EAST) &&
-        cells[cellPos + EAST].getStatus() == HALF_DEFINED))
+    if (inputType == LINE &&
+        (cellPos.y == 0 && doesCellExists(cellPos + EAST) &&
+         cells[cellPos + EAST].getStatus() == HALF_DEFINED))
       return false;
 
     // Remove trailing 0s from edge
