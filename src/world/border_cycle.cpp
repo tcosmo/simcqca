@@ -182,8 +182,8 @@ void World::printCycleInformation() {
   std::string period = "";
   int which = static_cast<int>(cells[ORIGIN_BORDER_MODE].bit);
   if (!constructCycleInLine) {
-    for (int y = ORIGIN_BORDER_MODE.y - (1-which); y >= -1 * indexesDetectedCycle.first;
-         y -= 1) {
+    for (int y = ORIGIN_BORDER_MODE.y - (1 - which);
+         y >= -1 * indexesDetectedCycle.first; y -= 1) {
       sf::Vector2i cellPos = {ORIGIN_BORDER_MODE.x, y};
       assert(doesCellExists(cellPos) && cells[cellPos].getStatus() == DEFINED);
       initSeg += cells[cellPos].sum() + '0';
