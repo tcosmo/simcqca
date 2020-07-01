@@ -26,4 +26,11 @@ struct compareWorldPositions {
   }
 };
 
+static sf::Vector2i operator*(int scalar, const sf::Vector2i &vector) {
+  sf::Vector2i toReturn = vector;
+  for (int i = 0; i < scalar; i += 1)
+    toReturn += vector;
+  return toReturn;
+}
+
 typedef std::set<sf::Vector2i, compareWorldPositions> Poset;

@@ -214,7 +214,7 @@ void GraphicEngine::outlineResult() {
     currentPos += NORTH;
   }
   std::reverse(base3Col.begin(), base3Col.end());
-  int z3 = 0;
+  long long int z3 = 0;
   for (const auto &c : base3Col)
     z3 = 3 * z3 + (c - '0');
 
@@ -231,15 +231,29 @@ void GraphicEngine::outlineResult() {
     iStep += 1;
   }
   std::reverse(base2Row.begin(), base2Row.end());
-  int z2 = 0;
+  long long int z2 = 0;
   for (const auto &c : base2Row)
     z2 = 2 * z2 + (c - '0');
 
-  printf("The outlined vertical column is a base 3' encoding of: `%s` = %d\n",
+  printf("\nBe careful that the following numbers are computed with 64 bits "
+         "precision.\n");
+  printf("Hence the following may look like non sense if you consider > 64 bit "
+         "strings.\n\n");
+
+  printf("The outlined vertical column is a base 3' encoding of: `%s` = %lld\n",
          base3Col.c_str(), z3);
-  printf("The outlined horizontal row is a base 2 encoding of: `%s` = %d\n",
+  printf("The outlined horizontal row is a base 2 encoding of: `%s` = %lld\n",
          base2Row.c_str(), z2);
-  printf("Both represent the number: %d\n\n", z3);
+  printf("Both represent the number: %lld\n\n", z3);
+
+  cameraCenter(mapWorldPosToCoords(targetCell));
+  int visibilityOffset = 4;
+  while (
+      !isCellInView(targetCell +
+                    (base3Col.size() + visibilityOffset) * NORTH) ||
+      !isCellInView(targetCell + (base2Row.size() + visibilityOffset) * WEST))
+    cameraZoom(1 / DEFAULT_CAM_ZOOM_STEP);
+
   while (isSimulationInView())
     world.next();
 }
