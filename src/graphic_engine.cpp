@@ -193,95 +193,55 @@ void GraphicEngine::outlineResult() {
    */
   assert(world.inputType == LINE || world.inputType == COL);
 
-  sf::Vector2i targetCellPos;
-
   // Heuristic bound to have all the necessary cells on the screen
   for (int iStep = 0; iStep < 4 * world.inputStr.size(); iStep += 1)
     world.next();
 
-  sf::Vector2i currPos;
-  std::string base3;
-
+  sf::Vector2i targetCell = {0,0};
   if (world.inputType == LINE) {
-    currPos = {-1 * static_cast<int>(world.inputStr.size()), 0};
-    while (world.doesCellExists(currPos) &&
-           world.doesCellExists(currPos + SOUTH)) {
-      assert(world.cells[currPos].getStatus() == DEFINED);
-      base3.push_back('0' + world.cells[currPos].sum());
-      selectedCells[currPos] = SELECTED_CELLS_WHEEL[0];
-      currPos += SOUTH;
-    }
-  } else {
-    sf::Vector2i currPos = {0, -1 * static_cast<int>(world.inputStr.size())};
-    while (world.doesCellExists(currPos) &&
-           world.doesCellExists(currPos + SOUTH)) {
-      assert(world.cells[currPos].getStatus() == DEFINED);
-      base3.push_back('0' + world.cells[currPos].sum());
-      selectedCells[currPos] = SELECTED_CELLS_WHEEL[0];
-      currPos += SOUTH;
-    }
+    targetCell = {-1*static_cast<int>(world.inputStr.size()), 0};
+    while(world.doesCellExists(targetCell) && world.doesCellExists(targetCell+SOUTH))
+      targetCell += SOUTH;
   }
 
-  std::string base2 = World::base32(base3);
-  int xCenter = -1 * static_cast<int>(world.inputStr.size());
-  int yCenter = base3.size() / 2;
-  if (world.inputType == COL) {
-    xCenter = 0;
-    yCenter = -1 * yCenter;
+  std::string base2Row, base3Col;
+  sf::Vector2i currentPos = targetCell + NORTH;
+
+  while (world.doesCellExists(currentPos)) {
+    base3Col += '0'+world.cells[currentPos].sum();
+    selectedCells[currentPos] = SELECTED_CELLS_WHEEL[0];
+    currentPos += NORTH;
   }
-  cameraCenter(mapWorldPosToCoords({xCenter, yCenter}));
-
-  int visibilityOffset = 4;
-  sf::Vector2i startOfCol;
-  sf::Vector2i endOfLine;
-
-  if (world.inputType == LINE) {
-    startOfCol = {-1 * static_cast<int>(world.inputStr.size()),
-                  0 - visibilityOffset};
-    endOfLine = {-1 * static_cast<int>(world.inputStr.size() + base2.size()) -
-                     visibilityOffset,
-                 static_cast<int>(base3.size())};
-    currPos = {-1 * static_cast<int>(world.inputStr.size()) - 1,
-               static_cast<int>(base3.size())};
-  } else {
-    startOfCol = {0, -1 * static_cast<int>(world.inputStr.size()) -
-                         visibilityOffset};
-    endOfLine = {-1 * static_cast<int>(base2.size()) - visibilityOffset, 0};
-    currPos = {-1, 0};
-  }
-
-  int i = 0;
-  std::string constructedBase2;
-  while (world.doesCellExists(currPos) && i < base2.size()) {
-    selectedCells[currPos] = SELECTED_CELLS_WHEEL[0];
-    constructedBase2.push_back('0' +
-                               static_cast<char>(world.cells[currPos].bit));
-    currPos += WEST;
-    i += 1;
-  }
-
-  std::reverse(constructedBase2.begin(), constructedBase2.end());
-
-  while (!isCellInView(endOfLine) || !isCellInView(startOfCol))
-    cameraZoom(1 / DEFAULT_CAM_ZOOM_STEP);
-
-  printf("\nBase conversion result\n");
-  printf("======================\n");
-
+  std::reverse(base3Col.begin(),base3Col.end());
   int z3 = 0;
-  for (const auto &c : base3)
-    z3 = 3 * z3 + (c - '0');
-  int z2 = 0;
-  for (const auto &c : constructedBase2)
-    z2 = 2 * z2 + (c - '0');
+  for (const auto& c: base3Col)
+    z3 = 3*z3 + (c-'0');
 
-  printf("The outlined vertical column is a base 3' encoding of: %s = %d\n",
-         base3.c_str(), z3);
-  printf("The outlined horizontal row is a base 2 encoding of: %s = %d\n",
-         constructedBase2.c_str(), z2);
+  std::string computedBase2 = World::base32(base3Col);
+  
+  currentPos = targetCell + WEST;
+  int iStep = 0;
+  while (world.doesCellExists(currentPos)) {
+    if (iStep == computedBase2.size())
+      break;
+    base2Row += '0'+static_cast<char>(world.cells[currentPos].bit);
+    selectedCells[currentPos] = SELECTED_CELLS_WHEEL[0];
+    currentPos += WEST;
+    iStep += 1;
+  }
+  std::reverse(base2Row.begin(),base2Row.end());
+  int z2 = 0;
+  for (const auto& c: base2Row)
+    z2 = 2*z2 + (c-'0');
+  
+
+  printf("The outlined vertical column is a base 3' encoding of: `%s` = %d\n",
+         base3Col.c_str(), z3);
+  printf("The outlined horizontal row is a base 2 encoding of: `%s` = %d\n",
+         base2Row.c_str(), z2);
   printf("Both represent the number: %d\n\n", z3);
-  // while (isSimulationInView())
-  //   world.next();
+  while (isSimulationInView())
+    world.next();
 }
 
 void GraphicEngine::run() {
@@ -311,7 +271,7 @@ void GraphicEngine::run() {
 
         case sf::Keyboard::A:
           // Not to clash with ctrl + A
-          if (!isControlPressed() {
+          if (!isControlPressed()) {
             printf("FPS: %d\n", currentFPS);
             printf("Vertex array (Background): %ld x O(%d)\n",
                    graphicCells[CELL_BACKGROUND].size(), VERTEX_ARRAY_MAX_SIZE);

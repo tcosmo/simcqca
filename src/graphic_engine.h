@@ -18,7 +18,7 @@
 #define DEFAULT_OUTLINE_THICKNESS 2
 
 // Defining some colors!!
-#define BACKGROUND_COLOR sf::Color(0.3 * 255, 0.3 * 255, 0.3 * 255)
+#define BACKGROUND_COLOR sf::Color(0.2 * 255, 0.2 * 255, 0.2 * 255)
 #define GRID_COLOR sf::Color(0.5 * 255, 0.5 * 255, 0.5 * 255)
 #define DEFAULT_CURSOR_COLOR sf::Color(34, 220, 34)
 #define BACKGROUND_COLOR_HALF_DEFINED sf::Color(0.4 * 255, 0.4 * 255, 0.4 * 255)

@@ -8,7 +8,7 @@ const char *argp_program_version = VERSION_LITERAL;
 
 void setInputType(const std::string &arg, Arguments &arguments,
                   InputType inputType) {
-  static const char *modeName[5] = {"None", "line", "col", "border", "cycle"};
+  static const char *modeName[5] = {"None", "row", "col", "border", "cycle"};
   if (arg.size() == 0) {
     printf("Input for mode `%s` should not be empty. Abort.\n",
            modeName[inputType]);
@@ -17,7 +17,7 @@ void setInputType(const std::string &arg, Arguments &arguments,
   }
   if (arguments.inputType != NONE) {
     printf(
-        "Only one input mode (line/col/border/cycle) should be chosen. Abort.");
+        "Only one input mode (row/col/border/cycle) should be chosen. Abort.");
     exit(0);
   }
   arguments.inputType = inputType;
@@ -104,7 +104,7 @@ void parseArguments(int argc, char *argv[], Arguments &arguments) {
           arguments, static_cast<InputType>(iOption));
       if (atLeastOne) {
         printf(
-            "Only one of the modes line/col/border/cycle can be launched at a "
+            "Only one of the modes row/col/border/cycle can be launched at a "
             "time. Abort.\n");
         exit(0);
       }
@@ -121,6 +121,12 @@ void parseArguments(int argc, char *argv[], Arguments &arguments) {
       exit(0);
     }
     arguments.constructCycleInLine = true;
+  }
+
+  // Tikz
+  if (input.cmdOptionExists(getShortOptionStr(options[6].shortOption)) ||
+      input.cmdOptionExists(getLongOptionStr(options[6].longOption))) {
+    arguments.isTikzEnabled = true;
   }
 
   if (input.cmdOptionExists("-V") || input.cmdOptionExists("--version")) {

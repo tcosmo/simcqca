@@ -29,25 +29,28 @@ Building `simcqca` has been tested on Linux and Mac OS, if it doesn't work for y
 # Examples
 <a href="examples"></a>
 
-## Line mode
-In Line mode, the input is a binary string. Each successive line corresponds to a new odd iteration of the Collatz process expressed in binary.
-- `./simcqca --line 10001010111000110000000000001111111111111111110001111111111111111111001`
-- `./simcqca --line 1001011111001000`
+## Row mode
+In row mode, the input is a binary string. Each successive row corresponds to a new odd iteration of the Collatz process expressed in binary. Right click on a row and the terminal will output the corresponding binary Collatz iterate.
+
+Press `N` to trigger one simulation step and `M` to trigger as many as can fit in the screen. Press `P` to generate enough simulation steps in order to visualise the base conversion property: columns, which are written in base 3, convert to rows, which are written in base 2. Look at you terminal which will output some information about the numbers encoded in the outlined row/column.
+- `./simcqca --row 1001011111001000`
+- `./simcqca --row 10001010111000110000000000001111111111111111110001111111111111111111001`
 ## Column mode
-In Column mode, the input is a ternary string. Each successive column corresponds to a new iteration of the Collata process expressed in ternary.
+In Column mode, the input is a ternary string. Each successive column corresponds to a new iteration of the Collatz process expressed in ternary. Right click on a column and the terminal will output the corresponding ternay Collatz iterates.
+
 - `./simcqca --col 12210000100011100110111112000`
 - `./simcqca --col 110012201`
 - `./simcqca --col 0001001010010222110010`
 ## Border mode
-In Border mode, the input is a parity vector. The automaton reconstructs the corresponding input line.
+In Border mode, the input is a parity vector. The automaton reconstructs the corresponding input row.
 - `./simcqca --border 1100000000000000011111000101011011`
 - `./simcqca --border 0011000`
 ## Cycle mode
-In cycle mode, the input is a parity vector supposed to be the support of a cycle. The automaton reconstructs the 3-adic expansion of the corresponding rational cycling over this parity vector. If the option `--cycle-line` is given, the automaton will reconstruct the 2-adic expansion of the same number (rational Collatz cyclic numbers are both 2-adic and 3-adic integers).
+In cycle mode, the input is a parity vector supposed to be the support of a cycle. The automaton reconstructs the 3-adic expansion of the corresponding rational cycling over this parity vector. If the option `--cycle-row` is given, the automaton will reconstruct the 2-adic expansion of the same number (rational Collatz cyclic numbers are both 2-adic and 3-adic integers).
 - `./simcqca --cycle 1000110`
-- `./simcqca --cycle 1000110 --cycle-line`
+- `./simcqca --cycle 1000110 --cycle-row`
 - `./simcqca --cycle 00010101100`
-- `./simcqca --cycle 00010101100 --cycle-line`
+- `./simcqca --cycle 00010101100 --cycle-row`
 ### Integer cycles
 You can try it on the 4 known non-zero integer cycles (1 non-negative and 3 non-positive):
 - `./simcqca --cycle 101010` : constructs the cycle (1,2,1,...)
@@ -78,8 +81,9 @@ We recommend the use of an **optical mouse** to manage the camera as functions o
 - `N`: next simulation step (Cellular Automaton-like evolution or sequential step depending on `--seq` flag)
 - `M`: runs simulation step until they are not in view anymore
 - `R`: resets the simulation
+- `RIGHT CLICK`: in row/column mode will finish to compute and blink the clicked row/column and will output in the terminal the number it represents (row are base 2/columns are base 3).
 - `P`:    
-    - In line/column modes will outline one instance of the base conversion result in the 2D CQCA. The outlined column represents a number in base 3' (most significant trit on top) and thus in base 3 by mapping each cell (bit,carry) as follows: (0,0) maps to the trit 0, (0,1) maps to the trit 1, (1,0) maps to the trit 1 and (1,1) maps to the trit 2. The outlined line represents a number in base 2 (most significant bit to the left) by simply keeping each cell's bit and ignoring carries. Those two numbers are the same.
+    - In row/column modes will outline one instance of the base conversion result in the 2D CQCA. The outlined column represents a number in base 3' (most significant trit on top) and thus in base 3 by mapping each cell (bit,carry) as follows: (0,0) maps to the trit 0, (0,1) maps to the trit 1, (1,0) maps to the trit 1 and (1,1) maps to the trit 2. The outlined row represents a number in base 2 (most significant bit to the left) by simply keeping each cell's bit and ignoring carries. Those two numbers are the same.
     - In cycle mode, pressing `P` will run the simulation until the period of the 3-adic/2-adic expansion of the cycle is found. Will then output in the console the initial segment and period of that expansion (both little and big endian conventions).
 ### Specific to cycle mode
 - `ALT + LEFT ARROW/RIGHT ARROW`: rotates the input parity vector to the left/right and re-runs the simulation until it is not in view anymore

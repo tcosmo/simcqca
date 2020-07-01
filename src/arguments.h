@@ -45,7 +45,7 @@ static std::vector<InputOption> options = {
     {"seq", 's', NULL,
      "Not implemented yet: runs sequential simulation instead of CA-style "
      "simulation"},
-    {"line", 'l', "INPUT BASE 2", "Inputs a binary line to the process"},
+    {"row", 'r', "INPUT BASE 2", "Inputs a binary row to the process"},
     {"col", 'c', "INPUT BASE 3",
      "Inputs a ternary column to the process. Base 3 -> base3' conversion is "
      "done internally"},
@@ -53,9 +53,13 @@ static std::vector<InputOption> options = {
      "Inputs a parity vector to the process"},
     {"cycle", 'y', "INPUT PARITY VECTOR",
      "Inputs a parity vector to the process with cyclic edges conditions"},
-    {"cycle-line", 'j', NULL,
-     "Combine this option with cycle mode to run the construction per line and "
+    {"cycle-row", 'j', NULL,
+     "Combine this option with cycle mode to run the construction per row and "
      "not per column"},
+
+    {"tikz", 't', NULL,
+     "Use this option to generate `tikz` figures from the"
+     " simulator."},
 
     // Default options
     {"help", 'h', NULL, "Give this help list"},
@@ -67,9 +71,11 @@ struct Arguments {
   InputType inputType;
   std::string inputStr;
   bool constructCycleInLine;
+  bool isTikzEnabled;
 
   Arguments()
-      : isSequential(false), inputType(NONE), constructCycleInLine(false) {}
+      : isSequential(false), inputType(NONE), constructCycleInLine(false),
+        isTikzEnabled(false) {}
 };
 
 void parseArguments(int argc, char *argv[], Arguments &arguments);
