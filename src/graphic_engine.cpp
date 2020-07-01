@@ -1,7 +1,8 @@
 #include "graphic_engine.h"
 
-GraphicEngine::GraphicEngine(World &world, int screen_w, int screen_h)
-    : world(world) {
+GraphicEngine::GraphicEngine(World &world, int screen_w, int screen_h,
+                             bool isTikzEnabled)
+    : world(world), isTikzEnabled(isTikzEnabled) {
   window.create(sf::VideoMode(screen_w, screen_h), simcqca_PROG_NAME);
   window.setFramerateLimit(TARGET_FPS);
 
@@ -27,6 +28,8 @@ GraphicEngine::GraphicEngine(World &world, int screen_w, int screen_h)
   currentSelectedColor = 0;
 
   initGraphicBuffers();
+
+  tikzMode = isTikzEnabled;
 }
 
 GraphicEngine::~GraphicEngine() {}
@@ -72,6 +75,11 @@ void GraphicEngine::reset() {
     vertexArrayCell[iLayer].clear();
   }
   initGraphicBuffers();
+
+  if (isTikzEnabled) {
+    tikzMode = isTikzEnabled;
+    tikzSelection.clear();
+  }
 }
 
 bool GraphicEngine::isSimulationInView() {
@@ -257,7 +265,15 @@ void GraphicEngine::outlineResult() {
     printf("Both represent the number: %lld\n\n", z3);
   }
   cameraCenter(mapWorldPosToCoords(targetCell));
-  int visibilityOffset = 4;
+
+  // Push a bit to the right
+  while (isCellInView(2 * EAST))
+    cameraTranslate(mapWorldPosToCoords(WEST));
+
+  while (isCellInView(2 * SOUTH))
+    cameraTranslate(mapWorldPosToCoords(NORTH));
+
+  int visibilityOffset = 2;
   while (
       !isCellInView(targetCell +
                     (base3Col.size() + visibilityOffset) * NORTH) ||
@@ -266,6 +282,19 @@ void GraphicEngine::outlineResult() {
 
   while (isSimulationInView())
     world.next();
+}
+
+void GraphicEngine::handleTikzEvents(const sf::Event &event) {
+  /**
+   * In tikz mode, enables the user to click on cells to be selected.
+   */
+  assert(isTikzEnabled);
+  if (event.type == sf::Event::MouseButtonPressed)
+    if ((event.mouseButton.button == sf::Mouse::Left)) {
+      if (std::find(tikzSelection.begin(), tikzSelection.end(),
+                    tikzCursorPos) == tikzSelection.end())
+        tikzSelection.push_back(tikzCursorPos);
+    }
 }
 
 void GraphicEngine::run() {
@@ -283,6 +312,9 @@ void GraphicEngine::run() {
     sf::Event event;
     while (window.pollEvent(event)) {
       handleCameraEvents(event);
+
+      if (isTikzEnabled)
+        handleTikzEvents(event);
 
       if (isShiftPressed() || isControlPressed())
         handleSelectorsEvents(event);
@@ -303,8 +335,8 @@ void GraphicEngine::run() {
                    totalGraphicBufferSize());
             printf("Number of cells on edge: %ld\n", world.cellsOnEdge.size());
             printf("Current zoom factor: %lf\n", currentZoom);
-            break;
           }
+          break;
 
         case sf::Keyboard::O:
           isOriginRendered = !isOriginRendered;
@@ -319,7 +351,12 @@ void GraphicEngine::run() {
           break;
 
         case sf::Keyboard::T:
-          isTextRendered = !isTextRendered;
+          if (!isTikzEnabled || !isControlPressed()) {
+            isTextRendered = !isTextRendered;
+          } else if (isTikzEnabled && isControlPressed()) {
+            tikzMode = !tikzMode;
+            tikzSelection.clear();
+          }
           break;
 
         case sf::Keyboard::K:
@@ -404,6 +441,17 @@ void GraphicEngine::run() {
 
     if (isOriginRendered)
       renderOrigin();
+
+    if (isTikzEnabled) {
+      if (tikzSelection.size() == 2) {
+        generateTikzFromSelection();
+        tikzSelection.clear();
+        tikzMode = false;
+      }
+
+      if (tikzMode)
+        renderTikzSelection();
+    }
 
     window.display();
 

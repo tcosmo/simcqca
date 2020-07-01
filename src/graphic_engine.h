@@ -43,7 +43,7 @@ static sf::Color CELL_DEFINED_COLORS[4] = {COLOR_DARKER_GREEN, sf::Color::Black,
 #define COLORED_SELECTORS_WHEEL_SIZE 2 // 2 colors for selected cells
 
 static sf::Color SELECTED_CELLS_WHEEL[2] = {sf::Color::Magenta,
-                                            sf::Color::Blue};
+                                            sf::Color::Cyan};
 
 class GraphicEngine {
   /***
@@ -51,7 +51,7 @@ class GraphicEngine {
    */
 
 public:
-  GraphicEngine(World &world, int screen_w, int screen_h);
+  GraphicEngine(World &world, int screen_w, int screen_h, bool isTikzEnabled);
   ~GraphicEngine();
 
   void run();
@@ -139,4 +139,15 @@ private:
                           bool toggleParityVector = false);
   void clearSelectedColor(const sf::Vector2i &cellPos);
   int currentSelectedColor;
+
+  // Tikz output: enables the user to select a rectangular
+  // area to export to tikz
+  bool isTikzEnabled;
+  bool tikzMode;
+  std::vector<sf::Vector2i> tikzSelection; // Contains 0, 1 or 2 cells
+  sf::Vector2i tikzCursorPos;
+  void renderTikzSelection();
+  std::string getTikzCell(const sf::Vector2i& cellPos, int maxX);
+  void generateTikzFromSelection();
+  void handleTikzEvents(const sf::Event &event);
 };

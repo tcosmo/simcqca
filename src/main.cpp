@@ -12,6 +12,7 @@ int main(int argc, char *argv[]) {
 
   World world(arguments.isSequential, arguments.inputType, arguments.inputStr,
               arguments.constructCycleInLine);
-  GraphicEngine graphicEngine(world, 800 * 1.5, 600 * 1.5);
+  GraphicEngine graphicEngine(world, 800 * 1.5, 600 * 1.5,
+                              arguments.isTikzEnabled);
   graphicEngine.run();
 }

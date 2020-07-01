@@ -319,3 +319,20 @@ void GraphicEngine::renderParityVector() {
   for (const auto &pos : world.parityVectorCells)
     outlineCell(pos, COLOR_PARITY_VECTOR);
 }
+
+void GraphicEngine::renderTikzSelection() {
+  /**
+   * Renders the cursor and selected cell for
+   * generating tikz image of the rectangle defined by those two cells.
+   */
+  assert(isTikzEnabled && tikzSelection.size() < 2);
+
+  auto mousePosition = sf::Mouse::getPosition(window);
+  auto coordMouse = window.mapPixelToCoords(mousePosition);
+  tikzCursorPos = mapCoordsToWorldPos(coordMouse);
+
+  outlineCell(tikzCursorPos, sf::Color::Blue);
+
+  for (const auto &cellPos : tikzSelection)
+    outlineCell(cellPos, sf::Color::Blue);
+}
