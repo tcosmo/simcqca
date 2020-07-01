@@ -117,12 +117,12 @@ void GraphicEngine::toggleSelectedCell(const sf::Vector2i &cellPos,
    * the toggling will be applyied only if the cell was not already selected.
    */
   if (selectedCells.find(cellPos) == selectedCells.end()) {
-    selectedCells[cellPos] = SELECTED_CELLS_WHEEL[currentSelectedColor];
+    selectedCells[cellPos] = currentSelectedColor;
     if (toggleParityVector) {
       assert(world.inputType == CYCLE);
       selectedBorder[cellPos] = SELECTED_CELLS_WHEEL[currentSelectedColor];
       selectedCells[cellPos - world.cyclicForwardVector] =
-          SELECTED_CELLS_WHEEL[currentSelectedColor];
+          currentSelectedColor;
     }
   } else if (!onlyAdd) {
     selectedCells.erase(cellPos);
@@ -143,11 +143,11 @@ void GraphicEngine::clearSelectedColor(const sf::Vector2i &cellPos) {
 
   if (selectedCells.find(cellPos) == selectedCells.end())
     return;
-
-  sf::Color color = selectedCells[cellPos];
+  
+  int colorId = selectedCells[cellPos];
   std::vector<sf::Vector2i> toErase;
   for (const auto &posAndColor : selectedCells)
-    if (posAndColor.second == color)
+    if (posAndColor.second == colorId)
       toErase.push_back(posAndColor.first);
   for (const auto &pos : toErase)
     selectedCells.erase(pos);
@@ -218,7 +218,7 @@ void GraphicEngine::outlineResult() {
 
   while (world.doesCellExists(currentPos)) {
     base3Col += '0' + world.cells[currentPos].sum();
-    selectedCells[currentPos] = SELECTED_CELLS_WHEEL[0];
+    selectedCells[currentPos] = 0;
     currentPos += NORTH;
   }
   std::reverse(base3Col.begin(), base3Col.end());
@@ -231,7 +231,7 @@ void GraphicEngine::outlineResult() {
   currentPos = targetCell + WEST;
   while (world.doesCellExists(currentPos)) {
     base2Row += '0' + static_cast<char>(world.cells[currentPos].bit);
-    selectedCells[currentPos] = SELECTED_CELLS_WHEEL[0];
+    selectedCells[currentPos] = 0;
     currentPos += WEST;
   }
 

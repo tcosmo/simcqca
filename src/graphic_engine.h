@@ -44,6 +44,8 @@ static sf::Color CELL_DEFINED_COLORS[4] = {COLOR_DARKER_GREEN, sf::Color::Black,
 
 static sf::Color SELECTED_CELLS_WHEEL[2] = {sf::Color::Magenta,
                                             sf::Color::Cyan};
+static std::string TIKZ_SELECTED_CELLS_WHEEL[2] = {"magenta",
+                                                   "blue"};
 
 class GraphicEngine {
   /***
@@ -130,7 +132,7 @@ private:
   void reset();
 
   // Selected cells
-  std::map<sf::Vector2i, sf::Color, compareWorldPositions> selectedCells;
+  std::map<sf::Vector2i, int, compareWorldPositions> selectedCells;
   std::map<sf::Vector2i, sf::Color, compareWorldPositions> selectedBorder;
   void renderSelectedCells();
   void renderSelectedBorder();
@@ -147,7 +149,7 @@ private:
   std::vector<sf::Vector2i> tikzSelection; // Contains 0, 1 or 2 cells
   sf::Vector2i tikzCursorPos;
   void renderTikzSelection();
-  std::string getTikzCell(const sf::Vector2i& cellPos, int maxX);
+  std::string getTikzCell(const sf::Vector2i &cellPos, int maxX);
   void generateTikzFromSelection();
   void handleTikzEvents(const sf::Event &event);
 };

@@ -56,7 +56,7 @@ void GraphicEngine::renderSelectedCells() {
    */
 
   for (const auto &posAndColor : selectedCells)
-    outlineCell(posAndColor.first, posAndColor.second);
+    outlineCell(posAndColor.first, SELECTED_CELLS_WHEEL[posAndColor.second]);
 }
 
 void GraphicEngine::renderSelectedBorder() {
