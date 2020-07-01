@@ -44,8 +44,7 @@ static sf::Color CELL_DEFINED_COLORS[4] = {COLOR_DARKER_GREEN, sf::Color::Black,
 
 static sf::Color SELECTED_CELLS_WHEEL[2] = {sf::Color::Magenta,
                                             sf::Color::Cyan};
-static std::string TIKZ_SELECTED_CELLS_WHEEL[2] = {"magenta",
-                                                   "blue"};
+static std::string TIKZ_SELECTED_CELLS_WHEEL[2] = {"magenta", "blue"};
 
 class GraphicEngine {
   /***

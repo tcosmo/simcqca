@@ -121,8 +121,7 @@ void GraphicEngine::toggleSelectedCell(const sf::Vector2i &cellPos,
     if (toggleParityVector) {
       assert(world.inputType == CYCLE);
       selectedBorder[cellPos] = SELECTED_CELLS_WHEEL[currentSelectedColor];
-      selectedCells[cellPos - world.cyclicForwardVector] =
-          currentSelectedColor;
+      selectedCells[cellPos - world.cyclicForwardVector] = currentSelectedColor;
     }
   } else if (!onlyAdd) {
     selectedCells.erase(cellPos);
@@ -143,7 +142,7 @@ void GraphicEngine::clearSelectedColor(const sf::Vector2i &cellPos) {
 
   if (selectedCells.find(cellPos) == selectedCells.end())
     return;
-  
+
   int colorId = selectedCells[cellPos];
   std::vector<sf::Vector2i> toErase;
   for (const auto &posAndColor : selectedCells)

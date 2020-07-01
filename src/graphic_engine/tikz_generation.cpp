@@ -12,7 +12,7 @@
   "\\definecolor{" TIKZ_HALF_DEFINED_BG_NAME "}{RGB}{102,102,102}\n"
 #define TIKZ_FULLY_DEFINED_BG                                                  \
   "\\definecolor{" TIKZ_FULLY_DEFINED_BG_NAME "}{RGB}{153,153,153}\n"
-#define TIKZ_BOOT_CARRY                                                  \
+#define TIKZ_BOOT_CARRY                                                        \
   "\\definecolor{" TIKZ_BOOT_CARRY_NAME "}{RGB}{102,26,26}\n"
 
 sf::Vector2f toTikzCoordinates(const sf::Vector2i &worldPos) {
@@ -51,8 +51,7 @@ std::string GraphicEngine::getTikzCell(const sf::Vector2i &cellPos, int maxX) {
   stringStream << "\\filldraw[";
   sf::Vector2f tikzCoord = toTikzCoordinates(cellPos);
 
-  const char *symbols[2] = {"\\boldsymbol{0}", 
-                            "\\boldsymbol{1}"};
+  const char *symbols[2] = {"\\boldsymbol{0}", "\\boldsymbol{1}"};
 
   std::string fillColor = TIKZ_UNDEFINED_BG_NAME;
   std::string strokeColor = TIKZ_UNDEFINED_BG_NAME;
@@ -80,10 +79,10 @@ std::string GraphicEngine::getTikzCell(const sf::Vector2i &cellPos, int maxX) {
     if (world.cells[cellPos].getStatus() == DEFINED) {
       fillColor = TIKZ_FULLY_DEFINED_BG_NAME;
       strokeColor = TIKZ_FULLY_DEFINED_BG_NAME;
-      text = symbols[world.cells[cellPos].index()/2];
+      text = symbols[world.cells[cellPos].index() / 2];
 
       if (world.cells[cellPos].index() == 0) {
-        sf::Vector2i pos = cellPos+WEST;
+        sf::Vector2i pos = cellPos + WEST;
         bool onlyNothingness = true;
         while (world.doesCellExists(pos)) {
           assert(world.cells[pos].getStatus() == DEFINED);
@@ -107,7 +106,8 @@ std::string GraphicEngine::getTikzCell(const sf::Vector2i &cellPos, int maxX) {
     }
   }
   // Color
-  stringStream << "draw=" << strokeColor << ",fill=" << fillColor << ",ultra thick] ";
+  stringStream << "draw=" << strokeColor << ",fill=" << fillColor
+               << ",ultra thick] ";
 
   // Position
   stringStream << "(" << tikzCoord.x << "," << tikzCoord.y << ") rectangle ";
@@ -119,9 +119,11 @@ std::string GraphicEngine::getTikzCell(const sf::Vector2i &cellPos, int maxX) {
     std::string carryColor = "white";
     if (world.cells[cellPos].isBootstrappingCarry)
       carryColor = TIKZ_BOOT_CARRY_NAME;
-    stringStream << "\\draw [" << carryColor << ", ultra thick] " << "(" << tikzCoord.x+0.27;
-    stringStream << "," << tikzCoord.y-0.11+tweaky << ") -- ";
-    stringStream << "(" << tikzCoord.x+1-0.27 << "," << tikzCoord.y-0.11+tweaky << ");\n";
+    stringStream << "\\draw [" << carryColor << ", ultra thick] "
+                 << "(" << tikzCoord.x + 0.27;
+    stringStream << "," << tikzCoord.y - 0.11 + tweaky << ") -- ";
+    stringStream << "(" << tikzCoord.x + 1 - 0.27 << ","
+                 << tikzCoord.y - 0.11 + tweaky << ");\n";
   }
 
   // Text
@@ -158,20 +160,17 @@ void GraphicEngine::generateTikzFromSelection() {
 
   for (int x = minX; x <= maxX; x += 1)
     for (int y = minY; y <= maxY; y += 1) {
-      sf::Vector2i cellPos = {x,y};
+      sf::Vector2i cellPos = {x, y};
       if (selectedCells.find(cellPos) == selectedCells.end())
         tikzFileString += getTikzCell({x, y}, maxX);
     }
 
   for (int x = minX; x <= maxX; x += 1)
     for (int y = minY; y <= maxY; y += 1) {
-      sf::Vector2i cellPos = {x,y};
+      sf::Vector2i cellPos = {x, y};
       if (selectedCells.find(cellPos) != selectedCells.end())
         tikzFileString += getTikzCell({x, y}, maxX);
     }
-        
-
-  
 
   tikzFileString += "\n\\end{tikzpicture}\n"
                     "\\end{document}";
