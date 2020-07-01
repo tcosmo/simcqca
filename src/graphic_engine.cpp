@@ -197,10 +197,11 @@ void GraphicEngine::outlineResult() {
   for (int iStep = 0; iStep < 4 * world.inputStr.size(); iStep += 1)
     world.next();
 
-  sf::Vector2i targetCell = {0,0};
+  sf::Vector2i targetCell = {0, 0};
   if (world.inputType == LINE) {
-    targetCell = {-1*static_cast<int>(world.inputStr.size()), 0};
-    while(world.doesCellExists(targetCell) && world.doesCellExists(targetCell+SOUTH))
+    targetCell = {-1 * static_cast<int>(world.inputStr.size()), 0};
+    while (world.doesCellExists(targetCell) &&
+           world.doesCellExists(targetCell + SOUTH))
       targetCell += SOUTH;
   }
 
@@ -208,32 +209,31 @@ void GraphicEngine::outlineResult() {
   sf::Vector2i currentPos = targetCell + NORTH;
 
   while (world.doesCellExists(currentPos)) {
-    base3Col += '0'+world.cells[currentPos].sum();
+    base3Col += '0' + world.cells[currentPos].sum();
     selectedCells[currentPos] = SELECTED_CELLS_WHEEL[0];
     currentPos += NORTH;
   }
-  std::reverse(base3Col.begin(),base3Col.end());
+  std::reverse(base3Col.begin(), base3Col.end());
   int z3 = 0;
-  for (const auto& c: base3Col)
-    z3 = 3*z3 + (c-'0');
+  for (const auto &c : base3Col)
+    z3 = 3 * z3 + (c - '0');
 
   std::string computedBase2 = World::base32(base3Col);
-  
+
   currentPos = targetCell + WEST;
   int iStep = 0;
   while (world.doesCellExists(currentPos)) {
     if (iStep == computedBase2.size())
       break;
-    base2Row += '0'+static_cast<char>(world.cells[currentPos].bit);
+    base2Row += '0' + static_cast<char>(world.cells[currentPos].bit);
     selectedCells[currentPos] = SELECTED_CELLS_WHEEL[0];
     currentPos += WEST;
     iStep += 1;
   }
-  std::reverse(base2Row.begin(),base2Row.end());
+  std::reverse(base2Row.begin(), base2Row.end());
   int z2 = 0;
-  for (const auto& c: base2Row)
-    z2 = 2*z2 + (c-'0');
-  
+  for (const auto &c : base2Row)
+    z2 = 2 * z2 + (c - '0');
 
   printf("The outlined vertical column is a base 3' encoding of: `%s` = %d\n",
          base3Col.c_str(), z3);
