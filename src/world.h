@@ -81,7 +81,7 @@ public:
     /**
      * Performs base 3 -> base 2 conversion.
      */
-    int x = 0;
+    unsigned long long int x = 0;
     for (const auto &c : base3)
       x = 3 * x + (c - '0');
     std::string base2;

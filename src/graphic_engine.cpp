@@ -214,38 +214,48 @@ void GraphicEngine::outlineResult() {
     currentPos += NORTH;
   }
   std::reverse(base3Col.begin(), base3Col.end());
-  long long int z3 = 0;
+  unsigned long long int z3 = 0;
   for (const auto &c : base3Col)
     z3 = 3 * z3 + (c - '0');
 
-  std::string computedBase2 = World::base32(base3Col);
+  // std::string computedBase2 = World::base32(base3Col);
 
   currentPos = targetCell + WEST;
-  int iStep = 0;
   while (world.doesCellExists(currentPos)) {
-    if (iStep == computedBase2.size())
-      break;
     base2Row += '0' + static_cast<char>(world.cells[currentPos].bit);
     selectedCells[currentPos] = SELECTED_CELLS_WHEEL[0];
     currentPos += WEST;
-    iStep += 1;
   }
+
+  // Remove head 0s
+  currentPos += EAST;
+  while (world.doesCellExists(currentPos) &&
+         world.cells[currentPos].bit == ZERO) {
+
+    selectedCells.erase(currentPos);
+    base2Row.erase(base2Row.size() - 1);
+    currentPos += EAST;
+  }
+
   std::reverse(base2Row.begin(), base2Row.end());
-  long long int z2 = 0;
+  unsigned long long int z2 = 0;
   for (const auto &c : base2Row)
     z2 = 2 * z2 + (c - '0');
 
-  printf("\nBe careful that the following numbers are computed with 64 bits "
-         "precision.\n");
-  printf("Hence the following may look like non sense if you consider > 64 bit "
-         "strings.\n\n");
-
+  if (base2Row.size() > 64) {
+    printf("\nYou are considering > 64 bit strings which exceeds the precision "
+           "the numbers were computed with.\n");
+    printf("Hence the following numbers interpretations are false "
+           "(truncated).\n\n");
+  } else
+    printf("\n");
   printf("The outlined vertical column is a base 3' encoding of: `%s` = %lld\n",
          base3Col.c_str(), z3);
   printf("The outlined horizontal row is a base 2 encoding of: `%s` = %lld\n",
          base2Row.c_str(), z2);
-  printf("Both represent the number: %lld\n\n", z3);
-
+  if (base2Row.size() <= 64) {
+    printf("Both represent the number: %lld\n\n", z3);
+  }
   cameraCenter(mapWorldPosToCoords(targetCell));
   int visibilityOffset = 4;
   while (
