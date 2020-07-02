@@ -187,7 +187,7 @@ void GraphicEngine::handleSelectorsEvents(const sf::Event &event) {
     case sf::Keyboard::Left:
       currentSelectedColor -= 1;
       if (currentSelectedColor == -1)
-        currentSelectedColor = COLORED_SELECTORS_WHEEL_SIZE -1;
+        currentSelectedColor = COLORED_SELECTORS_WHEEL_SIZE - 1;
       currentSelectedColor %= COLORED_SELECTORS_WHEEL_SIZE;
       break;
 

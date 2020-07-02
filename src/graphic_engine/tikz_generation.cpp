@@ -7,7 +7,7 @@
 #define TIKZ_BOOT_CARRY_NAME "clrBootCarry"
 
 #define TIKZ_UNDEFINED_BG                                                      \
-  "\\definecolor{" TIKZ_UNDEFINED_BG_NAME "}{RGB}{255,255,255}\n"
+  "\\definecolor{" TIKZ_UNDEFINED_BG_NAME "}{RGB}{51,51,51}\n"
 #define TIKZ_HALF_DEFINED_BG                                                   \
   "\\definecolor{" TIKZ_HALF_DEFINED_BG_NAME "}{RGB}{102,102,102}\n"
 #define TIKZ_FULLY_DEFINED_BG                                                  \
@@ -59,19 +59,21 @@ std::string GraphicEngine::getTikzCell(const sf::Vector2i &cellPos, int maxX) {
   bool drawSpecialStroke = false;
   // Sometimes the simulator says something is not defined
   // but in an ideal math world it is.
-  if (!world.doesCellExists(cellPos)) {
-    sf::Vector2i pos = cellPos;
-    bool ideallyDefined = false;
-    while (pos.x <= maxX) {
-      if (world.doesCellExists(pos)) {
-        ideallyDefined = true;
-        break;
+  if (world.inputType == COL || world.inputType == LINE) {
+    if (!world.doesCellExists(cellPos)) {
+      sf::Vector2i pos = cellPos;
+      bool ideallyDefined = false;
+      while (pos.x <= maxX) {
+        if (world.doesCellExists(pos)) {
+            ideallyDefined = true;
+            break;
+          }
+        pos += EAST;
       }
-      pos += EAST;
-    }
-    if (ideallyDefined) {
-      fillColor = TIKZ_FULLY_DEFINED_BG_NAME;
-      strokeColor = TIKZ_FULLY_DEFINED_BG_NAME;
+      if (ideallyDefined) {
+        fillColor = TIKZ_FULLY_DEFINED_BG_NAME;
+        strokeColor = TIKZ_FULLY_DEFINED_BG_NAME;
+      }
     }
   }
 
@@ -97,7 +99,7 @@ std::string GraphicEngine::getTikzCell(const sf::Vector2i &cellPos, int maxX) {
     } else {
       fillColor = TIKZ_HALF_DEFINED_BG_NAME;
       strokeColor = TIKZ_HALF_DEFINED_BG_NAME;
-      int symbolIndex = 2 * static_cast<int>(world.cells[cellPos].bit);
+      int symbolIndex = static_cast<int>(world.cells[cellPos].bit);
       text = symbols[symbolIndex];
     }
 
@@ -110,10 +112,9 @@ std::string GraphicEngine::getTikzCell(const sf::Vector2i &cellPos, int maxX) {
 
   if (drawSpecialStroke || !isTikzGridEnabled)
     stringStream << "draw=" << strokeColor << ",fill=" << fillColor
-               << ",ultra thick] ";
+                 << ",ultra thick] ";
   else
-    stringStream << "fill=" << fillColor
-               << "] ";
+    stringStream << "fill=" << fillColor << "] ";
 
   // Position
   stringStream << "(" << tikzCoord.x << "," << tikzCoord.y << ") rectangle ";
@@ -172,8 +173,8 @@ void GraphicEngine::generateTikzFromSelection() {
     }
 
   // Imposing an order on selected cells
-  for (int iColor = 0 ; iColor < COLORED_SELECTORS_WHEEL_SIZE ; iColor+=1)
-    for (const auto& posAndColor: selectedCells)
+  for (int iColor = 0; iColor < COLORED_SELECTORS_WHEEL_SIZE; iColor += 1)
+    for (const auto &posAndColor : selectedCells)
       if (posAndColor.second == iColor)
         tikzFileString += getTikzCell(posAndColor.first, maxX);
 
@@ -187,6 +188,6 @@ void GraphicEngine::generateTikzFromSelection() {
       std::string(DEFAULT_TIKZ_OUTPUT_FOLDER) + outputFileName;
 
   saveFile(outputFilePath, tikzFileString);
-  
-  //nbRun += 1; // More annoying than useful
+
+  // nbRun += 1; // More annoying than useful
 }
