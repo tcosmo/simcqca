@@ -30,6 +30,7 @@ GraphicEngine::GraphicEngine(World &world, int screen_w, int screen_h,
   initGraphicBuffers();
 
   tikzMode = isTikzEnabled;
+  isTikzGridEnabled = false;
 }
 
 GraphicEngine::~GraphicEngine() {}
@@ -79,6 +80,7 @@ void GraphicEngine::reset() {
   if (isTikzEnabled) {
     tikzMode = isTikzEnabled;
     tikzSelection.clear();
+    isTikzGridEnabled = false;
   }
 }
 
@@ -184,6 +186,8 @@ void GraphicEngine::handleSelectorsEvents(const sf::Event &event) {
 
     case sf::Keyboard::Left:
       currentSelectedColor -= 1;
+      if (currentSelectedColor == -1)
+        currentSelectedColor = COLORED_SELECTORS_WHEEL_SIZE -1;
       currentSelectedColor %= COLORED_SELECTORS_WHEEL_SIZE;
       break;
 
@@ -347,6 +351,13 @@ void GraphicEngine::run() {
 
         case sf::Keyboard::F:
           isParityVectorRendered = !isParityVectorRendered;
+          break;
+
+        case sf::Keyboard::G:
+          if (isTikzEnabled) {
+            isTikzGridEnabled = !isTikzGridEnabled;
+            printf("Tikz grid %s.\n", (isTikzEnabled) ? "enabled" : "disabled");
+          }
           break;
 
         case sf::Keyboard::T:

@@ -26,6 +26,7 @@
 #define COLOR_SPECIAL_CARRY sf::Color(0.4 * 255, 0.1 * 255, 0.1 * 255)
 #define COLOR_DARKER_GREEN sf::Color(0.2 * 255, 0.9 * 255, 0.2 * 255)
 #define COLOR_PARITY_VECTOR sf::Color(0.9 * 255, 0.2 * 255, 0.2 * 255)
+#define COLOR_ORANGE sf::Color(255, 0.64*255, 0)
 // Vertex Array layer indexing
 #define NB_LAYERS 3
 #define CELL_BACKGROUND 0 // Background of cell (defined/half defined)
@@ -40,11 +41,11 @@ static sf::PrimitiveType LAYER_PRIMITIVE_TYPE[3] = {sf::Quads, sf::Quads,
 static sf::Color CELL_DEFINED_COLORS[4] = {COLOR_DARKER_GREEN, sf::Color::Black,
                                            sf::Color::Magenta, sf::Color::Blue};
 
-#define COLORED_SELECTORS_WHEEL_SIZE 2 // 2 colors for selected cells
+#define COLORED_SELECTORS_WHEEL_SIZE 3 // 2 colors for selected cells
 
-static sf::Color SELECTED_CELLS_WHEEL[2] = {sf::Color::Magenta,
-                                            sf::Color::Cyan};
-static std::string TIKZ_SELECTED_CELLS_WHEEL[2] = {"magenta", "blue"};
+static sf::Color SELECTED_CELLS_WHEEL[COLORED_SELECTORS_WHEEL_SIZE] = {sf::Color::Magenta,
+                                            sf::Color::Cyan, COLOR_ORANGE};
+static std::string TIKZ_SELECTED_CELLS_WHEEL[COLORED_SELECTORS_WHEEL_SIZE] = {"magenta", "blue", "orange"};
 
 class GraphicEngine {
   /***
@@ -151,4 +152,5 @@ private:
   std::string getTikzCell(const sf::Vector2i &cellPos, int maxX);
   void generateTikzFromSelection();
   void handleTikzEvents(const sf::Event &event);
+  bool isTikzGridEnabled;
 };
