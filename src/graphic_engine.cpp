@@ -98,11 +98,12 @@ bool GraphicEngine::isSimulationInView() {
     if (world.inputType == BORDER && world.isComputationDone())
       return false;
 
-    if (!world.constructCycleInLine) {
+    if (!world.constructCycleInLine || world.cycleBoth) {
       for (const auto &cellPos : world.cellsOnEdge)
         if (cellPos.y >= boundaries.first.y)
           inView = true;
-    } else {
+    } 
+    if (world.constructCycleInLine || world.cycleBoth) {
       for (const auto &cellPos : world.cellsOnEdge)
         if (cellPos.x >= boundaries.first.x)
           inView = true;

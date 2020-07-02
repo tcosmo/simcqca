@@ -129,6 +129,13 @@ void parseArguments(int argc, char *argv[], Arguments &arguments) {
     arguments.isTikzEnabled = true;
   }
 
+  // Tikz
+  if (input.cmdOptionExists(getShortOptionStr(options[7].shortOption)) ||
+      input.cmdOptionExists(getLongOptionStr(options[7].longOption))) {
+    arguments.cycleBoth = true;
+  }
+
+
   if (input.cmdOptionExists("-V") || input.cmdOptionExists("--version")) {
     printf("%s\n", argp_program_version);
     exit(0);
@@ -144,4 +151,8 @@ void parseArguments(int argc, char *argv[], Arguments &arguments) {
     usagePage();
     exit(0);
   }
+
+  //Tweak
+  if(arguments.constructCycleInLine && arguments.cycleBoth)
+    arguments.constructCycleInLine = false;
 }

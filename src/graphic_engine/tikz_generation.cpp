@@ -142,7 +142,8 @@ std::string GraphicEngine::getTikzCell(const sf::Vector2i &cellPos, int maxX) {
     float textY = static_cast<float>(tikzCoord.y) - 0.5 + tweaky;
 
     stringStream << "\\node[text=" << TIKZ_TEXT_COLOR << "] at (" << textX;
-    stringStream << "," << textY << ") " << "{$" << text << "$};\n";
+    stringStream << "," << textY << ") "
+                 << "{$" << text << "$};\n";
   }
 
   return stringStream.str();

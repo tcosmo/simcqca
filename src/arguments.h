@@ -60,6 +60,9 @@ static std::vector<InputOption> options = {
     {"tikz", 't', NULL,
      "Use this option to generate `tikz` figures from the"
      " simulator."},
+    {"cycle-both", 'j', NULL,
+     "Combine this option with cycle mode to run the construction per row and "
+     "per column at the same time."},
 
     // Default options
     {"help", 'h', NULL, "Give this help list"},
@@ -72,10 +75,11 @@ struct Arguments {
   std::string inputStr;
   bool constructCycleInLine;
   bool isTikzEnabled;
+  bool cycleBoth;
 
   Arguments()
       : isSequential(false), inputType(NONE), constructCycleInLine(false),
-        isTikzEnabled(false) {}
+        isTikzEnabled(false), cycleBoth(false) {}
 };
 
 void parseArguments(int argc, char *argv[], Arguments &arguments);

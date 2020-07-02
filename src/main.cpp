@@ -11,7 +11,7 @@ int main(int argc, char *argv[]) {
   parseArguments(argc, argv, arguments);
 
   World world(arguments.isSequential, arguments.inputType, arguments.inputStr,
-              arguments.constructCycleInLine);
+              arguments.constructCycleInLine, arguments.cycleBoth);
   GraphicEngine graphicEngine(world, 800 * 1.5, 600 * 1.5,
                               arguments.isTikzEnabled);
   graphicEngine.run();

@@ -89,15 +89,19 @@ World::findCyclicUpdates(const std::vector<CellPosAndCell> &updates) {
     const sf::Vector2i &pos = update.first;
     const Cell &cell = update.second;
 
-    if (!constructCycleInLine) {
+    if (!constructCycleInLine || cycleBoth) {
       if ((pos - cyclicForwardVector).x == ORIGIN_BORDER_MODE.x) {
         sf::Vector2i posEquivalent = pos - cyclicForwardVector;
         toRet.push_back(std::make_pair(posEquivalent, cell));
       }
-    } else if ((pos + cyclicForwardVector).y ==
+    } 
+    
+    if (constructCycleInLine || cycleBoth) {
+      if ((pos + cyclicForwardVector).y ==
                ORIGIN_BORDER_MODE.y + parityVectorSpan) {
-      sf::Vector2i posEquivalent = pos + cyclicForwardVector;
-      toRet.push_back(std::make_pair(posEquivalent, cell));
+        sf::Vector2i posEquivalent = pos + cyclicForwardVector;
+        toRet.push_back(std::make_pair(posEquivalent, cell));
+      }
     }
   }
   return toRet;

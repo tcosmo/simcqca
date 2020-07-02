@@ -74,6 +74,7 @@ private:
 
   void outlineResult();
 
+
   // Text attribute and routines
   sf::Font defaultFont;
   bool isTextRendered, isTextForcedDisabled;

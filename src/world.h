@@ -66,13 +66,16 @@ class World {
    */
 public:
   World(bool isSequentialSim, InputType inputType, std::string inputStr,
-        bool constructCycleInLine)
+        bool constructCycleInLine, bool cycleBoth)
       : isSequentialSim(isSequentialSim), inputType(inputType),
-        inputStr(inputStr), constructCycleInLine(constructCycleInLine) {
+        inputStr(inputStr), constructCycleInLine(constructCycleInLine), cycleBoth(cycleBoth) {
     if (isSequentialSim) {
       printf("Sequential simulation not implemented yet. Abort.\n");
       exit(0);
     }
+
+    if (cycleBoth && constructCycleInLine)
+      constructCycleInLine = false;
 
     setInputCells();
   }
@@ -112,6 +115,7 @@ public:
 
   bool constructCycleInLine; // Construct cycle line per line instead of col
                              // per col
+  bool cycleBoth;
 
   sf::Vector2i cyclicForwardVector;
   std::vector<sf::Vector2i> parityVectorCells; // Border and cycle mode, all
