@@ -65,9 +65,9 @@ std::string GraphicEngine::getTikzCell(const sf::Vector2i &cellPos, int maxX) {
       bool ideallyDefined = false;
       while (pos.x <= maxX) {
         if (world.doesCellExists(pos)) {
-            ideallyDefined = true;
-            break;
-          }
+          ideallyDefined = true;
+          break;
+        }
         pos += EAST;
       }
       if (ideallyDefined) {
