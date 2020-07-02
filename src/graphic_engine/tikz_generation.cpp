@@ -6,14 +6,17 @@
 #define TIKZ_FULLY_DEFINED_BG_NAME "clrBackgroundDefined"
 #define TIKZ_BOOT_CARRY_NAME "clrBootCarry"
 
+// This is the opposite color scheme of the simulator
 #define TIKZ_UNDEFINED_BG                                                      \
-  "\\definecolor{" TIKZ_UNDEFINED_BG_NAME "}{RGB}{51,51,51}\n"
+  "\\definecolor{" TIKZ_UNDEFINED_BG_NAME "}{RGB}{255,255,255}\n"
 #define TIKZ_HALF_DEFINED_BG                                                   \
-  "\\definecolor{" TIKZ_HALF_DEFINED_BG_NAME "}{RGB}{102,102,102}\n"
+  "\\definecolor{" TIKZ_HALF_DEFINED_BG_NAME "}{RGB}{153,153,153}\n"
 #define TIKZ_FULLY_DEFINED_BG                                                  \
-  "\\definecolor{" TIKZ_FULLY_DEFINED_BG_NAME "}{RGB}{153,153,153}\n"
+  "\\definecolor{" TIKZ_FULLY_DEFINED_BG_NAME "}{RGB}{102,102,102}\n"
 #define TIKZ_BOOT_CARRY                                                        \
   "\\definecolor{" TIKZ_BOOT_CARRY_NAME "}{RGB}{102,26,26}\n"
+
+#define TIKZ_TEXT_COLOR "black"
 
 sf::Vector2f toTikzCoordinates(const sf::Vector2i &worldPos) {
   /**
@@ -123,7 +126,7 @@ std::string GraphicEngine::getTikzCell(const sf::Vector2i &cellPos, int maxX) {
   // Carry
   float tweaky = -0.15;
   if (world.doesCellExists(cellPos) && world.cells[cellPos].carry == ONE) {
-    std::string carryColor = "white";
+    std::string carryColor = TIKZ_TEXT_COLOR;
     if (world.cells[cellPos].isBootstrappingCarry)
       carryColor = TIKZ_BOOT_CARRY_NAME;
     stringStream << "\\draw [" << carryColor << ", ultra thick] "
@@ -138,8 +141,8 @@ std::string GraphicEngine::getTikzCell(const sf::Vector2i &cellPos, int maxX) {
     float textX = static_cast<float>(tikzCoord.x) + 0.5;
     float textY = static_cast<float>(tikzCoord.y) - 0.5 + tweaky;
 
-    stringStream << "\\node[text=white] at (" << textX << "," << textY << ") ";
-    stringStream << "{$" << text << "$};\n";
+    stringStream << "\\node[text=" << TIKZ_TEXT_COLOR << "] at (" << textX;
+    stringStream << "," << textY << ") " << "{$" << text << "$};\n";
   }
 
   return stringStream.str();
