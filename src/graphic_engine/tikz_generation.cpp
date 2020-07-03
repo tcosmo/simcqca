@@ -10,13 +10,13 @@
 #define TIKZ_UNDEFINED_BG                                                      \
   "\\definecolor{" TIKZ_UNDEFINED_BG_NAME "}{RGB}{255,255,255}\n"
 #define TIKZ_HALF_DEFINED_BG                                                   \
-  "\\definecolor{" TIKZ_HALF_DEFINED_BG_NAME "}{RGB}{153,153,153}\n"
+  "\\definecolor{" TIKZ_HALF_DEFINED_BG_NAME "}{RGB}{143,143,143}\n"
 #define TIKZ_FULLY_DEFINED_BG                                                  \
   "\\definecolor{" TIKZ_FULLY_DEFINED_BG_NAME "}{RGB}{102,102,102}\n"
 #define TIKZ_BOOT_CARRY                                                        \
-  "\\definecolor{" TIKZ_BOOT_CARRY_NAME "}{RGB}{102,26,26}\n"
+  "\\definecolor{" TIKZ_BOOT_CARRY_NAME "}{RGB}{255,69,69}\n"
 
-#define TIKZ_TEXT_COLOR "black"
+#define TIKZ_TEXT_COLOR "white"
 
 sf::Vector2f toTikzCoordinates(const sf::Vector2i &worldPos) {
   /**
@@ -68,6 +68,10 @@ std::string GraphicEngine::getTikzCell(const sf::Vector2i &cellPos, int maxX) {
       bool ideallyDefined = false;
       while (pos.x <= maxX) {
         if (world.doesCellExists(pos)) {
+          if (world.cells[pos].getStatus() == HALF_DEFINED) {
+            ideallyDefined = false;
+            break;
+          }
           ideallyDefined = true;
           break;
         }

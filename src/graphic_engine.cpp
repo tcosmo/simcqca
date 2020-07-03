@@ -102,7 +102,7 @@ bool GraphicEngine::isSimulationInView() {
       for (const auto &cellPos : world.cellsOnEdge)
         if (cellPos.y >= boundaries.first.y)
           inView = true;
-    } 
+    }
     if (world.constructCycleInLine || world.cycleBoth) {
       for (const auto &cellPos : world.cellsOnEdge)
         if (cellPos.x >= boundaries.first.x)

@@ -135,7 +135,6 @@ void parseArguments(int argc, char *argv[], Arguments &arguments) {
     arguments.cycleBoth = true;
   }
 
-
   if (input.cmdOptionExists("-V") || input.cmdOptionExists("--version")) {
     printf("%s\n", argp_program_version);
     exit(0);
@@ -152,7 +151,7 @@ void parseArguments(int argc, char *argv[], Arguments &arguments) {
     exit(0);
   }
 
-  //Tweak
-  if(arguments.constructCycleInLine && arguments.cycleBoth)
+  // Tweak
+  if (arguments.constructCycleInLine && arguments.cycleBoth)
     arguments.constructCycleInLine = false;
 }

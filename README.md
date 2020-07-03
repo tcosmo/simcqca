@@ -46,11 +46,12 @@ In Border mode, the input is a parity vector. The automaton reconstructs the cor
 - `./simcqca --border 1100000000000000011111000101011011`
 - `./simcqca --border 0011000`
 ## Cycle mode
-In cycle mode, the input is a parity vector supposed to be the support of a cycle. The automaton reconstructs the 3-adic expansion of the corresponding rational cycling over this parity vector. If the option `--cycle-row` is given, the automaton will reconstruct the 2-adic expansion of the same number (rational Collatz cyclic numbers are both 2-adic and 3-adic integers).
+In cycle mode, the input is a parity vector supposed to be the support of a cycle. The automaton reconstructs the 3-adic expansion of the corresponding rational cycling over this parity vector. If the option `--cycle-row` is given, the automaton will reconstruct the 2-adic expansion of the same number (rational Collatz cyclic numbers are both 2-adic and 3-adic integers). If the option `--cycle-both` is given the automaton will construct them both at the same time.
 - `./simcqca --cycle 1000110`
 - `./simcqca --cycle 1000110 --cycle-row`
 - `./simcqca --cycle 00010101100`
 - `./simcqca --cycle 00010101100 --cycle-row`
+- `./simcqca --cycle 00010101100 --cycle-both`
 ### Integer cycles
 You can try it on the 4 known non-zero integer cycles (1 non-negative and 3 non-positive):
 - `./simcqca --cycle 101010` : constructs the cycle (1,2,1,...)

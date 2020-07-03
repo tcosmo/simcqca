@@ -68,7 +68,8 @@ public:
   World(bool isSequentialSim, InputType inputType, std::string inputStr,
         bool constructCycleInLine, bool cycleBoth)
       : isSequentialSim(isSequentialSim), inputType(inputType),
-        inputStr(inputStr), constructCycleInLine(constructCycleInLine), cycleBoth(cycleBoth) {
+        inputStr(inputStr), constructCycleInLine(constructCycleInLine),
+        cycleBoth(cycleBoth) {
     if (isSequentialSim) {
       printf("Sequential simulation not implemented yet. Abort.\n");
       exit(0);
