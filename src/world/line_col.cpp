@@ -54,6 +54,11 @@ void World::setInputCellsCol() {
   Cell cellToAdd = {ZERO, UNDEF};
   updates.push_back(std::make_pair(posToAdd, cellToAdd));
 
+  // // Need this for coherence in definitions
+  // posToAdd = {0,0};
+  // cellToAdd = {ZERO,UNDEF};
+  // updates.push_back(std::make_pair(posToAdd, cellToAdd));
+
   applyUpdates(updates);
 }
 
