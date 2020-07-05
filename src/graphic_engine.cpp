@@ -98,15 +98,24 @@ bool GraphicEngine::isSimulationInView() {
     if (world.inputType == BORDER && world.isComputationDone())
       return false;
 
-    if (!world.constructCycleInLine || world.cycleBoth) {
+    if (world.cycleBoth) {
       for (const auto &cellPos : world.cellsOnEdge)
-        if (cellPos.y >= boundaries.first.y)
+        if (cellPos.y >= boundaries.first.y &&
+            cellPos.x >= boundaries.first.x) {
           inView = true;
-    }
-    if (world.constructCycleInLine || world.cycleBoth) {
-      for (const auto &cellPos : world.cellsOnEdge)
-        if (cellPos.x >= boundaries.first.x)
-          inView = true;
+        }
+    } else {
+      if (!world.constructCycleInLine) {
+        for (const auto &cellPos : world.cellsOnEdge)
+          if (cellPos.y >= boundaries.first.y) {
+            inView = true;
+          }
+      }
+      if (world.constructCycleInLine) {
+        for (const auto &cellPos : world.cellsOnEdge)
+          if (cellPos.x >= boundaries.first.x)
+            inView = true;
+      }
     }
   }
 
