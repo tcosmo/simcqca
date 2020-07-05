@@ -357,7 +357,8 @@ void GraphicEngine::run() {
         case sf::Keyboard::G:
           if (isTikzEnabled) {
             isTikzGridEnabled = !isTikzGridEnabled;
-            printf("Tikz grid %s.\n", (isTikzEnabled) ? "enabled" : "disabled");
+            printf("Tikz grid %s.\n",
+                   (isTikzGridEnabled) ? "enabled" : "disabled");
           }
           break;
 
@@ -384,7 +385,8 @@ void GraphicEngine::run() {
           break;
 
         case sf::Keyboard::Right:
-          if (isAltPressed() && world.inputType == CYCLE) {
+          if (isAltPressed() &&
+              (world.inputType == CYCLE || world.inputType == BORDER)) {
             reset();
             world.rotate(1);
             while (isSimulationInView())
@@ -393,7 +395,8 @@ void GraphicEngine::run() {
           break;
 
         case sf::Keyboard::Left:
-          if (isAltPressed() && world.inputType == CYCLE) {
+          if (isAltPressed() &&
+              (world.inputType == CYCLE || world.inputType == BORDER)) {
             reset();
             world.rotate(-1);
             while (isSimulationInView())

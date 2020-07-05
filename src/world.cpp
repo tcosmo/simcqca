@@ -341,7 +341,7 @@ void World::rotate(int direction) {
   /**
    * In cycle mode rotates the input parity vector.
    */
-  assert(inputType == CYCLE);
+  assert(inputType == CYCLE || inputType == BORDER);
   inputStr = rotateStr(inputStr, direction);
   reset();
 }
