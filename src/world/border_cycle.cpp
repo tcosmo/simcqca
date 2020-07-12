@@ -184,24 +184,25 @@ void World::printCycleInformation() {
 
   std::string initSeg = "";
   std::string period = "";
+  int parityVectorNorm = static_cast<int>(inputStr.size());
   int which = static_cast<int>(cells[ORIGIN_BORDER_MODE].bit);
   if (!constructCycleInLine) {
-    for (int y = ORIGIN_BORDER_MODE.y - (1 - which);
-         y >= -1 * indexesDetectedCycle.first; y -= 1) {
-      sf::Vector2i cellPos = {ORIGIN_BORDER_MODE.x, y};
+    for (int y = ORIGIN_BORDER_MODE.y + parityVectorSpan -1;
+         y >= -1 * indexesDetectedCycle.first + parityVectorSpan -1; y -= 1) {
+      sf::Vector2i cellPos = {ORIGIN_BORDER_MODE.x-parityVectorNorm+1, y};
       assert(doesCellExists(cellPos) && cells[cellPos].getStatus() == DEFINED);
       initSeg += cells[cellPos].sum() + '0';
     }
-    for (int y = -1 * indexesDetectedCycle.first - 1;
-         y >= -1 * indexesDetectedCycle.second; y -= 1) {
-      sf::Vector2i cellPos = {ORIGIN_BORDER_MODE.x, y};
+    for (int y = -1 * indexesDetectedCycle.first - 1 + parityVectorSpan -1;
+         y >= -1 * indexesDetectedCycle.second+ parityVectorSpan -1; y -= 1) {
+      sf::Vector2i cellPos = {ORIGIN_BORDER_MODE.x-parityVectorNorm+1, y};
       assert(doesCellExists(cellPos) && cells[cellPos].getStatus() == DEFINED);
       period += cells[cellPos].sum() + '0';
     }
   } else {
-    for (int x = ORIGIN_BORDER_MODE.x - 1; x >= -1 * indexesDetectedCycle.first;
+    for (int x = ORIGIN_BORDER_MODE.x; x >= -1 * indexesDetectedCycle.first;
          x -= 1) {
-      sf::Vector2i cellPos = {x, ORIGIN_BORDER_MODE.y + which};
+      sf::Vector2i cellPos = {x, ORIGIN_BORDER_MODE.y};
       if (!doesCellExists(cellPos))
         continue;
       // assert(doesCellExists(cellPos) && cells[cellPos].getStatus() ==
@@ -210,7 +211,7 @@ void World::printCycleInformation() {
     }
     for (int x = -1 * indexesDetectedCycle.first - 1;
          x >= -1 * indexesDetectedCycle.second; x -= 1) {
-      sf::Vector2i cellPos = {x, ORIGIN_BORDER_MODE.y + which};
+      sf::Vector2i cellPos = {x, ORIGIN_BORDER_MODE.y};
       assert(doesCellExists(cellPos) && cells[cellPos].getStatus() == DEFINED);
       period += static_cast<int>(cells[cellPos].bit) + '0';
     }
