@@ -160,8 +160,9 @@ void World::nextLocal() {
       applyUpdates(cyclicUpdates);
     }
     // Tweak to get the right amount of 0s on the south
-    auto tweakUpdates = findTweakSouthBorderUpdates();
-    applyUpdates(tweakUpdates);
+    // Deprecated
+    //auto tweakUpdates = findTweakSouthBorderUpdates();
+    //applyUpdates(tweakUpdates);
   }
 }
 
