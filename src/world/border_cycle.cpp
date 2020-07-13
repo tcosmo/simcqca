@@ -187,15 +187,15 @@ void World::printCycleInformation() {
   int parityVectorNorm = static_cast<int>(inputStr.size());
   int which = static_cast<int>(cells[ORIGIN_BORDER_MODE].bit);
   if (!constructCycleInLine) {
-    for (int y = ORIGIN_BORDER_MODE.y + parityVectorSpan -1;
-         y >= -1 * indexesDetectedCycle.first + parityVectorSpan -1; y -= 1) {
-      sf::Vector2i cellPos = {ORIGIN_BORDER_MODE.x-parityVectorNorm+1, y};
+    for (int y = ORIGIN_BORDER_MODE.y + parityVectorSpan - 1;
+         y >= -1 * indexesDetectedCycle.first + parityVectorSpan - 1; y -= 1) {
+      sf::Vector2i cellPos = {ORIGIN_BORDER_MODE.x - parityVectorNorm + 1, y};
       assert(doesCellExists(cellPos) && cells[cellPos].getStatus() == DEFINED);
       initSeg += cells[cellPos].sum() + '0';
     }
-    for (int y = -1 * indexesDetectedCycle.first - 1 + parityVectorSpan -1;
-         y >= -1 * indexesDetectedCycle.second+ parityVectorSpan -1; y -= 1) {
-      sf::Vector2i cellPos = {ORIGIN_BORDER_MODE.x-parityVectorNorm+1, y};
+    for (int y = -1 * indexesDetectedCycle.first - 1 + parityVectorSpan - 1;
+         y >= -1 * indexesDetectedCycle.second + parityVectorSpan - 1; y -= 1) {
+      sf::Vector2i cellPos = {ORIGIN_BORDER_MODE.x - parityVectorNorm + 1, y};
       assert(doesCellExists(cellPos) && cells[cellPos].getStatus() == DEFINED);
       period += cells[cellPos].sum() + '0';
     }

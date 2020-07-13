@@ -69,11 +69,13 @@ void GraphicEngine::renderSelectedBorder() {
     // a public access to the step to take.
     for (int i = 0; i < world.inputStr.length(); i++) {
       const char &c = world.inputStr[i];
-      outlineCell(currentPos, posAndColor.second, SOUTH);
+      outlineCell(currentPos,
+
+                  SELECTED_CELLS_WHEEL[posAndColor.second], SOUTH);
       currentPos += WEST;
       if (c == '1') {
         currentPos += SOUTH;
-        outlineCell(currentPos, posAndColor.second, EAST);
+        outlineCell(currentPos, SELECTED_CELLS_WHEEL[posAndColor.second], EAST);
       }
     }
   }

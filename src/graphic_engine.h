@@ -134,7 +134,7 @@ private:
 
   // Selected cells
   std::map<sf::Vector2i, int, compareWorldPositions> selectedCells;
-  std::map<sf::Vector2i, sf::Color, compareWorldPositions> selectedBorder;
+  std::map<sf::Vector2i, int, compareWorldPositions> selectedBorder;
   void renderSelectedCells();
   void renderSelectedBorder();
   void handleSelectorsEvents(const sf::Event &event);

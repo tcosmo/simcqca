@@ -117,6 +117,15 @@ std::string GraphicEngine::getTikzCell(const sf::Vector2i &cellPos, int maxX) {
   }
   // Color
 
+  if (isColorRendered) {
+    if (world.cells[cellPos].getStatus() == DEFINED) {
+      int i = world.cells[cellPos].index();
+      std::string colorTikzArray[] = {"green", "black", "violet", "blue"};
+      strokeColor = colorTikzArray[i];
+      fillColor = colorTikzArray[i];
+    }
+  }
+
   if (drawSpecialStroke || !isTikzGridEnabled)
     stringStream << "draw=" << strokeColor << ",fill=" << fillColor
                  << ",ultra thick] ";
@@ -185,6 +194,34 @@ void GraphicEngine::generateTikzFromSelection() {
     for (const auto &posAndColor : selectedCells)
       if (posAndColor.second == iColor)
         tikzFileString += getTikzCell(posAndColor.first, maxX);
+
+  for (const auto &posAndColor : selectedBorder) {
+    sf::Vector2i currentPos = posAndColor.first - world.cyclicForwardVector;
+    // FIXME: should not have access to world inputStr, world should give
+    // a public access to the step to take.
+    for (int i = 0; i < world.inputStr.length(); i++) {
+      const char &c = world.inputStr[i];
+
+      std::string colorTikzName = TIKZ_SELECTED_CELLS_WHEEL[posAndColor.second];
+      auto tikzCoord = toTikzCoordinates(currentPos);
+      std::ostringstream stringStream;
+
+      stringStream << "\n\\draw[" << colorTikzName << ",ultra thick] ("
+                   << tikzCoord.x << "," << tikzCoord.y - 1 << ") -- ("
+                   << tikzCoord.x + 1 << "," << tikzCoord.y - 1 << ");";
+      tikzFileString += stringStream.str();
+
+      currentPos += WEST;
+      if (c == '1') {
+        currentPos += SOUTH;
+        tikzCoord = toTikzCoordinates(currentPos);
+        stringStream << "\n\\draw[" << colorTikzName << ",ultra thick] ("
+                     << tikzCoord.x + 1 << "," << tikzCoord.y << ") -- ("
+                     << tikzCoord.x + 1 << "," << tikzCoord.y - 1 << ");";
+        tikzFileString += stringStream.str();
+      }
+    }
+  }
 
   tikzFileString += "\n\\end{tikzpicture}\n"
                     "\\end{document}";

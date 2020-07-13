@@ -6,7 +6,7 @@
 
 # What is SimCQCA
 
-`simcqca` is a simulator for the 2D Collatz Quasi Cellular Automaton. Please refer to the paper and the following [Example section](#examples) for more details and explanations about the above image: ... 
+`simcqca` is a simulator for the 2D Collatz Quasi Cellular Automaton. Please refer to the paper and the following [Example section](#examples) for more details and explanations about the above image: *The Collatz process embeds a base conversion algorithm.* Tristan Stérin and Damien Woods, in submission.
 
 # Build SimCQCA
 
@@ -30,13 +30,13 @@ Building `simcqca` has been tested on Linux and Mac OS, if it doesn't work for y
 <a href="examples"></a>
 
 ## Row mode
-In row mode, the input is a binary string. Each successive row corresponds to a new odd iteration of the Collatz process expressed in binary. Right click on a row and the terminal will output the corresponding binary Collatz iterate.
+In row mode, the input is a binary string. Each successive row corresponds to a new odd iteration of the Collatz process expressed in binary.
 
 Press `N` to trigger one simulation step and `M` to trigger as many as can fit in the screen. Press `P` to generate enough simulation steps in order to visualise the base conversion property: columns, which are written in base 3, convert to rows, which are written in base 2. Look at you terminal which will output some information about the numbers encoded in the outlined row/column (be careful of 64 bit precision).
 - `./simcqca --row 1001011111001000`
 - `./simcqca --row 10001010111000110000000000001111111111111111`
 ## Column mode
-In Column mode, the input is a ternary string. Each successive column corresponds to a new iteration of the Collatz process expressed in ternary. Right click on a column and the terminal will output the corresponding ternay Collatz iterates.
+In Column mode, the input is a ternary string. Each successive column corresponds to a new iteration of the Collatz process expressed in ternary. 
 
 - `./simcqca --col 12210000100011100110111112000`
 - `./simcqca --col 110012201`
@@ -79,14 +79,15 @@ We recommend the use of an **optical mouse** to manage the camera as functions o
 - `F`: in border and cycle mode outlines the original cells of the parity vector
 **Warning**: rendering for modes `E` and `F` are not optimized hence potential performance issues if used when too many cells on the edge/parity vector (too many being thousands).
 ## Simulation
-- `N`: next simulation step (Cellular Automaton-like evolution or sequential step depending on `--seq` flag)
+- `N`: next simulation step (Cellular Automaton-like evolution or sequential step depending on `--seq` flag, **Not implemented yet**)
 - `M`: runs simulation step until they are not in view anymore
 - `R`: resets the simulation
 - `RIGHT CLICK`: in row/column mode will finish to compute and blink the clicked row/column and will output in the terminal the number it represents (row are base 2/columns are base 3).
 - `P`:    
-    - In row/column modes will outline one instance of the base conversion result in the 2D CQCA. The outlined column represents a number in base 3' (most significant trit on top) and thus in base 3 by mapping each cell (bit,carry) as follows: (0,0) maps to the trit 0, (0,1) maps to the trit 1, (1,0) maps to the trit 1 and (1,1) maps to the trit 2. The outlined row represents a number in base 2 (most significant bit to the left) by simply keeping each cell's bit and ignoring carries. Those two numbers are the same. The terminal reads those numbers for you but be careful of the 64 bits precision: if the row gets too big (>64 bits) the output will look like nonsense.
+    - In row/column modes will outline one instance of the base conversion result in the 2D CQCA. The outlined column represents a number in base 3' (most significant trit on top) and thus in base 3 by mapping each cell (bit,carry) as follows: (0,0) maps to the trit 0, (0,1) maps to the trit 1, (1,0) maps to the trit 1 and (1,1) maps to the trit 2. The outlined row represents a number in base 2 (most significant bit to the left) by simply keeping each cell's bit and ignoring carries. Those two numbers are the same. The terminal reads those numbers for you but be careful of the 64 bits precision: if the row gets too big (>64 bits) the output will look like nonsense. (the printing is disabled in release `v0.4`)
+    - In border mode, pressing `P` will run the simulation until it is complete (finite evolution space).
     - In cycle mode, pressing `P` will run the simulation until the period of the 3-adic/2-adic expansion of the cycle is found. Will then output in the console the initial segment and period of that expansion (both little and big endian conventions).
-### Specific to cycle mode
+### Specific to border/cycle mode
 - `ALT + LEFT ARROW/RIGHT ARROW`: rotates the input parity vector to the left/right and re-runs the simulation until it is not in view anymore
 ## Selectors
 In order to visually outline some pattern of your choice you can select cells on the screen:

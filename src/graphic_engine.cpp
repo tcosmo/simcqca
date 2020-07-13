@@ -132,7 +132,7 @@ void GraphicEngine::toggleSelectedCell(const sf::Vector2i &cellPos,
     selectedCells[cellPos] = currentSelectedColor;
     if (toggleParityVector) {
       assert(world.inputType == CYCLE);
-      selectedBorder[cellPos] = SELECTED_CELLS_WHEEL[currentSelectedColor];
+      selectedBorder[cellPos] = currentSelectedColor;
       selectedCells[cellPos - world.cyclicForwardVector] = currentSelectedColor;
     }
   } else if (!onlyAdd) {
@@ -417,7 +417,10 @@ void GraphicEngine::run() {
           if (world.inputType == CYCLE) {
             while (!world.isCycleDetected())
               world.next();
-            world.printCycleInformation();
+            // world.printCycleInformation();
+          } else if (world.inputType == BORDER) {
+            while (!world.isComputationDone())
+              world.next();
           } else if (world.inputType == LINE || world.inputType == COL) {
             outlineResult();
           }
