@@ -26,14 +26,15 @@ To build `simcqca` do:
 
 Building `simcqca` has been tested on Linux and Mac OS, if it doesn't work for you please feel free to open an [issue](https://github.com/tcosmo/simcqca/issues).
 
-## Latest release
+## Latest release: `v0.4`
 
 The latest stable release is `v0.4` you can build this version of `simcqca` by doing (after cloning):
 
 1. `git fetch --all --tags`
 2. `git checkout tags/v0.4 -b v0.4-branch`
 
-Git will put you in a separate branch with version 0.4 of `simcqca`. You can go back to the development version by doing: `git checkout master`.
+Git will put you in a separate branch with version 0.4 of `simcqca`.      
+You can go back to the development version by doing: `git checkout master`.
 
 # Examples
 <a href="examples"></a>
@@ -93,9 +94,9 @@ We recommend the use of an **optical mouse** to manage the camera as functions o
 - `R`: resets the simulation
 - `RIGHT CLICK`: in row/column mode will finish to compute and blink the clicked row/column and will output in the terminal the number it represents (row are base 2/columns are base 3).
 - `P`:    
-    - In row/column modes will outline one instance of the base conversion result in the 2D CQCA. The outlined column represents a number in base 3' (most significant trit on top) and thus in base 3 by mapping each cell (bit,carry) as follows: (0,0) maps to the trit 0, (0,1) maps to the trit 1, (1,0) maps to the trit 1 and (1,1) maps to the trit 2. The outlined row represents a number in base 2 (most significant bit to the left) by simply keeping each cell's bit and ignoring carries. Those two numbers are the same. The terminal reads those numbers for you but be careful of the 64 bits precision: if the row gets too big (>64 bits) the output will look like nonsense. (the printing is disabled in release `v0.4`)
+    - In row/column modes will outline one instance of the base conversion result in the 2D CQCA. The outlined column represents a number in base 3' (most significant trit on top) and thus in base 3 by mapping each cell (bit,carry) as follows: (0,0) maps to the trit 0, (0,1) maps to the trit 1, (1,0) maps to the trit 1 and (1,1) maps to the trit 2. The outlined row represents a number in base 2 (most significant bit to the left) by simply keeping each cell's bit and ignoring carries. Those two numbers are the same. The terminal reads those numbers for you but be careful of the 64 bits precision: if the row gets too big (>64 bits) the output will look like nonsense. 
     - In border mode, pressing `P` will run the simulation until it is complete (finite evolution space).
-    - In cycle mode, pressing `P` will run the simulation until the period of the 3-adic/2-adic expansion of the cycle is found. Will then output in the console the initial segment and period of that expansion (both little and big endian conventions).
+    - In cycle mode, pressing `P` will run the simulation until the period of the 3-adic/2-adic expansion of the cycle is found. Will then output in the console the initial segment and period of that expansion (both little and big endian conventions). **Warning:** this printing is disabled in `v0.4`.
 ### Specific to border/cycle mode
 - `ALT + LEFT ARROW/RIGHT ARROW`: rotates the input parity vector to the left/right and re-runs the simulation until it is not in view anymore
 ## Selectors
