@@ -43,9 +43,16 @@ You can go back to the development version by doing: `git checkout master`.
 ## Row mode
 In row mode, the input is a binary string. Each successive row corresponds to a new odd iteration of the Collatz process expressed in binary.
 
-Press `N` to trigger one simulation step and `M` to trigger as many as can fit in the screen. Press `P` to generate enough simulation steps in order to visualise the base conversion property: columns, which are written in base 3, convert to rows, which are written in base 2. Look at you terminal which will output some information about the numbers encoded in the outlined row/column (be careful of 64 bit precision).
+**Examples**
 - `./simcqca --row 1001011111001000`
 - `./simcqca --row 10001010111000110000000000001111111111111111`
+
+**Basic Controls**
+
+- Press `N` to trigger one simulation step
+- Press`M` to trigger as many steps as can fit in the screen     
+- Press `P` to generate enough simulation steps in order to visualise the base conversion property: columns, which are written in base 3, convert to rows, which are written in base 2. Look at the terminal which will output some information about the numbers encoded in the outlined row/column (be careful of 64 bit precision).
+
 ## Column mode
 In Column mode, the input is a ternary string. Each successive column corresponds to a new iteration of the Collatz process expressed in ternary. 
 
