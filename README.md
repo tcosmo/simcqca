@@ -1,12 +1,13 @@
 <p align="center">
 <img src="https://github.com/tcosmo/simcqca/blob/master/base_conversion.png?raw=true" align="center" width="70%" style="text-align:center" alt="The Collatz process embeds a base conversion algorithm"></img>
 <br/>
-<strong>The Collatz process embeds a base conversion algorithm.</strong>
+<strong><a href="https://arxiv.org/abs/2007.06979">The Collatz process embeds a base conversion algorithm</a></strong>
 </p>
 
 # What is SimCQCA
 
-`simcqca` is a simulator for the 2D Collatz Quasi Cellular Automaton. Please refer to the paper and the following [Example section](#examples) for more details and explanations about the above image: *The Collatz process embeds a base conversion algorithm.* Tristan Stérin and Damien Woods, in submission.
+`simcqca` is a simulator for the 2D Collatz Quasi Cellular Automaton. Please refer to the paper and the following [Example section](#examples) for more details and explanations about the above image: [The Collatz process embeds a base conversion algorithm](https://arxiv.org/abs/2007.06979), Tristan Stérin and Damien Woods.
+
 
 # Build SimCQCA
 
