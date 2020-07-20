@@ -30,13 +30,13 @@ Building `simcqca` has been tested on Linux and Mac OS, if it doesn't work for y
 <a href="examples"></a>
 
 ## Row mode
-In row mode, the input is a binary string. Each successive row corresponds to a new odd iteration of the Collatz process expressed in binary. Right click on a row and the terminal will output the corresponding binary Collatz iterate.
+In row mode, the input is a binary string. Each successive row corresponds to a new odd iteration of the Collatz process expressed in binary.
 
 Press `N` to trigger one simulation step and `M` to trigger as many as can fit in the screen. Press `P` to generate enough simulation steps in order to visualise the base conversion property: columns, which are written in base 3, convert to rows, which are written in base 2. Look at you terminal which will output some information about the numbers encoded in the outlined row/column (be careful of 64 bit precision).
 - `./simcqca --row 1001011111001000`
 - `./simcqca --row 10001010111000110000000000001111111111111111`
 ## Column mode
-In Column mode, the input is a ternary string. Each successive column corresponds to a new iteration of the Collatz process expressed in ternary. Right click on a column and the terminal will output the corresponding ternay Collatz iterates.
+In Column mode, the input is a ternary string. Each successive column corresponds to a new iteration of the Collatz process expressed in ternary. 
 
 - `./simcqca --col 12210000100011100110111112000`
 - `./simcqca --col 110012201`
