@@ -50,7 +50,7 @@ In row mode, the input is a binary string. Each successive row corresponds to a 
 **Basic Controls**
 
 - Press `N` to trigger one simulation step
-- Press`M` to trigger as many steps as can fit in the screen     
+- Press `M` to trigger as many steps as can fit in the screen     
 - Press `P` to generate enough simulation steps in order to visualise the base conversion property: columns, which are written in base 3, convert to rows, which are written in base 2. Look at the terminal which will output some information about the numbers encoded in the outlined row/column (be careful of 64 bit precision).
 
 ## Column mode
@@ -81,6 +81,15 @@ You can try it on the 4 known non-zero integer cycles (1 non-negative and 3 non-
 ## General
 - `ESC`: quit
 - `A`: outputs some performance information (FPS, vertex array size, etc..)
+## Simulation
+- `N`: next simulation step (Cellular Automaton-like evolution or sequential step depending on `--seq` flag, **Not implemented yet**)
+- `M`: runs simulation step until they are not in view anymore
+- `R`: resets the simulation
+- `P`:    
+    - In row/column modes will outline one instance of the base conversion result in the 2D CQCA. The outlined column represents a number in base 3' (most significant trit on top) and thus in base 3 by mapping each cell (bit,carry) as follows: (0,0) maps to the trit 0, (0,1) maps to the trit 1, (1,0) maps to the trit 1 and (1,1) maps to the trit 2. The outlined row represents a number in base 2 (most significant bit to the left) by simply keeping each cell's bit and ignoring carries. Those two numbers are the same. The terminal reads those numbers for you but be careful of the 64 bits precision: if the row gets too big (>64 bits) the output will look like nonsense. 
+    - In border mode, pressing `P` will run the simulation until it is complete (finite evolution space).
+    - In cycle mode, pressing `P` will run the simulation until the period of the 3-adic/2-adic expansion of the cycle is found. Will then output in the console the initial segment and period of that expansion (both little and big endian conventions). **Warning:** this printing is disabled in `v0.4`.
+    
 ## Camera
 
 We recommend the use of an **optical mouse** to manage the camera as functions of the trackpad are not supported and keyboard camera controls potentially cumbersome to use.
@@ -96,15 +105,6 @@ We recommend the use of an **optical mouse** to manage the camera as functions o
 - `E`: outlines all cells on the edge of the computed world in green. 
 - `F`: in border and cycle mode outlines the original cells of the parity vector
 **Warning**: rendering for modes `E` and `F` are not optimized hence potential performance issues if used when too many cells on the edge/parity vector (too many being thousands).
-## Simulation
-- `N`: next simulation step (Cellular Automaton-like evolution or sequential step depending on `--seq` flag, **Not implemented yet**)
-- `M`: runs simulation step until they are not in view anymore
-- `R`: resets the simulation
-- `RIGHT CLICK`: in row/column mode will finish to compute and blink the clicked row/column and will output in the terminal the number it represents (row are base 2/columns are base 3).
-- `P`:    
-    - In row/column modes will outline one instance of the base conversion result in the 2D CQCA. The outlined column represents a number in base 3' (most significant trit on top) and thus in base 3 by mapping each cell (bit,carry) as follows: (0,0) maps to the trit 0, (0,1) maps to the trit 1, (1,0) maps to the trit 1 and (1,1) maps to the trit 2. The outlined row represents a number in base 2 (most significant bit to the left) by simply keeping each cell's bit and ignoring carries. Those two numbers are the same. The terminal reads those numbers for you but be careful of the 64 bits precision: if the row gets too big (>64 bits) the output will look like nonsense. 
-    - In border mode, pressing `P` will run the simulation until it is complete (finite evolution space).
-    - In cycle mode, pressing `P` will run the simulation until the period of the 3-adic/2-adic expansion of the cycle is found. Will then output in the console the initial segment and period of that expansion (both little and big endian conventions). **Warning:** this printing is disabled in `v0.4`.
 ### Specific to border/cycle mode
 - `ALT + LEFT ARROW/RIGHT ARROW`: rotates the input parity vector to the left/right and re-runs the simulation until it is not in view anymore
 ## Selectors
