@@ -82,7 +82,7 @@ You can try it on the 4 known non-zero integer cycles (1 non-negative and 3 non-
 - `ESC`: quit
 - `A`: outputs some performance information (FPS, vertex array size, etc..)
 ## Simulation
-- `N`: next simulation step (Cellular Automaton-like evolution or sequential step depending on `--seq` flag, **Not implemented yet**)
+- `N`: next simulation step 
 - `M`: runs simulation step until they are not in view anymore
 - `R`: resets the simulation
 - `P`:    
