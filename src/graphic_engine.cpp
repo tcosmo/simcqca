@@ -417,7 +417,7 @@ void GraphicEngine::run() {
           if (world.inputType == CYCLE) {
             while (!world.isCycleDetected())
               world.next();
-              world.printCycleInformation();
+            //world.printCycleInformation();
           } else if (world.inputType == BORDER) {
             while (!world.isComputationDone())
               world.next();
