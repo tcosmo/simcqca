@@ -27,14 +27,14 @@ To build `simcqca` do:
 
 Building `simcqca` has been tested on Linux and Mac OS, if it doesn't work for you please feel free to open an [issue](https://github.com/tcosmo/simcqca/issues).
 
-## Latest release: `v0.4`
+## Latest release: `v0.4.2`
 
-The latest stable release is `v0.4` you can build this version of `simcqca` by doing (after cloning):
+The latest stable release is `v0.4.2` you can build this version of `simcqca` by doing (after cloning):
 
 1. `git fetch --all --tags`
-2. `git checkout tags/v0.4 -b v0.4-branch`
+2. `git checkout tags/v0.4.2 -b v0.4.2-branch`
 
-Git will put you in a separate branch with version 0.4 of `simcqca`.      
+Git will put you in a separate branch with version 0.4.2 of `simcqca`.      
 You can go back to the development version by doing: `git checkout master`.
 
 # Examples
