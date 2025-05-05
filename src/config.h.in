@@ -21,7 +21,7 @@
 #define DEFAULT_FONT_TEXTURE_PATH "assets/fonts/font.png"
 #define DEFAULT_TIKZ_OUTPUT_FOLDER "tikz_output/"
 #else
-#define DEAULT_FONT_PATH "assets\\fonts\\" DEFAULT_FONT
+#define DEFAULT_FONT_PATH "assets\\fonts\\" DEFAULT_FONT
 #define DEFAULT_FONT_TEXTURE_PATH "assets\\fonts\\font.png"
 #define DEFAULT_TIKZ_OUTPUT_FOLDER "tikz_output\\"
 #endif
